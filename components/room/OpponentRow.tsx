@@ -12,7 +12,11 @@ export function OpponentRow({ player }: { player: PublicPlayer }) {
 
   const isCurrent = v.state?.currentPlayerId === player.id;
   const isPlayerHost = v.state?.hostId === player.id;
-  const canTarget = v.canGuess && player.alive;
+  // While the picker is open, drop the "tappable" affordance on every
+  // tile — pulse, hover state, etc. The backdrop blocks taps anyway,
+  // so visual urgency at this point is just background noise.
+  const pickerOpen = !!selectedTile;
+  const canTarget = v.canGuess && player.alive && !pickerOpen;
 
   return (
     <PlayerRow

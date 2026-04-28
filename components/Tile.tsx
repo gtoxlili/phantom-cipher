@@ -1,5 +1,6 @@
 'use client';
 
+import { motion } from 'motion/react';
 import { list } from 'radash';
 import clsx from 'clsx';
 import type { Color } from '@/lib/types';
@@ -52,7 +53,9 @@ export function Tile({
     s.tile,
     s.size[size],
     pending && s.pending,
-    selected && s.selected,
+    // Selected tiles intentionally get no visual treatment — the picker
+    // modal opens immediately and covers the board, so the lift/glow
+    // effect was both redundant and invisible.
     selectable && s.selectableHover,
     selectable && s.tappable,
     ownedHidden && s.ownedHidden,
@@ -63,7 +66,7 @@ export function Tile({
   );
 
   const inner = (
-    <svg viewBox="0 0 80 112" className={clsx(s.svg, selected && s.selectedSvg)} aria-hidden="true">
+    <svg viewBox="0 0 80 112" className={s.svg} aria-hidden="true">
       <path
         d="M 4 4 L 64 4 L 76 16 L 76 108 L 4 108 Z"
         fill={bgPrimary}
@@ -159,28 +162,39 @@ export function Tile({
     </svg>
   );
 
-  // For face-down opponent tiles in the PICK A TILE phase, layer the
-  // tileSelectablePulse keyframe AFTER the entrance animation. We set
-  // `animation` inline because Panda emits `s.tile`'s longhand
-  // `animation-name` AFTER any class-level shorthand override, so a
-  // class-based animation gets eaten by the cascade — inline always
-  // wins. tileSelectablePulse itself is defined in styles/global.css
-  // (outside the @layer base wrapper) so it bypasses Panda config.
+  // ALWAYS declare both animations inline. Toggling the `animation`
+  // shorthand between renders re-evaluates animation-name and replays
+  // tileIn from scratch (a 0.45s entrance from rotate(-12deg)) — that
+  // replay is what made selecting feel "abrupt", not the lift itself.
+  // Use animation-play-state for pulse on/off — the name doesn't change,
+  // so tileIn keeps its original timeline.
   const showPulse = selectable && !selected && !pending;
-  const inlineDelay: React.CSSProperties = showPulse
-    ? {
-        animation: `tileIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) ${index * 35}ms backwards, tileSelectablePulse 0.75s ease-in-out ${500 + index * 60}ms infinite`,
-      }
-    : { animationDelay: `${index * 35}ms` };
+  const inlineDelay: React.CSSProperties = {
+    animation: `tileIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) ${index * 35}ms backwards, tileSelectablePulse 0.75s ease-in-out ${500 + index * 60}ms infinite`,
+    animationPlayState: showPulse ? 'running' : 'running, paused',
+  };
 
+  // Lift handled by motion on an inner wrapper rather than CSS on the
+  // button: motion interpolates the transform from "wherever it is now"
+  // (mid-pulse-cycle is fine) to the target via spring, so there's no
+  // animation→static snap regardless of the outer button's pulse state.
   const decorations = (
     <>
       <div className={s.shadow} aria-hidden />
-      {inner}
+      <motion.div
+        style={{ display: 'block', position: 'relative', zIndex: 2 }}
+        animate={{
+          y: selected ? -14 : 0,
+          scale: selected ? 1.06 : 1,
+          rotate: selected ? 1 : 0,
+        }}
+        transition={{ type: 'spring', stiffness: 380, damping: 28, mass: 0.5 }}
+      >
+        {inner}
+      </motion.div>
       {ownedExposed && <span className={s.exposedSlash} aria-hidden />}
       {pending && <span className={s.pendingTag}>暂 / NEW</span>}
       {ownedExposed && !pending && <span className={s.exposedTag}>亮 / OPEN</span>}
-      {selected && <span className={s.targetTag}>标的</span>}
     </>
   );
 

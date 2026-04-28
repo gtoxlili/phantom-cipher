@@ -49,8 +49,16 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="zh-CN" className={`${bebas.variable} ${oswald.variable} ${inter.variable} ${notoSC.variable}`}>
-      <body>
+    // suppressHydrationWarning on <html>: browser extensions (e.g.
+    // Immersive Translate) inject attributes like data-immersive-
+    // translate-page-theme onto <html> before React hydrates, which
+    // would otherwise blow up the entire tree as a mismatch.
+    <html
+      lang="zh-CN"
+      className={`${bebas.variable} ${oswald.variable} ${inter.variable} ${notoSC.variable}`}
+      suppressHydrationWarning
+    >
+      <body suppressHydrationWarning>
         <Providers>{children}</Providers>
       </body>
     </html>
