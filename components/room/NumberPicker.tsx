@@ -90,7 +90,19 @@ export function NumberPicker() {
               transition={{ delay: 0.42, type: 'spring', stiffness: 400, damping: 24 }}
               whileTap={{ scale: 0.97 }}
             >
-              <span className="dash">‒</span>
+              <span className="dash" aria-hidden>
+                <svg viewBox="0 0 32 32" width="28" height="28">
+                  <path
+                    transform="translate(1.5 2)"
+                    fill="rgba(230,0,34,0.55)"
+                    d="M 16 4 L 19 12 L 27 12 L 20 17 L 23 26 L 16 21 L 9 26 L 12 17 L 5 12 L 13 12 Z"
+                  />
+                  <path
+                    fill="currentColor"
+                    d="M 16 4 L 19 12 L 27 12 L 20 17 L 23 26 L 16 21 L 9 26 L 12 17 L 5 12 L 13 12 Z"
+                  />
+                </svg>
+              </span>
               <span className="label">JOKER<em>赖子</em></span>
             </motion.button>
             <button className={s.cancel} onClick={close} type="button">

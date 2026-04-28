@@ -89,15 +89,41 @@ export function Tile({
           {number}
         </text>
       ) : showJoker ? (
-        <text
-          x="40"
-          y="84"
-          textAnchor="middle"
-          className={s.jokerText}
-          style={{ fill: numberColor }}
-        >
-          ‒
-        </text>
+        // P5-inspired joker mark — a chunky five-point star (sized to
+        // match the numeric glyphs above) with a blood-red offset
+        // shadow, plus diagonal sparkle accents that mark this as a
+        // special / wild tile.
+        <g>
+          {/* Faint radial burst behind the star */}
+          <g stroke="#e60022" strokeWidth="1.2" strokeLinecap="round" opacity="0.5">
+            <line x1="40" y1="34" x2="40" y2="40" />
+            <line x1="40" y1="90" x2="40" y2="96" />
+            <line x1="12" y1="62" x2="18" y2="62" />
+            <line x1="62" y1="62" x2="68" y2="62" />
+            <line x1="22" y1="44" x2="26" y2="48" />
+            <line x1="58" y1="44" x2="54" y2="48" />
+            <line x1="22" y1="80" x2="26" y2="76" />
+            <line x1="58" y1="80" x2="54" y2="76" />
+          </g>
+          {/* Star with offset shadow */}
+          <g transform="rotate(-6 40 62)">
+            <path
+              d="M 40 42 L 45 58 L 61 58 L 48 67 L 53 83 L 40 74 L 27 83 L 32 67 L 19 58 L 35 58 Z"
+              fill="#e60022"
+              transform="translate(2 3)"
+            />
+            <path
+              d="M 40 42 L 45 58 L 61 58 L 48 67 L 53 83 L 40 74 L 27 83 L 32 67 L 19 58 L 35 58 Z"
+              fill={numberColor}
+              stroke={isBlack ? '#0a0a0a' : '#0a0a0a'}
+              strokeWidth="0.5"
+              strokeLinejoin="miter"
+            />
+          </g>
+          {/* Corner sparkle diamonds */}
+          <path d="M 14 36 L 17 39 L 14 42 L 11 39 Z" fill="#e60022" />
+          <path d="M 66 88 L 69 91 L 66 94 L 63 91 Z" fill="#e60022" />
+        </g>
       ) : (
         <text x="38" y="80" textAnchor="middle" className={s.questionText} style={{ fill: '#e60022' }}>
           ?
