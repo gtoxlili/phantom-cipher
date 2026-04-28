@@ -378,13 +378,17 @@ export const input = css({
   fontFamily: 'body',
   fontWeight: 700,
   fontSize: { base: '18px', lg: '20px' },
-  padding: { base: '14px 16px', lg: '16px 18px' },
+  // Fixed height + horizontal-only padding so this input lines up with
+  // `inputMono` (whose larger font otherwise pushes its rendered height
+  // past minHeight). Browser centers text vertically inside the
+  // content area.
+  padding: { base: '0 16px', lg: '0 18px' },
   background: 'paper',
   border: '3px solid var(--colors-ink)',
   color: 'ink',
   outline: 'none',
   transition: 'box-shadow 0.15s, transform 0.1s',
-  minHeight: { base: '52px', lg: '60px' },
+  height: { base: '52px', lg: '60px' },
   transform: 'skewX(-4deg)',
   boxShadow: '4px 4px 0 var(--colors-blood)',
   '&:focus': {
@@ -398,17 +402,65 @@ export const input = css({
   },
 });
 
+/**
+ * SHUFFLE button — slim P5-style dashed pill, sits below an input as
+ * an opt-in "give me a name" affordance. Distinct from the primary
+ * submit so it doesn't compete visually.
+ */
+export const shuffleBtn = css({
+  alignSelf: 'flex-start',
+  marginTop: '6px',
+  padding: '8px 14px',
+  fontFamily: 'condensed',
+  fontWeight: 700,
+  fontSize: '11px',
+  letterSpacing: '0.28em',
+  textTransform: 'uppercase',
+  color: 'paper',
+  background: 'transparent',
+  border: '2px dashed var(--colors-paper)',
+  minHeight: '34px',
+  transform: 'skewX(-6deg)',
+  transition: 'background 0.12s, color 0.12s, border-color 0.12s, transform 0.08s',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '10px',
+  cursor: 'pointer',
+  '&:hover': {
+    background: 'rgba(230, 0, 34, 0.18)',
+    borderColor: 'blood',
+    color: 'paper',
+  },
+  '&:active': {
+    background: 'blood',
+    borderColor: 'blood',
+    color: 'paper',
+    transform: 'skewX(-6deg) translate(2px, 2px)',
+  },
+});
+
+export const shuffleIcon = css({
+  display: 'inline-block',
+  fontFamily: 'display',
+  fontStyle: 'italic',
+  fontSize: '14px',
+  color: 'blood',
+  transform: 'skewX(6deg)',
+});
+
 export const inputMono = css({
   fontFamily: 'display',
   fontWeight: 400,
   fontSize: { base: '26px', lg: '32px' },
-  padding: { base: '14px 16px', lg: '16px 18px' },
+  // Same fixed height + horizontal-only padding as `input` so the two
+  // align row-to-row when stacked in a form.
+  padding: { base: '0 16px', lg: '0 18px' },
   background: 'paper',
   border: '3px solid var(--colors-ink)',
   color: 'ink',
   outline: 'none',
   transition: 'box-shadow 0.15s, transform 0.1s',
-  minHeight: { base: '52px', lg: '60px' },
+  height: { base: '52px', lg: '60px' },
   transform: 'skewX(-4deg)',
   boxShadow: '4px 4px 0 var(--colors-blood)',
   textAlign: 'center',

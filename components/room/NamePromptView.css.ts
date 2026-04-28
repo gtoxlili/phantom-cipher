@@ -72,6 +72,52 @@ export const input = css({
   },
 });
 
+/**
+ * SHUFFLE button — slim P5-style dashed pill, sits between input and
+ * primary submit. Distinct enough to discover but doesn't compete with
+ * the main "入局" CTA.
+ */
+export const shuffleBtn = css({
+  width: '100%',
+  padding: '10px 12px',
+  marginBottom: '12px',
+  fontFamily: 'condensed',
+  fontWeight: 700,
+  fontSize: '12px',
+  letterSpacing: '0.28em',
+  textTransform: 'uppercase',
+  color: 'ink',
+  background: 'transparent',
+  border: '2px dashed var(--colors-ink)',
+  minHeight: '40px',
+  transform: 'skewX(-6deg)',
+  transition: 'background 0.12s, color 0.12s, transform 0.08s',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '12px',
+  '&:hover': {
+    background: 'rgba(230, 0, 34, 0.08)',
+    borderColor: 'blood',
+    color: 'blood',
+  },
+  '&:active': {
+    background: 'blood',
+    borderColor: 'blood',
+    color: 'paper',
+    transform: 'skewX(-6deg) translate(2px, 2px)',
+  },
+});
+
+export const shuffleIcon = css({
+  display: 'inline-block',
+  fontFamily: 'display',
+  fontStyle: 'italic',
+  fontSize: '16px',
+  color: 'blood',
+  transform: 'skewX(6deg)',
+});
+
 export const submit = css({
   width: '100%',
   padding: '14px',

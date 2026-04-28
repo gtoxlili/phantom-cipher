@@ -1,12 +1,13 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAtom, useSetAtom } from 'jotai';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'motion/react';
 import { Sketch } from '@/components/Sketch';
 import { intentHostAtom, myNameAtom } from '@/lib/atoms';
+import { pickRandomCodename } from '@/lib/codenames';
 import * as s from './page.css';
 
 const CODE_CHARS = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789';
@@ -67,6 +68,15 @@ export default function Home() {
   const [code, setCode] = useState('');
   const [mode, setMode] = useState<Mode>('menu');
   const [error, setError] = useState('');
+  // Track last shuffled index so consecutive clicks don't repeat.
+  const lastShuffleIdxRef = useRef(-1);
+
+  const shuffleName = () => {
+    const { name: picked, index } = pickRandomCodename(lastShuffleIdxRef.current);
+    lastShuffleIdxRef.current = index;
+    setName(picked);
+    setError('');
+  };
 
   // Atom values arrive hydrated from sessionStorage (atomWithStorage with
   // getOnInit), so no manual rehydration needed here.
@@ -206,6 +216,7 @@ export default function Home() {
                     placeholder: 'JOKER',
                     maxLength: 16,
                     autoFocus: true,
+                    onShuffle: shuffleName,
                   },
                 ]}
               />
@@ -235,6 +246,7 @@ export default function Home() {
                     placeholder: 'JOKER',
                     maxLength: 16,
                     autoFocus: true,
+                    onShuffle: shuffleName,
                   },
                   {
                     key: 'code',
@@ -266,6 +278,8 @@ interface FieldDef {
   maxLength?: number;
   mono?: boolean;
   autoFocus?: boolean;
+  /** When set, render a small SHUFFLE pill below the input. */
+  onShuffle?: () => void;
 }
 
 function RoomForm({
@@ -301,6 +315,13 @@ function RoomForm({
             autoComplete="off"
             spellCheck={false}
           />
+          {f.onShuffle && (
+            <button type="button" className={s.shuffleBtn} onClick={f.onShuffle}>
+              <span className={s.shuffleIcon}>✦</span>
+              <span>随机代号 / SHUFFLE</span>
+              <span className={s.shuffleIcon}>✦</span>
+            </button>
+          )}
         </label>
       ))}
       {error && <div className={s.error}>{error}</div>}

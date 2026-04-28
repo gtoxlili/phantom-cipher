@@ -1,20 +1,29 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
 import { Sketch } from '@/components/Sketch';
 import { currentRoomCodeAtom, myNameAtom } from '@/lib/atoms';
+import { pickRandomCodename } from '@/lib/codenames';
 import * as s from './NamePromptView.css';
 
 export function NamePromptView({ onCancel }: { onCancel: () => void }) {
   const code = useAtomValue(currentRoomCodeAtom);
   const setName = useSetAtom(myNameAtom);
   const [draft, setDraft] = useState('');
+  // Don't pick the same codename twice in a row — keep shuffling fresh.
+  const lastIdxRef = useRef(-1);
 
   const submit = () => {
     const n = draft.trim();
     if (!n) return;
     setName(n);
+  };
+
+  const shuffle = () => {
+    const { name: picked, index } = pickRandomCodename(lastIdxRef.current);
+    lastIdxRef.current = index;
+    setDraft(picked);
   };
 
   return (
@@ -33,6 +42,11 @@ export function NamePromptView({ onCancel }: { onCancel: () => void }) {
           autoFocus
           onKeyDown={(e) => { if (e.key === 'Enter') submit(); }}
         />
+        <button className={s.shuffleBtn} onClick={shuffle} type="button">
+          <span className={s.shuffleIcon}>✦</span>
+          <span>随机代号 / SHUFFLE</span>
+          <span className={s.shuffleIcon}>✦</span>
+        </button>
         <button className={s.submit} onClick={submit} disabled={!draft.trim()}>入局 ▶</button>
         <button className={s.linkBtn} onClick={onCancel}>← BACK TO LOBBY</button>
       </div>
