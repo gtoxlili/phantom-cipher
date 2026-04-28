@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAtom, useSetAtom } from 'jotai';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'motion/react';
@@ -63,10 +63,19 @@ const itemVariants = {
 
 export default function Home() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [name, setName] = useAtom(myNameAtom);
   const setIntentHost = useSetAtom(intentHostAtom);
   const [code, setCode] = useState('');
-  const [mode, setMode] = useState<Mode>('menu');
+  // PWA shortcuts launch with `?intent=create|join` so long-press
+  // home-screen actions skip straight into the matching panel. Read
+  // once on mount; the in-page back/forward between menu and forms
+  // is handled by local state — keeping URL in sync would require
+  // either an extra dep (nuqs) or scattered router.replace() calls
+  // for very little payoff on a 3-mode toggle.
+  const intent = searchParams.get('intent');
+  const initialMode: Mode = intent === 'create' || intent === 'join' ? intent : 'menu';
+  const [mode, setMode] = useState<Mode>(initialMode);
   const [error, setError] = useState('');
   // Track last shuffled index so consecutive clicks don't repeat.
   const lastShuffleIdxRef = useRef(-1);

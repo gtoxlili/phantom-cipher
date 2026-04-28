@@ -67,10 +67,12 @@ ENV NODE_ENV=production \
     HOSTNAME=0.0.0.0
 
 # Standalone bundle: server.js + trimmed node_modules + .next/server.
-# .next/static and .next/cache live outside standalone — copy by hand
-# with --chown so the nonroot user (uid 65532) can read/write them.
+# .next/static, public/, and .next/cache live outside standalone —
+# copy by hand with --chown so the nonroot user (uid 65532) can
+# read/write them. public/ holds the PWA icons + manifest assets.
 COPY --from=builder --chown=nonroot:nonroot /app/.next/standalone ./
 COPY --from=builder --chown=nonroot:nonroot /app/.next/static ./.next/static
+COPY --from=builder --chown=nonroot:nonroot /app/public ./public
 COPY --from=builder --chown=nonroot:nonroot /tmp/runtime-cache ./.next/cache
 
 USER nonroot
