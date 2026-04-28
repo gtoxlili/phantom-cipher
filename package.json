@@ -1,0 +1,29 @@
+{
+  "name": "davinci-game",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "prepare": "panda codegen",
+    "dev": "panda codegen && next dev --turbo -p 3477",
+    "build": "panda codegen && next build --turbo",
+    "start": "next start -p 3477"
+  },
+  "dependencies": {
+    "clsx": "^2.1.1",
+    "immer": "^11.1.4",
+    "jotai": "^2.19.1",
+    "jotai-immer": "^0.4.3",
+    "next": "latest",
+    "radash": "^12.1.1",
+    "react": "latest",
+    "react-dom": "latest"
+  },
+  "devDependencies": {
+    "@pandacss/dev": "^1.10.0",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "typescript": "latest"
+  }
+}
