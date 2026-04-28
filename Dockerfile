@@ -12,19 +12,25 @@
 # All build-time tooling (pnpm, panda, ts) lives in the alpine builder
 # stage and is discarded.
 
-ARG BUILD_IMAGE=node:alpine
+# Build image pinned to Node 24 alpine to match the runtime distroless
+# image's Node major. Override at build time if needed:
+#   docker build --build-arg BUILD_IMAGE=node:lts-alpine .
+ARG BUILD_IMAGE=node:24-alpine
 ARG RUNTIME_IMAGE=gcr.io/distroless/nodejs24-debian13:nonroot
 ARG PNPM_VERSION=latest
 
 # --- base (build-time only) ----------------------------------------
+# pnpm is installed via npm rather than via corepack — the latest
+# `node:alpine` images dropped corepack from the default bundle, so
+# `corepack enable` blows up with "command not found". `npm i -g pnpm`
+# is one extra layer but works on every Node Docker image.
 FROM ${BUILD_IMAGE} AS base
 ARG PNPM_VERSION
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     PNPM_HOME=/pnpm \
     PATH="/pnpm:$PATH"
-RUN corepack enable \
-    && corepack prepare pnpm@${PNPM_VERSION} --activate
+RUN npm install -g pnpm@${PNPM_VERSION}
 
 # --- deps: install full dep tree (incl. devDeps) for the build -----
 FROM base AS deps
