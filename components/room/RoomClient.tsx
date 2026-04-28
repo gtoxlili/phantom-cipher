@@ -17,6 +17,9 @@ import { useRoomBootstrap } from '@/lib/hooks/useRoomBootstrap';
  * sessionStorage-backed atoms, which the server can't see. Without the
  * gate, server renders one tree (always NamePrompt) and the client
  * renders another (Board if name was already cached) → hydration error.
+ *
+ * Lives in components/room/ alongside the views it switches between,
+ * so app/room/[code]/page.tsx stays a one-line route entry point.
  */
 export default function RoomClient({ code }: { code: string }) {
   const router = useRouter();

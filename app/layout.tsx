@@ -3,7 +3,7 @@ import '@/styles/global.css';
 
 import type { Metadata, Viewport } from 'next';
 import { Bebas_Neue, Inter, Noto_Sans_SC, Oswald } from 'next/font/google';
-import { Providers } from './Providers';
+import { Providers } from '@/components/Providers';
 
 const bebas = Bebas_Neue({
   subsets: ['latin'],
