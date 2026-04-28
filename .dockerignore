@@ -1,0 +1,40 @@
+# Build artifacts and local-only files — keep the build context lean
+# so each `docker build` doesn't ship 300 MB of node_modules to the
+# daemon and bust the layer cache on irrelevant changes.
+
+node_modules
+.next
+out
+dist
+build
+
+# panda regenerates these on every build
+styled-system
+styled-system-studio
+
+# tsc incremental
+*.tsbuildinfo
+
+# local config / secrets
+.env
+.env.*
+!.env.example
+
+# editor / OS junk
+.vscode
+.idea
+.DS_Store
+.claude
+
+# git metadata isn't needed inside the image
+.git
+.github
+.gitignore
+
+# logs and coverage
+*.log
+coverage
+
+# docs / non-runtime files
+README.md
+*.md
