@@ -119,6 +119,77 @@ export const numBtn = css({
   },
 });
 
+/**
+ * Joker guess button — visually distinct from the numbered grid: a slim
+ * skewed bar split into a halftone stamp ("‒") and a label, separated by
+ * a vertical blood-red rule. Reads like a stamp/special-action chip.
+ */
+export const jokerBtn = css({
+  position: 'relative',
+  width: '100%',
+  minHeight: '44px',
+  padding: '0',
+  marginBottom: '10px',
+  background: 'ink',
+  color: 'paper',
+  border: '2.5px solid var(--colors-ink)',
+  boxShadow: '3px 3px 0 var(--colors-blood)',
+  transform: 'skewX(-8deg)',
+  transition: 'transform 0.08s, box-shadow 0.1s',
+  display: 'grid',
+  gridTemplateColumns: '54px 1fr',
+  alignItems: 'stretch',
+  overflow: 'hidden',
+  cursor: 'pointer',
+  '&::before': {
+    content: '""',
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    left: '54px',
+    width: '2px',
+    background: 'blood',
+  },
+  '& > span.dash': {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: 'repeating-linear-gradient(135deg, transparent 0 6px, rgba(230,0,34,0.18) 6px 8px)',
+    fontFamily: 'display',
+    fontSize: '30px',
+    fontStyle: 'italic',
+    fontWeight: 800,
+    color: 'blood',
+    transform: 'skewX(8deg)',
+    paddingTop: '2px',
+  },
+  '& > span.label': {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontFamily: 'condensed',
+    fontSize: '12px',
+    fontWeight: 700,
+    fontStyle: 'normal',
+    letterSpacing: '0.36em',
+    color: 'paper',
+    transform: 'skewX(8deg)',
+    paddingLeft: '8px',
+    '& em': {
+      fontStyle: 'normal',
+      color: 'blood',
+      marginLeft: '8px',
+      fontFamily: 'cn',
+      fontWeight: 900,
+      letterSpacing: '0.08em',
+    },
+  },
+  '&:active': {
+    transform: 'skewX(-8deg) translate(2px, 2px)',
+    boxShadow: '1px 1px 0 var(--colors-blood)',
+  },
+});
+
 export const cancel = css({
   width: '100%',
   padding: '12px',

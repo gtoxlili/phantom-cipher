@@ -81,6 +81,18 @@ export function NumberPicker() {
                 </motion.div>
               ))}
             </motion.div>
+            <motion.button
+              className={s.jokerBtn}
+              onClick={() => actions.guess(selectedTile.playerId, selectedTile.tileId, null)}
+              type="button"
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.42, type: 'spring', stiffness: 400, damping: 24 }}
+              whileTap={{ scale: 0.97 }}
+            >
+              <span className="dash">‒</span>
+              <span className="label">JOKER<em>赖子</em></span>
+            </motion.button>
             <button className={s.cancel} onClick={close} type="button">
               CANCEL ✕
             </button>

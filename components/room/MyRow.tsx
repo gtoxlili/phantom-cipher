@@ -18,7 +18,8 @@ export function MyRow() {
         id: t.id,
         color: t.color,
         revealed: t.revealed,
-        number: t.number,
+        number: t.number ?? undefined,
+        joker: t.joker,
         pending: v.pendingTileId === t.id,
       }))}
       current={v.isMyTurn}

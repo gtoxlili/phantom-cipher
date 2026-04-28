@@ -2,9 +2,11 @@ export type Color = 'black' | 'white';
 
 export interface Tile {
   id: string;
-  number: number;
+  /** null when this is a joker ("-" tile). */
+  number: number | null;
   color: Color;
   revealed: boolean;
+  joker: boolean;
 }
 
 export interface PublicTile {
@@ -12,7 +14,10 @@ export interface PublicTile {
   position: number;
   color: Color;
   revealed: boolean;
+  /** Only present once revealed AND not a joker. */
   number?: number;
+  /** Only present once revealed and the tile IS a joker. */
+  joker?: boolean;
   pending?: boolean;
 }
 
@@ -24,7 +29,7 @@ export interface PublicPlayer {
   connected: boolean;
 }
 
-export type Phase = 'waiting' | 'drawing' | 'guessing' | 'continuing' | 'ended';
+export type Phase = 'waiting' | 'drawing' | 'placing' | 'guessing' | 'continuing' | 'ended';
 
 export interface LogEntry {
   id: number;
@@ -37,8 +42,10 @@ export interface RevealInfo {
   targetPlayerId: string;
   guesserId: string;
   correct: boolean;
-  number: number;
+  /** null when the guess (or the revealed tile) is a joker. */
+  number: number | null;
   color: Color;
+  joker: boolean;
 }
 
 export interface PublicGameState {

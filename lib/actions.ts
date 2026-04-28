@@ -74,9 +74,18 @@ export async function guessTile(
   playerId: string,
   targetPlayerId: string,
   tileId: string,
-  number: number,
+  /** null = guessing the joker ("-"). */
+  number: number | null,
 ): Promise<ActionResult> {
   return run(code, (g) => { g.guess(playerId, targetPlayerId, tileId, number); });
+}
+
+export async function placeJoker(
+  code: string,
+  playerId: string,
+  position: number,
+): Promise<ActionResult> {
+  return run(code, (g) => g.placeJoker(playerId, position));
 }
 
 export async function decideContinue(

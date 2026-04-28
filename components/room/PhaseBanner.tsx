@@ -54,12 +54,13 @@ function computePhaseInfo(v: ReturnType<typeof useAtomValue<typeof gameViewAtom>
   if (v.isMyTurn) {
     let text = 'YOUR TURN';
     if (v.canDraw) text = '你的回合 / DRAW';
+    else if (v.state.phase === 'placing') text = '放置赖子 / PLACE JOKER';
     else if (v.canGuess && v.state.phase === 'continuing') text = '继续 OR 收手';
     else if (v.canGuess) text = '选一块 PICK A TILE';
     return { text, accent: '▶', mood: 'turn' };
   }
   const cur = v.state.players.find((p) => p.id === v.state!.currentPlayerId);
-  const action = { drawing: 'DRAWING', guessing: 'GUESSING', continuing: 'DECIDING' }[v.state.phase] ?? '';
+  const action = { drawing: 'DRAWING', placing: 'PLACING', guessing: 'GUESSING', continuing: 'DECIDING' }[v.state.phase] ?? '';
   return {
     text: `${cur?.name?.toUpperCase() ?? '?'} ${action}`,
     accent: '·',

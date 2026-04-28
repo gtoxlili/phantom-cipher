@@ -8,6 +8,8 @@ import * as s from './Tile.css';
 interface TileProps {
   number?: number;
   color: Color;
+  /** This tile is a joker — render as "-" instead of a number. */
+  joker?: boolean;
   faceDown?: boolean;
   /** Owner's view of a still-secret tile (number visible to me, ? to opponents). */
   ownedHidden?: boolean;
@@ -25,6 +27,7 @@ interface TileProps {
 export function Tile({
   number,
   color,
+  joker,
   faceDown,
   ownedHidden,
   ownedExposed,
@@ -37,7 +40,9 @@ export function Tile({
   index = 0,
 }: TileProps) {
   const isBlack = color === 'black';
-  const showNumber = !faceDown && number !== undefined;
+  const showFace = !faceDown;
+  const showNumber = showFace && !joker && number !== undefined;
+  const showJoker = showFace && joker;
   const bgPrimary = isBlack ? '#0a0a0a' : '#ece5cf';
   const numberColor = isBlack ? '#fafaf3' : '#0a0a0a';
   const halftoneStrokeColor = isBlack ? 'rgba(250,250,243,0.16)' : 'rgba(10,10,10,0.18)';
@@ -82,6 +87,16 @@ export function Tile({
           style={{ fill: numberColor }}
         >
           {number}
+        </text>
+      ) : showJoker ? (
+        <text
+          x="40"
+          y="84"
+          textAnchor="middle"
+          className={s.jokerText}
+          style={{ fill: numberColor }}
+        >
+          ‒
         </text>
       ) : (
         <text x="38" y="80" textAnchor="middle" className={s.questionText} style={{ fill: '#e60022' }}>

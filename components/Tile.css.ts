@@ -56,6 +56,15 @@ export const questionText = css({
   fontStyle: 'italic',
 });
 
+/** "-" face for joker tiles. Slightly heavier so the dash reads at any size. */
+export const jokerText = css({
+  fontFamily: 'display',
+  fontWeight: 700,
+  fontSize: '92px',
+  fontStyle: 'italic',
+  letterSpacing: '-0.04em',
+});
+
 export const size = {
   sm: css({ width: '36px' }),
   md: css({ width: '50px' }),

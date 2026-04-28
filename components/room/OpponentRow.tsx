@@ -23,6 +23,7 @@ export function OpponentRow({ player }: { player: PublicPlayer }) {
         color: t.color,
         revealed: t.revealed,
         number: t.number,
+        joker: !!t.joker,
         pending: !!t.pending,
       }))}
       current={!!isCurrent}

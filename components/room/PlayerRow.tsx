@@ -10,6 +10,7 @@ export interface PlayerCell {
   color: 'black' | 'white';
   revealed: boolean;
   number?: number;
+  joker: boolean;
   pending: boolean;
 }
 
@@ -72,6 +73,8 @@ export function PlayerRow({
                 size={isMe ? 'lg' : 'md'}
                 number={isMe ? c.number : c.revealed ? c.number : undefined}
                 color={c.color}
+                // Owner always sees their joker; opponents only after reveal.
+                joker={isMe ? c.joker : c.revealed && c.joker}
                 faceDown={!isMe && !c.revealed}
                 ownedHidden={isMe && !c.revealed && !c.pending}
                 ownedExposed={isMe && c.revealed}

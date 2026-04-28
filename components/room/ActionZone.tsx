@@ -85,7 +85,7 @@ export function ActionZone() {
     );
   }
 
-  if (v.phase === 'drawing' || v.phase === 'guessing' || v.phase === 'continuing') {
+  if (v.phase === 'drawing' || v.phase === 'placing' || v.phase === 'guessing' || v.phase === 'continuing') {
     return (
       <section className={s.zone}>
         <DeckChoice

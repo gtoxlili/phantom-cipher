@@ -7,6 +7,7 @@ import {
   guessTile as guessTileAction,
   joinOrCreateRoom,
   leaveRoom as leaveRoomAction,
+  placeJoker as placeJokerAction,
   resetGame as resetGameAction,
   startGame as startGameAction,
 } from '@/lib/actions';
@@ -49,10 +50,14 @@ export function useGameActions() {
       if (!ready) return;
       report(await drawTileAction(code, playerId, color));
     },
-    async guess(targetPlayerId: string, tileId: string, number: number) {
+    async guess(targetPlayerId: string, tileId: string, number: number | null) {
       if (!ready) return;
       setSelectedTile(null);
       report(await guessTileAction(code, playerId, targetPlayerId, tileId, number));
+    },
+    async placeJoker(position: number) {
+      if (!ready) return;
+      report(await placeJokerAction(code, playerId, position));
     },
     async decideContinue(cont: boolean) {
       if (!ready) return;

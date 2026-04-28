@@ -5,6 +5,7 @@ import { Sketch } from '@/components/Sketch';
 import { gameViewAtom } from '@/lib/atoms';
 import { ActionZone } from './ActionZone';
 import { Header } from './Header';
+import { JokerPlacement } from './JokerPlacement';
 import { LogPanel } from './LogPanel';
 import { MyRow } from './MyRow';
 import { NotificationStack } from './NotificationStack';
@@ -30,6 +31,7 @@ export function RoomBoard({ onExit }: { onExit: () => void }) {
         {me ? <MyRow /> : <div className={s.connectingMsg}>· CONNECTING · {phase} ·</div>}
       </section>
       <NumberPicker />
+      <JokerPlacement />
       <RevealOverlay />
       <LogPanel />
       <NotificationStack />

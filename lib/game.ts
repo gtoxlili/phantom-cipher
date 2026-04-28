@@ -16,6 +16,13 @@ interface ServerPlayer {
   name: string;
   hand: Tile[];
   pendingDraw?: Tile;
+  /**
+   * Insertion index for `pendingDraw` once committed.
+   * - For a numbered tile: set immediately on draw via sorted insert.
+   * - For a joker: undefined while in `placing` phase, set once the
+   *   player picks a slot via placeJoker().
+   */
+  pendingPosition?: number;
   alive: boolean;
   connected: boolean;
 }
@@ -29,16 +36,28 @@ export type Subscriber = (event: GameEvent) => void;
 
 const NAME_MAX = 16;
 
+/** Sort order between two NUMBERED tiles. Jokers are excluded from this. */
 const compareTiles = (a: Tile, b: Tile): number => {
-  if (a.number !== b.number) return a.number - b.number;
+  if (a.joker || b.joker) {
+    // Jokers fall through to the end if compared accidentally.
+    if (a.joker && b.joker) return a.color === 'black' ? -1 : 1;
+    return a.joker ? 1 : -1;
+  }
+  const an = a.number ?? 0;
+  const bn = b.number ?? 0;
+  if (an !== bn) return an - bn;
   return a.color === 'black' ? -1 : 1;
 };
 
-const buildDeck = (): Tile[] =>
-  list(0, 11).flatMap<Tile>((n) => [
-    { id: `b${n}`, number: n, color: 'black', revealed: false },
-    { id: `w${n}`, number: n, color: 'white', revealed: false },
-  ]);
+const buildDeck = (): Tile[] => [
+  ...list(0, 11).flatMap<Tile>((n) => [
+    { id: `b${n}`, number: n, color: 'black', revealed: false, joker: false },
+    { id: `w${n}`, number: n, color: 'white', revealed: false, joker: false },
+  ]),
+  // Two jokers, one per color — represented as "-" in the UI.
+  { id: 'jb', number: null, color: 'black', revealed: false, joker: true },
+  { id: 'jw', number: null, color: 'white', revealed: false, joker: true },
+];
 
 const cn = (c: Color) => (c === 'black' ? '黑' : '白');
 
@@ -177,7 +196,16 @@ export class Game {
     }
     for (const p of this.players) {
       for (let i = 0; i < handSize; i++) p.hand.push(shuffled.pop()!);
-      p.hand.sort(compareTiles);
+      // Sort numbered tiles by the canonical order, then drop any jokers
+      // back in at random positions — initial joker placement is by chance,
+      // so the position itself doesn't leak info to opponents on round one.
+      const numbered = p.hand.filter((t) => !t.joker).sort(compareTiles);
+      const jokers = p.hand.filter((t) => t.joker);
+      p.hand = numbered;
+      for (const j of jokers) {
+        const pos = Math.floor(Math.random() * (p.hand.length + 1));
+        p.hand.splice(pos, 0, j);
+      }
     }
 
     this.deckBlack = randomize(shuffled.filter((t) => t.color === 'black'));
@@ -220,16 +248,45 @@ export class Game {
     const targetDeck = color === 'black' ? this.deckBlack : this.deckWhite;
     if (targetDeck.length === 0) throw new Error(`${cn(color)}牌堆已空`);
 
-    cur.pendingDraw = targetDeck.pop()!;
+    const drawn = targetDeck.pop()!;
+    cur.pendingDraw = drawn;
+
+    if (drawn.joker) {
+      // Joker — player must choose where to slot it. UI surfaces a
+      // placement sheet while phase === 'placing'.
+      cur.pendingPosition = undefined;
+      this.phase = 'placing';
+      this.addLog(`${cur.name} 抽到了赖子，待选位置`);
+    } else {
+      // Numbered — slot it at the canonical sorted position immediately,
+      // skipping over any existing jokers the owner has anchored.
+      cur.pendingPosition = this.findSortedIndex(cur.hand, drawn);
+      this.phase = 'guessing';
+      this.addLog(`${cur.name} 从${cn(color)}牌堆抽了一张`);
+    }
+  }
+
+  placeJoker(playerId: string, position: number): void {
+    if (this.phase !== 'placing') throw new Error('当前不在放置阶段');
+    const cur = this.currentPlayer();
+    if (cur.id !== playerId) throw new Error('不是你的回合');
+    if (!cur.pendingDraw || !cur.pendingDraw.joker) {
+      throw new Error('没有待放置的赖子');
+    }
+    if (!Number.isInteger(position) || position < 0 || position > cur.hand.length) {
+      throw new Error('位置无效');
+    }
+    cur.pendingPosition = position;
     this.phase = 'guessing';
-    this.addLog(`${cur.name} 从${cn(color)}牌堆抽了一张`);
+    this.addLog(`${cur.name} 把赖子放在第 ${position + 1} 位`);
   }
 
   guess(
     playerId: string,
     targetPlayerId: string,
     tileId: string,
-    number: number
+    /** null = the player is calling "-" (joker). */
+    number: number | null
   ): { correct: boolean; reveal: RevealInfo } {
     if (this.phase !== 'guessing' && this.phase !== 'continuing') {
       throw new Error('当前不能猜测');
@@ -243,11 +300,11 @@ export class Game {
     const tile = target.hand.find((t) => t.id === tileId);
     if (!tile) throw new Error('目标牌不存在');
     if (tile.revealed) throw new Error('该牌已亮明');
-    if (!Number.isInteger(number) || number < 0 || number > 11) {
+    if (number !== null && (!Number.isInteger(number) || number < 0 || number > 11)) {
       throw new Error('数字超出范围');
     }
 
-    const correct = tile.number === number;
+    const correct = number === null ? tile.joker : !tile.joker && tile.number === number;
     const reveal: RevealInfo = {
       tileId,
       targetPlayerId,
@@ -255,13 +312,17 @@ export class Game {
       correct,
       number,
       color: tile.color,
+      joker: tile.joker,
     };
     this.lastReveal = reveal;
     this.emitReveal(reveal);
 
+    const guessLabel = number === null ? `${cn(tile.color)}-` : `${cn(tile.color)}${number}`;
+    const truthLabel = tile.joker ? `${cn(tile.color)}-` : `${cn(tile.color)}${tile.number}`;
+
     if (correct) {
       tile.revealed = true;
-      this.addLog(`${cur.name} 猜测 ${target.name} 的 ${cn(tile.color)}${number} ✓ 命中`);
+      this.addLog(`${cur.name} 猜测 ${target.name} 的 ${guessLabel} ✓ 命中`);
       if (target.hand.every((t) => t.revealed)) {
         target.alive = false;
         this.addLog(`${target.name} 全数翻明，出局`);
@@ -276,14 +337,13 @@ export class Game {
       this.phase = 'continuing';
     } else {
       this.addLog(
-        `${cur.name} 猜测 ${target.name} 的 ${cn(tile.color)}${number} ✗ — 实为 ${cn(tile.color)}${tile.number}`
+        `${cur.name} 猜测 ${target.name} 的 ${guessLabel} ✗ — 实为 ${truthLabel}`
       );
       if (cur.pendingDraw) {
         cur.pendingDraw.revealed = true;
-        this.insertSorted(cur.hand, cur.pendingDraw);
-        const drawn = cur.pendingDraw;
-        cur.pendingDraw = undefined;
-        this.addLog(`${cur.name} 翻明了所抽 ${cn(drawn.color)}${drawn.number}`);
+        this.commitPending(cur);
+        const drawn = tile.joker ? '赖子' : `${cn(tile.color)}${tile.number}`;
+        this.addLog(`${cur.name} 翻明了所抽 ${drawn}`);
       }
       if (cur.hand.every((t) => t.revealed)) {
         cur.alive = false;
@@ -302,13 +362,30 @@ export class Game {
       this.phase = 'guessing';
       this.addLog(`${cur.name} 继续猜测`);
     } else {
-      if (cur.pendingDraw) {
-        this.insertSorted(cur.hand, cur.pendingDraw);
-        cur.pendingDraw = undefined;
-      }
+      if (cur.pendingDraw) this.commitPending(cur);
       this.addLog(`${cur.name} 收手，结束回合`);
       this.advanceTurn();
     }
+  }
+
+  /** Lock the pending draw into the hand at its decided slot. */
+  private commitPending(p: ServerPlayer): void {
+    if (!p.pendingDraw) return;
+    const idx = p.pendingPosition ?? p.hand.length;
+    p.hand.splice(Math.max(0, Math.min(idx, p.hand.length)), 0, p.pendingDraw);
+    p.pendingDraw = undefined;
+    p.pendingPosition = undefined;
+  }
+
+  /** Index where a numbered tile should slot in, skipping anchored jokers. */
+  private findSortedIndex(hand: Tile[], tile: Tile): number {
+    let i = 0;
+    while (i < hand.length) {
+      if (hand[i].joker) { i++; continue; }
+      if (compareTiles(hand[i], tile) >= 0) break;
+      i++;
+    }
+    return i;
   }
 
   // ---------- internal helpers ----------
@@ -354,9 +431,9 @@ export class Game {
     return this.players[this.currentIdx];
   }
 
+  /** @deprecated kept for any external callers — prefer commitPending. */
   private insertSorted(hand: Tile[], tile: Tile): void {
-    let i = 0;
-    while (i < hand.length && compareTiles(hand[i], tile) < 0) i++;
+    const i = tile.joker ? hand.length : this.findSortedIndex(hand, tile);
     hand.splice(i, 0, tile);
   }
 
@@ -384,17 +461,20 @@ export class Game {
   private toPublicPlayer(p: ServerPlayer): PublicPlayer {
     type Cell = { tile: Tile; pending: boolean };
     const cells: Cell[] = p.hand.map((t) => ({ tile: t, pending: false }));
-    if (p.pendingDraw) {
-      let i = 0;
-      while (i < cells.length && compareTiles(cells[i].tile, p.pendingDraw) < 0) i++;
-      cells.splice(i, 0, { tile: p.pendingDraw, pending: true });
+    // Only surface the pending tile to opponents once its slot is decided
+    // — during 'placing' the joker is in limbo and shouldn't leak its
+    // future position.
+    if (p.pendingDraw && p.pendingPosition !== undefined) {
+      const pos = Math.max(0, Math.min(p.pendingPosition, cells.length));
+      cells.splice(pos, 0, { tile: p.pendingDraw, pending: true });
     }
     const tiles: PublicTile[] = cells.map((c, i) => ({
       id: c.tile.id,
       position: i,
       color: c.tile.color,
       revealed: c.tile.revealed,
-      number: c.tile.revealed ? c.tile.number : undefined,
+      number: c.tile.revealed && !c.tile.joker ? (c.tile.number ?? undefined) : undefined,
+      joker: c.tile.revealed && c.tile.joker ? true : undefined,
       pending: c.pending,
     }));
     return {
@@ -412,9 +492,11 @@ export class Game {
     const all = [...me.hand];
     let pendingTileId: string | undefined;
     if (me.pendingDraw) {
-      let i = 0;
-      while (i < all.length && compareTiles(all[i], me.pendingDraw) < 0) i++;
-      all.splice(i, 0, me.pendingDraw);
+      // Owner always sees their pending tile. While positioning a joker
+      // (no chosen index yet) park it at the end as a temporary preview;
+      // the placement sheet drives the real choice.
+      const pos = me.pendingPosition ?? all.length;
+      all.splice(Math.max(0, Math.min(pos, all.length)), 0, me.pendingDraw);
       pendingTileId = me.pendingDraw.id;
     }
     return {
