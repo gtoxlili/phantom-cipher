@@ -59,6 +59,15 @@ FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
+# Next.js bakes `metadataBase` (used by og:image / twitter:image and
+# friends) into statically-prerendered pages at build time. Without
+# this, CI builds — which don't ship the gitignored .env.production
+# — would emit share-card URLs against `localhost:3477` and every
+# WeChat / Twitter / iMessage preview would be broken. Override at
+# build time with `--build-arg SITE_URL=...` if you fork to a
+# different domain.
+ARG SITE_URL=https://cipher.gtio.work
+ENV SITE_URL=${SITE_URL}
 # Cache .next/cache across builds — Next.js' compiled module graph
 # survives rebuilds when source hasn't changed. (BuildKit cache is
 # NOT committed into the image; the standalone bundle handles what's
