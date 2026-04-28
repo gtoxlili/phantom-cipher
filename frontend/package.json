@@ -1,0 +1,29 @@
+{
+  "name": "phantom-cipher-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "panda && vite",
+    "build": "panda && vite build",
+    "preview": "vite preview",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@motionone/dom": "^10.18.0",
+    "@solid-primitives/keyed": "^1.5.3",
+    "@solidjs/meta": "^0.29.4",
+    "@solidjs/router": "^0.16.1",
+    "clsx": "^2.1.1",
+    "msgpackr": "^1.11.10",
+    "solid-js": "^1.9.12",
+    "solid-motionone": "^1.0.4"
+  },
+  "devDependencies": {
+    "@pandacss/dev": "^1.10.0",
+    "@types/node": "^25.6.0",
+    "typescript": "^6.0.3",
+    "vite": "^8.0.10",
+    "vite-plugin-solid": "^2.11.12"
+  }
+}

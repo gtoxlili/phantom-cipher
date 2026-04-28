@@ -1,0 +1,42 @@
+[package]
+name = "phantom-cipher"
+version = "0.1.0"
+edition = "2024"
+license = "GPL-3.0"
+publish = false
+
+[profile.release]
+# Squeeze the binary — we trade build time for runtime efficiency
+# on purpose. fat LTO + single codegen unit lets the linker inline
+# across crate boundaries; panic=abort drops unwinding tables we
+# never use; strip removes debug symbols.
+lto = "fat"
+codegen-units = 1
+strip = "symbols"
+opt-level = 3
+panic = "abort"
+
+[dependencies]
+anyhow = "1.0.102"
+arc-swap = "1.9.1"
+axum = { version = "0.8.9", features = ["ws", "macros"] }
+axum-extra = { version = "0.12.6", features = ["typed-header", "query"] }
+bytes = "1.11.1"
+dashmap = "6.1.0"
+futures = "0.3.32"
+parking_lot = "0.12.5"
+r2d2 = "0.8.10"
+r2d2_sqlite = "0.33.0"
+rand = "0.10.1"
+rmp-serde = "1.3.1"
+rusqlite = { version = "0.39.0", features = ["bundled"] }
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.149"
+thiserror = "2.0.18"
+tokio = { version = "1.52.1", features = ["macros", "rt-multi-thread", "signal", "sync", "time", "io-util", "fs", "net"] }
+tokio-stream = { version = "0.1.18", features = ["sync"] }
+tower = "0.5.3"
+tower-http = { version = "0.6.8", features = ["fs", "compression-br", "compression-gzip", "trace", "set-header", "cors"] }
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
+uuid = { version = "1.23.1", features = ["v4", "serde"] }

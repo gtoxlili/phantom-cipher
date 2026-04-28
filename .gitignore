@@ -1,14 +1,15 @@
 # dependencies
 node_modules/
 
-# next.js
-.next/
+# build artifacts
 out/
 *.tsbuildinfo
-
-# production
 build/
 dist/
+
+# rust target / artifacts
+target/
+*.rs.bk
 
 # panda css (generated)
 styled-system/
