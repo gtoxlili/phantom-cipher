@@ -322,7 +322,7 @@ export class Game {
 
     if (correct) {
       tile.revealed = true;
-      this.addLog(`${cur.name} 猜测 ${target.name} 的 ${guessLabel} ✓ 命中`);
+      this.addLog(`${cur.name} 猜测 ${target.name} 的 ${guessLabel} ✓︎ 命中`);
       if (target.hand.every((t) => t.revealed)) {
         target.alive = false;
         this.addLog(`${target.name} 全数翻明，出局`);
@@ -337,7 +337,7 @@ export class Game {
       this.phase = 'continuing';
     } else {
       this.addLog(
-        `${cur.name} 猜测 ${target.name} 的 ${guessLabel} ✗ — 实为 ${truthLabel}`
+        `${cur.name} 猜测 ${target.name} 的 ${guessLabel} ✗︎ — 实为 ${truthLabel}`
       );
       if (cur.pendingDraw) {
         cur.pendingDraw.revealed = true;

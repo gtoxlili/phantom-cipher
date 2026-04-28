@@ -30,6 +30,6 @@ export const toast = css({
   transform: 'skewX(-8deg)',
   pointerEvents: 'auto',
   cursor: 'pointer',
-  '&::before': { content: '"⚠ "' },
+  '&::before': { content: '"⚠︎ "' },
   '& > span': { display: 'inline-block', transform: 'skewX(8deg)' },
 });

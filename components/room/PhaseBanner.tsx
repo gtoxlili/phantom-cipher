@@ -41,13 +41,16 @@ function computePhaseInfo(v: ReturnType<typeof useAtomValue<typeof gameViewAtom>
     if (n < 2) {
       return { text: 'WAITING · 等待 2–4 玩家', accent: `${n}/2`, mood: 'idle' };
     }
-    return { text: `READY · ${n} 玩家就位 · 房主开局`, accent: '▶', mood: 'turn' };
+    // ︎ (Variation Selector-15) appended to ambiguous chars
+    // forces text presentation on iOS Safari — without it ▶︎/★︎/⚠︎
+    // fall back to colored Apple emoji glyphs.
+    return { text: `READY · ${n} 玩家就位 · 房主开局`, accent: '▶︎', mood: 'turn' };
   }
   if (v.state.phase === 'ended') {
     const winner = v.state.players.find((p) => p.id === v.state!.winnerId);
     return {
       text: winner ? `${winner.name.toUpperCase()} WINS` : 'GAME OVER',
-      accent: '★',
+      accent: '★︎',
       mood: 'end',
     };
   }
@@ -57,7 +60,7 @@ function computePhaseInfo(v: ReturnType<typeof useAtomValue<typeof gameViewAtom>
     else if (v.state.phase === 'placing') text = '放置赖子 / PLACE JOKER';
     else if (v.canGuess && v.state.phase === 'continuing') text = '继续 OR 收手';
     else if (v.canGuess) text = '选一块 PICK A TILE';
-    return { text, accent: '▶', mood: 'turn' };
+    return { text, accent: '▶︎', mood: 'turn' };
   }
   const cur = v.state.players.find((p) => p.id === v.state!.currentPlayerId);
   const action = { drawing: 'DRAWING', placing: 'PLACING', guessing: 'GUESSING', continuing: 'DECIDING' }[v.state.phase] ?? '';

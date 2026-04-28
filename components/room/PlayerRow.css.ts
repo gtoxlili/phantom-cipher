@@ -61,7 +61,7 @@ export const playerName = css({
   alignItems: 'center',
   gap: '8px',
   '&::before': {
-    content: '"◆"',
+    content: '"◆︎"',
     color: 'blood',
     fontSize: '12px',
   },

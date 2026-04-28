@@ -39,7 +39,7 @@ export function JokerPlacement() {
             exit={{ y: '110%' }}
             transition={{ type: 'spring', stiffness: 360, damping: 32, mass: 0.7 }}
           >
-            <div className={s.subtitle}>▶ JOKER · 赖子待放置 ◀</div>
+            <div className={s.subtitle}>▶︎ JOKER · 赖子待放置 ◀︎</div>
             <div className={s.title}>
               选个位置 — <strong>把赖子塞进去</strong>
             </div>

@@ -298,7 +298,7 @@ export const howtoSummary = css({
   padding: '8px',
   fontWeight: 700,
   '&::-webkit-details-marker': { display: 'none' },
-  '&::after': { content: '" ▾"', color: 'blood' },
+  '&::after': { content: '" ▾︎"', color: 'blood' },
 });
 
 export const howtoBox = css({
@@ -320,7 +320,7 @@ export const howtoBox = css({
     gap: '8px',
   },
   '& p::before': {
-    content: '"◆"',
+    content: '"◆︎"',
     color: 'blood',
     flexShrink: 0,
   },
@@ -482,7 +482,7 @@ export const error = css({
   letterSpacing: '0.04em',
   textTransform: 'uppercase',
   animation: 'shake 0.4s ease-out',
-  '&::before': { content: '"⚠ "' },
+  '&::before': { content: '"⚠︎ "' },
 });
 
 export const formActions = css({
@@ -539,6 +539,6 @@ export const footer = css({
   fontSize: { base: '11px', lg: '13px' },
   textTransform: 'uppercase',
   borderTop: { lg: '1px solid rgba(230, 0, 34, 0.18)' },
-  '&::before': { content: '"★"', color: 'blood', marginRight: '8px' },
-  '&::after': { content: '"★"', color: 'blood', marginLeft: '8px' },
+  '&::before': { content: '"★︎"', color: 'blood', marginRight: '8px' },
+  '&::after': { content: '"★︎"', color: 'blood', marginLeft: '8px' },
 });

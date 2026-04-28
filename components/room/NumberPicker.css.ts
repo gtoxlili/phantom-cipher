@@ -46,7 +46,7 @@ export const title = css({
   flexWrap: 'wrap',
   letterSpacing: '0.02em',
   '&::before': {
-    content: '"▶ TARGET ◀"',
+    content: '"▶︎ TARGET ◀︎"',
     display: 'block',
     width: '100%',
     fontFamily: 'condensed',

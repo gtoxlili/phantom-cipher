@@ -75,7 +75,7 @@ export function ActionZone() {
     return (
       <section className={s.zone}>
         <div className={s.endPanel}>
-          <div className={s.endCrown}>{won ? '★ ★ ★' : '· · ·'}</div>
+          <div className={s.endCrown}>{won ? '★︎ ★︎ ★︎' : '· · ·'}</div>
           <div className={s.endText}>
             <span>{won ? 'YOU WIN' : winner ? `${winner.name.toUpperCase()} WINS` : 'GAME OVER'}</span>
           </div>

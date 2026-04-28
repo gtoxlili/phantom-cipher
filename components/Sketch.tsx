@@ -25,9 +25,9 @@ export function Sketch({ intensity = 'normal' }: SketchProps) {
         <div className={s.streak.three} style={{ opacity: o.streak3 }} />
       </div>
       <div className={s.starsWrap}>
-        <span className={s.star.one} style={{ opacity: o.star1 }}>✦</span>
-        <span className={s.star.two} style={{ opacity: o.star2 }}>✦</span>
-        <span className={s.star.three} style={{ opacity: o.star3 }}>✶</span>
+        <span className={s.star.one} style={{ opacity: o.star1 }}>✦︎</span>
+        <span className={s.star.two} style={{ opacity: o.star2 }}>✦︎</span>
+        <span className={s.star.three} style={{ opacity: o.star3 }}>✶︎</span>
       </div>
 
       {/* desktop chrome — Persona 5 magazine ornaments, hidden below 768px */}
