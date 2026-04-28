@@ -7,6 +7,9 @@ export const main = css({
   display: 'flex',
   flexDirection: 'column',
   background: 'ink',
+  width: '100%',
+  maxWidth: '480px',
+  marginInline: 'auto',
 });
 
 export const card = css({

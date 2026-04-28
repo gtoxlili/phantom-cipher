@@ -61,8 +61,12 @@ export async function startGame(code: string, playerId: string): Promise<ActionR
   return run(code, (g) => g.start(playerId));
 }
 
-export async function drawTile(code: string, playerId: string): Promise<ActionResult> {
-  return run(code, (g) => g.drawTile(playerId));
+export async function drawTile(
+  code: string,
+  playerId: string,
+  color: 'black' | 'white',
+): Promise<ActionResult> {
+  return run(code, (g) => g.drawTile(playerId, color));
 }
 
 export async function guessTile(

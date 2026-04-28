@@ -11,6 +11,7 @@ import {
   startGame as startGameAction,
 } from '@/lib/actions';
 import type { ActionResult } from '@/lib/actions';
+import type { Color } from '@/lib/types';
 import {
   currentRoomCodeAtom,
   playerIdAtom,
@@ -44,9 +45,9 @@ export function useGameActions() {
       if (!ready) return;
       report(await startGameAction(code, playerId));
     },
-    async draw() {
+    async draw(color: Color) {
       if (!ready) return;
-      report(await drawTileAction(code, playerId));
+      report(await drawTileAction(code, playerId, color));
     },
     async guess(targetPlayerId: string, tileId: string, number: number) {
       if (!ready) return;

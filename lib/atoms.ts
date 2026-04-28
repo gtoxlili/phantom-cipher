@@ -98,7 +98,8 @@ export interface GameView {
   isHost: boolean;
   myHand: Tile[];
   pendingTileId: string | undefined;
-  deckCount: number;
+  deckBlackCount: number;
+  deckWhiteCount: number;
 }
 
 export const gameViewAtom = atom<GameView>((get): GameView => {
@@ -122,6 +123,7 @@ export const gameViewAtom = atom<GameView>((get): GameView => {
     isHost: !!state && !!myId && state.hostId === myId,
     myHand: priv?.myHand ?? [],
     pendingTileId: priv?.pendingTileId,
-    deckCount: state?.deckCount ?? 0,
+    deckBlackCount: state?.deckBlackCount ?? 0,
+    deckWhiteCount: state?.deckWhiteCount ?? 0,
   };
 });

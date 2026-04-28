@@ -134,6 +134,47 @@ export const ownedHidden = css({
   },
 });
 
+/**
+ * Owner view of a tile that has been exposed to the table — desaturate
+ * the body so it reads as "spent", and a stamp badge makes it obvious.
+ */
+export const ownedExposed = css({
+  opacity: 0.6,
+  filter: 'grayscale(0.45) saturate(0.85)',
+});
+
+export const exposedTag = css({
+  position: 'absolute',
+  top: '-14px',
+  left: '50%',
+  transform: 'translateX(-50%) skewX(-10deg)',
+  background: 'paper',
+  color: 'ink',
+  fontFamily: 'condensed',
+  fontWeight: 700,
+  fontSize: '9px',
+  padding: '2px 7px',
+  letterSpacing: '0.16em',
+  whiteSpace: 'nowrap',
+  zIndex: 5,
+  border: '1.5px solid var(--colors-ink)',
+  boxShadow: '2px 2px 0 var(--colors-blood)',
+});
+
+/** A diagonal "OPEN" slash across the exposed tile for at-a-glance reading. */
+export const exposedSlash = css({
+  position: 'absolute',
+  top: '50%',
+  left: '-6%',
+  right: '-6%',
+  height: '2px',
+  background: 'blood',
+  transform: 'translateY(-50%) rotate(-12deg)',
+  zIndex: 4,
+  opacity: 0.55,
+  pointerEvents: 'none',
+});
+
 export const flashCorrect = css({
   animation: 'flashCorrect 1.0s ease-out',
 });

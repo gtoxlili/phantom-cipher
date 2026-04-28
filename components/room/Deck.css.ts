@@ -76,7 +76,38 @@ export const deckLabel = css({
   fontWeight: 700,
   fontSize: '10px',
   letterSpacing: '0.22em',
-  color: 'blood',
   textTransform: 'uppercase',
   marginTop: '6px',
+});
+
+export const deckLabelBlack = css({
+  color: 'graySoft',
+});
+
+export const deckLabelWhite = css({
+  color: 'paper',
+});
+
+/** Wrapper that lays out the two decks side by side with a hint above. */
+export const deckChoiceRow = css({
+  display: 'flex',
+  alignItems: 'center',
+  flexDirection: 'column',
+  gap: '6px',
+});
+
+export const deckChoiceHint = css({
+  fontFamily: 'condensed',
+  fontSize: '9px',
+  letterSpacing: '0.32em',
+  color: 'blood',
+  textTransform: 'uppercase',
+  fontWeight: 700,
+  fontStyle: 'italic',
+});
+
+export const deckPair = css({
+  display: 'flex',
+  gap: '14px',
+  alignItems: 'flex-start',
 });

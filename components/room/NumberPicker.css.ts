@@ -90,7 +90,14 @@ export const numberGrid = css({
   marginBottom: '14px',
 });
 
+/** Layout cell for each number — motion wraps this so the button keeps its CSS skew. */
+export const numBtnSlot = css({
+  display: 'block',
+  width: '100%',
+});
+
 export const numBtn = css({
+  width: '100%',
   padding: '14px 0',
   fontFamily: 'display',
   fontSize: '32px',

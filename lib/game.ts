@@ -46,7 +46,9 @@ export class Game {
   code: string;
   hostId: string;
   players: ServerPlayer[] = [];
-  deck: Tile[] = [];
+  /** Two face-down draw piles, one per color — the canonical Da Vinci Code shape. */
+  deckBlack: Tile[] = [];
+  deckWhite: Tile[] = [];
   phase: Phase = 'waiting';
   currentIdx = 0;
   log: LogEntry[] = [];
@@ -96,14 +98,17 @@ export class Game {
   }
 
   // ---------- player management ----------
-  addPlayer(playerId: string, rawName: string): ServerPlayer {
+  addPlayer(playerId: string, rawName: unknown): ServerPlayer {
     const existing = this.players.find((p) => p.id === playerId);
     if (existing) {
       existing.connected = true;
       if (this.phase === 'waiting') existing.alive = true;
       return existing;
     }
-    const name = rawName.trim().slice(0, NAME_MAX) || `玩家${this.players.length + 1}`;
+    // Defensive: storage round-trips have produced non-strings here in
+    // the past (e.g. JSON.parse('1') → number). Coerce before .trim().
+    const safe = typeof rawName === 'string' ? rawName : String(rawName ?? '');
+    const name = safe.trim().slice(0, NAME_MAX) || `玩家${this.players.length + 1}`;
     const player: ServerPlayer = {
       id: playerId,
       name,
@@ -160,7 +165,9 @@ export class Game {
     if (this.players.length < 2) throw new Error('至少需要 2 位玩家');
     if (this.players.length > 4) throw new Error('最多 4 位玩家');
 
-    const deck = randomize(buildDeck());
+    // Shuffle all 24 tiles together to deal random hands, then split the
+    // remainder into the two color piles for the rest of the game.
+    const shuffled = randomize(buildDeck());
     const handSize = this.players.length === 4 ? 3 : 4;
 
     for (const p of this.players) {
@@ -169,11 +176,12 @@ export class Game {
       p.pendingDraw = undefined;
     }
     for (const p of this.players) {
-      for (let i = 0; i < handSize; i++) p.hand.push(deck.pop()!);
+      for (let i = 0; i < handSize; i++) p.hand.push(shuffled.pop()!);
       p.hand.sort(compareTiles);
     }
 
-    this.deck = deck;
+    this.deckBlack = randomize(shuffled.filter((t) => t.color === 'black'));
+    this.deckWhite = randomize(shuffled.filter((t) => t.color === 'white'));
     this.currentIdx = Math.floor(Math.random() * this.players.length);
     this.phase = 'drawing';
     this.winnerId = undefined;
@@ -184,7 +192,8 @@ export class Game {
   reset(initiatorId: string): void {
     if (initiatorId !== this.hostId) throw new Error('只有房主可以重开');
     this.phase = 'waiting';
-    this.deck = [];
+    this.deckBlack = [];
+    this.deckWhite = [];
     this.winnerId = undefined;
     this.lastReveal = undefined;
     for (const p of this.players) {
@@ -195,19 +204,25 @@ export class Game {
     this.addLog('房主重置了对局');
   }
 
-  drawTile(playerId: string): void {
+  drawTile(playerId: string, color: Color): void {
     if (this.phase !== 'drawing') throw new Error('当前不能抽牌');
     const cur = this.currentPlayer();
     if (cur.id !== playerId) throw new Error('不是你的回合');
     if (cur.pendingDraw) throw new Error('你已经抽过了');
-    if (this.deck.length === 0) {
+
+    // Both piles empty → skip the draw and go straight to guessing.
+    if (this.deckBlack.length === 0 && this.deckWhite.length === 0) {
       this.phase = 'guessing';
-      this.addLog(`${cur.name} —— 牌堆已空，直接猜测`);
+      this.addLog(`${cur.name} —— 两堆牌均已空，直接猜测`);
       return;
     }
-    cur.pendingDraw = this.deck.pop()!;
+
+    const targetDeck = color === 'black' ? this.deckBlack : this.deckWhite;
+    if (targetDeck.length === 0) throw new Error(`${cn(color)}牌堆已空`);
+
+    cur.pendingDraw = targetDeck.pop()!;
     this.phase = 'guessing';
-    this.addLog(`${cur.name} 抽了一张牌`);
+    this.addLog(`${cur.name} 从${cn(color)}牌堆抽了一张`);
   }
 
   guess(
@@ -358,7 +373,8 @@ export class Game {
       players: this.players.map((p) => this.toPublicPlayer(p)),
       currentPlayerId: this.players[this.currentIdx]?.id,
       hostId: this.hostId,
-      deckCount: this.deck.length,
+      deckBlackCount: this.deckBlack.length,
+      deckWhiteCount: this.deckWhite.length,
       log: this.log.slice(-30),
       winnerId: this.winnerId,
       lastReveal: this.lastReveal,

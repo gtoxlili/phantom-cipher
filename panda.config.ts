@@ -124,6 +124,13 @@ export default defineConfig({
           '20%': { background: 'rgba(10, 10, 10, 0.55)' },
           '100%': { background: 'rgba(10, 10, 10, 0)' },
         },
+        // gentle fade-in for elements whose children carry their own
+        // skew transforms — animating the parent's skew would distort
+        // the children mid-animation and snap back at the end.
+        gentleIn: {
+          '0%': { opacity: '0', transform: 'translateY(8px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
       },
     },
   },

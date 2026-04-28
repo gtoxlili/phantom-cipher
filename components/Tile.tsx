@@ -9,7 +9,10 @@ interface TileProps {
   number?: number;
   color: Color;
   faceDown?: boolean;
+  /** Owner's view of a still-secret tile (number visible to me, ? to opponents). */
   ownedHidden?: boolean;
+  /** Owner's view of a tile that's been revealed to the table — visually "spent". */
+  ownedExposed?: boolean;
   pending?: boolean;
   selected?: boolean;
   selectable?: boolean;
@@ -24,6 +27,7 @@ export function Tile({
   color,
   faceDown,
   ownedHidden,
+  ownedExposed,
   pending,
   selected,
   selectable,
@@ -47,6 +51,7 @@ export function Tile({
     selectable && s.selectableHover,
     selectable && s.tappable,
     ownedHidden && s.ownedHidden,
+    ownedExposed && s.ownedExposed,
     highlight === 'correct' && s.flashCorrect,
     highlight === 'wrong' && s.flashWrong,
     onClick && s.tappable,
@@ -88,22 +93,27 @@ export function Tile({
 
   const inlineDelay: React.CSSProperties = { animationDelay: `${index * 35}ms` };
 
+  const decorations = (
+    <>
+      <div className={s.shadow} aria-hidden />
+      {inner}
+      {ownedExposed && <span className={s.exposedSlash} aria-hidden />}
+      {pending && <span className={s.pendingTag}>暂 / NEW</span>}
+      {ownedExposed && !pending && <span className={s.exposedTag}>亮 / OPEN</span>}
+      {selected && <span className={s.targetTag}>标的</span>}
+    </>
+  );
+
   if (onClick) {
     return (
       <button className={className} onClick={onClick} disabled={!selectable && !!faceDown && !ownedHidden} style={inlineDelay} type="button">
-        <div className={s.shadow} aria-hidden />
-        {inner}
-        {pending && <span className={s.pendingTag}>暂 / NEW</span>}
-        {selected && <span className={s.targetTag}>标的</span>}
+        {decorations}
       </button>
     );
   }
   return (
     <div className={className} style={inlineDelay}>
-      <div className={s.shadow} aria-hidden />
-      {inner}
-      {pending && <span className={s.pendingTag}>暂 / NEW</span>}
-      {selected && <span className={s.targetTag}>标的</span>}
+      {decorations}
     </div>
   );
 }

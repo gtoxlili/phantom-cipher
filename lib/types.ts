@@ -47,7 +47,8 @@ export interface PublicGameState {
   players: PublicPlayer[];
   currentPlayerId?: string;
   hostId: string;
-  deckCount: number;
+  deckBlackCount: number;
+  deckWhiteCount: number;
   log: LogEntry[];
   winnerId?: string;
   lastReveal?: RevealInfo;

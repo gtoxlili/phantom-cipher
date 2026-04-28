@@ -84,3 +84,174 @@ export const star = {
     color: 'gold',
   }),
 };
+
+/* ============================================================
+ * DESKTOP ORNAMENTS — only above 768px. Fills the empty space
+ * around the centered mobile viewport with Persona-style chrome.
+ * ============================================================ */
+
+export const desktopOnly = css({
+  display: { base: 'none', md: 'contents' },
+});
+
+/** Huge italic "?" watermark in the bottom-right of the viewport. */
+export const bigQuestion = css({
+  position: 'absolute',
+  bottom: '-4vh',
+  right: '-2vw',
+  fontFamily: 'display',
+  fontSize: 'clamp(280px, 36vw, 640px)',
+  fontStyle: 'italic',
+  fontWeight: 400,
+  color: 'transparent',
+  WebkitTextStroke: '3px var(--colors-blood)',
+  opacity: 0.18,
+  lineHeight: 0.8,
+  letterSpacing: '-0.05em',
+  transform: 'rotate(8deg)',
+  pointerEvents: 'none',
+});
+
+/** Big stylized monogram in the top-right corner. */
+export const monogramTR = css({
+  position: 'absolute',
+  top: '6vh',
+  right: '4vw',
+  fontFamily: 'cn',
+  fontSize: 'clamp(120px, 14vw, 240px)',
+  fontStyle: 'italic',
+  fontWeight: 900,
+  color: 'transparent',
+  WebkitTextStroke: '2px var(--colors-paper)',
+  opacity: 0.06,
+  letterSpacing: '-0.04em',
+  lineHeight: 0.9,
+  transform: 'rotate(-4deg)',
+});
+
+/** Vertical text strips along the side gutters. */
+const verticalTextBase = {
+  position: 'absolute',
+  fontFamily: 'condensed',
+  fontWeight: 700,
+  fontSize: '12px',
+  letterSpacing: '0.6em',
+  color: 'rgba(230, 0, 34, 0.55)',
+  textTransform: 'uppercase',
+  whiteSpace: 'nowrap',
+  writingMode: 'vertical-rl',
+  textOrientation: 'mixed' as const,
+  pointerEvents: 'none',
+} as const;
+
+export const verticalLeft = css({
+  ...verticalTextBase,
+  left: '2vw',
+  top: '50%',
+  transform: 'translateY(-50%) rotate(180deg)',
+});
+
+export const verticalRight = css({
+  ...verticalTextBase,
+  right: '2vw',
+  top: '50%',
+  transform: 'translateY(-50%)',
+  color: 'rgba(250, 250, 243, 0.18)',
+});
+
+/** Roman numeral strip — like a tarot index. */
+export const romanStrip = css({
+  position: 'absolute',
+  top: '50%',
+  right: '6vw',
+  transform: 'translateY(-50%)',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '14px',
+  fontFamily: 'display',
+  fontStyle: 'italic',
+  fontSize: '20px',
+  color: 'rgba(255, 210, 0, 0.4)',
+  letterSpacing: '0.08em',
+  '& span': {
+    transform: 'skewX(-10deg)',
+    paddingLeft: '8px',
+    borderLeft: '1px solid rgba(255, 210, 0, 0.4)',
+  },
+});
+
+export const romanStripLeft = css({
+  position: 'absolute',
+  top: '50%',
+  left: '6vw',
+  transform: 'translateY(-50%)',
+  display: 'flex',
+  flexDirection: 'column',
+  gap: '14px',
+  fontFamily: 'display',
+  fontStyle: 'italic',
+  fontSize: '14px',
+  color: 'rgba(230, 0, 34, 0.30)',
+  letterSpacing: '0.08em',
+  alignItems: 'flex-end',
+  '& span': {
+    transform: 'skewX(-10deg)',
+    paddingRight: '8px',
+    borderRight: '1px solid rgba(230, 0, 34, 0.30)',
+  },
+});
+
+/** Diagonal red "tape" strip across the top-right corner. */
+export const tapeStripTop = css({
+  position: 'absolute',
+  top: '8vh',
+  left: '-10vw',
+  width: '40vw',
+  height: '6px',
+  background: 'blood',
+  transform: 'rotate(-22deg)',
+  opacity: 0.6,
+});
+
+export const tapeStripBottom = css({
+  position: 'absolute',
+  bottom: '12vh',
+  right: '-10vw',
+  width: '40vw',
+  height: '4px',
+  background: 'paper',
+  transform: 'rotate(-22deg)',
+  opacity: 0.20,
+});
+
+/** Floating tile silhouettes. */
+export const tileSilhouetteWrap = css({
+  position: 'absolute',
+  inset: 0,
+});
+
+const tileSilhouetteBase = {
+  position: 'absolute',
+  width: '90px',
+  height: '126px',
+  border: '3px solid rgba(230, 0, 34, 0.28)',
+  background: 'transparent',
+  clipPath: 'polygon(5% 4%, 80% 4%, 95% 14%, 95% 96%, 5% 96%)',
+} as const;
+
+export const tileSilhouette = {
+  one: css({
+    ...tileSilhouetteBase,
+    top: '12vh',
+    left: '6vw',
+    transform: 'rotate(-18deg)',
+  }),
+  two: css({
+    ...tileSilhouetteBase,
+    bottom: '14vh',
+    right: '7vw',
+    transform: 'rotate(14deg)',
+    width: '70px',
+    height: '98px',
+  }),
+};

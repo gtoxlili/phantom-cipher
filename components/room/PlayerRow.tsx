@@ -73,7 +73,8 @@ export function PlayerRow({
                 number={isMe ? c.number : c.revealed ? c.number : undefined}
                 color={c.color}
                 faceDown={!isMe && !c.revealed}
-                ownedHidden={isMe && !c.revealed}
+                ownedHidden={isMe && !c.revealed && !c.pending}
+                ownedExposed={isMe && c.revealed}
                 pending={c.pending}
                 selected={selectedTileId === c.id}
                 selectable={canTarget && !c.revealed && player.alive}

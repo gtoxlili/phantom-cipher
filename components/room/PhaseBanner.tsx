@@ -35,7 +35,13 @@ function computePhaseInfo(v: ReturnType<typeof useAtomValue<typeof gameViewAtom>
   if (!v.state) return { text: 'LOADING', accent: '', mood: 'idle' };
 
   if (v.state.phase === 'waiting') {
-    return { text: 'WAITING FOR PLAYERS', accent: `${v.state.players.length}/4`, mood: 'idle' };
+    const n = v.state.players.length;
+    // Game accepts 2–4 players; show that explicitly so "2/4" doesn't
+    // read as "need to reach 4 to start".
+    if (n < 2) {
+      return { text: 'WAITING · 等待 2–4 玩家', accent: `${n}/2`, mood: 'idle' };
+    }
+    return { text: `READY · ${n} 玩家就位 · 房主开局`, accent: '▶', mood: 'turn' };
   }
   if (v.state.phase === 'ended') {
     const winner = v.state.players.find((p) => p.id === v.state!.winnerId);

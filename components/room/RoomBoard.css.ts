@@ -10,6 +10,11 @@ export const main = css({
   padding: 0,
   overflow: 'hidden',
   background: 'ink',
+  width: '100%',
+  maxWidth: '480px',
+  marginInline: 'auto',
+  // soft red glow at the seam between the "phone" frame and the desktop bg
+  boxShadow: '0 0 0 1px rgba(230, 0, 34, 0.12), 0 0 60px rgba(230, 0, 34, 0.08)',
 });
 
 export const opponentsArea = css({

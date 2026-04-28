@@ -13,6 +13,7 @@
     "immer": "^11.1.4",
     "jotai": "^2.19.1",
     "jotai-immer": "^0.4.3",
+    "motion": "^12.38.0",
     "next": "latest",
     "radash": "^12.1.1",
     "react": "latest",
