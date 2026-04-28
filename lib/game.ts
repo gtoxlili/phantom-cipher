@@ -1,6 +1,7 @@
 import { list, shuffle as randomize } from 'radash';
 import type {
   Color,
+  GameSnapshot,
   LogEntry,
   Phase,
   PrivateState,
@@ -8,6 +9,7 @@ import type {
   PublicPlayer,
   PublicTile,
   RevealInfo,
+  SnapshotPlayer,
   Tile,
 } from './types';
 
@@ -73,8 +75,11 @@ export class Game {
   log: LogEntry[] = [];
   winnerId?: string;
   lastReveal?: RevealInfo;
+  /** ms epoch when phase first transitioned out of 'waiting'. */
+  startedAt: number | null = null;
 
-  private logCounter = 0;
+  /** Public so snapshots can preserve monotonic log ids across restarts. */
+  logCounter = 0;
   private subscribers = new Map<string, Subscriber>();
 
   constructor(code: string, hostId: string) {
@@ -214,6 +219,7 @@ export class Game {
     this.phase = 'drawing';
     this.winnerId = undefined;
     this.lastReveal = undefined;
+    this.startedAt = Date.now();
     this.addLog(`一局开始 — 由 ${this.players[this.currentIdx].name} 先手`);
   }
 
@@ -224,6 +230,7 @@ export class Game {
     this.deckWhite = [];
     this.winnerId = undefined;
     this.lastReveal = undefined;
+    this.startedAt = null;
     for (const p of this.players) {
       p.hand = [];
       p.alive = true;
@@ -440,6 +447,63 @@ export class Game {
   private addLog(text: string): void {
     this.log.push({ id: ++this.logCounter, text, ts: Date.now() });
     if (this.log.length > 80) this.log.shift();
+  }
+
+  // ---------- persistence snapshots ----------
+
+  /**
+   * Plain-JSON snapshot for the persistence layer. Subscribers are
+   * intentionally excluded — SSE clients re-subscribe after reconnect.
+   * `connected` is also dropped (always false on rehydrate; flips back
+   * to true when a player rejoins).
+   */
+  toSnapshot(): GameSnapshot {
+    return {
+      code: this.code,
+      hostId: this.hostId,
+      players: this.players.map<SnapshotPlayer>((p) => ({
+        id: p.id,
+        name: p.name,
+        hand: p.hand.map((t) => ({ ...t })),
+        pendingDraw: p.pendingDraw ? { ...p.pendingDraw } : undefined,
+        pendingPosition: p.pendingPosition,
+        alive: p.alive,
+      })),
+      deckBlack: this.deckBlack.map((t) => ({ ...t })),
+      deckWhite: this.deckWhite.map((t) => ({ ...t })),
+      phase: this.phase,
+      currentIdx: this.currentIdx,
+      log: this.log.map((e) => ({ ...e })),
+      logCounter: this.logCounter,
+      winnerId: this.winnerId,
+      lastReveal: this.lastReveal ? { ...this.lastReveal } : undefined,
+      startedAt: this.startedAt,
+    };
+  }
+
+  static fromSnapshot(snap: GameSnapshot): Game {
+    const g = new Game(snap.code, snap.hostId);
+    g.players = snap.players.map((p) => ({
+      id: p.id,
+      name: p.name,
+      hand: p.hand.map((t) => ({ ...t })),
+      pendingDraw: p.pendingDraw ? { ...p.pendingDraw } : undefined,
+      pendingPosition: p.pendingPosition,
+      alive: p.alive,
+      // Everyone's offline at boot; they flip back to connected when
+      // their SSE stream reattaches via joinOrCreateRoom.
+      connected: false,
+    }));
+    g.deckBlack = snap.deckBlack.map((t) => ({ ...t }));
+    g.deckWhite = snap.deckWhite.map((t) => ({ ...t }));
+    g.phase = snap.phase;
+    g.currentIdx = snap.currentIdx;
+    g.log = snap.log.map((e) => ({ ...e }));
+    g.logCounter = snap.logCounter;
+    g.winnerId = snap.winnerId;
+    g.lastReveal = snap.lastReveal ? { ...snap.lastReveal } : undefined;
+    g.startedAt = snap.startedAt;
+    return g;
   }
 
   // ---------- snapshots ----------

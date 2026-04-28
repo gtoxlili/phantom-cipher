@@ -67,6 +67,36 @@ export interface PrivateState {
   pendingTileId?: string;
 }
 
+/**
+ * On-disk shape of a Game. Strict subset of the Game class state — the
+ * subscriber map is intentionally NOT part of this; subscriptions
+ * reattach when SSE clients reconnect after a restart.
+ */
+export interface SnapshotPlayer {
+  id: string;
+  name: string;
+  hand: Tile[];
+  pendingDraw?: Tile;
+  pendingPosition?: number;
+  alive: boolean;
+}
+
+export interface GameSnapshot {
+  code: string;
+  hostId: string;
+  players: SnapshotPlayer[];
+  deckBlack: Tile[];
+  deckWhite: Tile[];
+  phase: Phase;
+  currentIdx: number;
+  log: LogEntry[];
+  logCounter: number;
+  winnerId?: string;
+  lastReveal?: RevealInfo;
+  /** ms epoch when phase first transitioned out of 'waiting'. */
+  startedAt: number | null;
+}
+
 export type AckOk = { ok: true };
 export type AckErr = { error: string };
 export type Ack = AckOk | AckErr;

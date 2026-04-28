@@ -35,6 +35,14 @@ styled-system-studio
 *.log
 coverage
 
+# local SQLite — the runner mounts a volume at /app/data; never bake
+# any host-side .db file into the build context.
+data
+*.db
+*.db-journal
+*.db-shm
+*.db-wal
+
 # docs / non-runtime files
 README.md
 *.md

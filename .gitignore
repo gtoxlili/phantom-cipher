@@ -35,3 +35,10 @@ coverage/
 # OS
 Thumbs.db
 /.env.production
+
+# local SQLite (rooms, matches, players) — never check this in
+data/
+*.db
+*.db-journal
+*.db-shm
+*.db-wal

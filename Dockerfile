@@ -1,16 +1,20 @@
 # syntax=docker/dockerfile:1.7
 #
 # 达芬奇密码 — Next.js 16 (App Router) + SSE multiplayer.
-# Game state is purely in-memory (singleton on globalThis) — no
-# persistent volume needed.
+# In-flight rooms, finished matches, and player profiles are persisted
+# via node:sqlite (the built-in SQLite shipped with Node 22+; stable
+# in Node 24). DB file lives at /app/data/phantom.db — mount a volume
+# there to keep data across container replacements.
 #
 #   DOCKER_BUILDKIT=1 docker build -t davinci-game .
-#   docker run -d --name davinci-game -p 3000:3000 davinci-game
+#   docker run -d --name davinci-game -p 3000:3000 \
+#     -v phantom-data:/app/data davinci-game
 #
 # Final image is distroless (gcr.io/distroless/nodejs24-debian13) —
 # ~80 MB, no shell, no package manager, no apt, no extra binaries.
 # All build-time tooling (pnpm, panda, ts) lives in the alpine builder
-# stage and is discarded.
+# stage and is discarded. node:sqlite is part of the Node binary, so
+# no native module is added to the runtime image.
 
 # Build image pinned to Node 24 alpine to match the runtime distroless
 # image's Node major. Override at build time if needed:
@@ -61,10 +65,11 @@ COPY . .
 # needed at runtime.)
 RUN --mount=type=cache,target=/app/.next/cache \
     pnpm build
-# Empty placeholder dir — copied into the runner so .next/cache exists
-# with nonroot ownership for any runtime cache writes (no ISR is used,
-# but Next can still touch it on startup).
-RUN mkdir -p /tmp/runtime-cache
+# Empty placeholder dirs — copied into the runner so .next/cache and
+# data/ exist with nonroot ownership before the app boots. distroless
+# has no shell to mkdir at runtime, and SQLite needs the parent dir
+# to exist before it'll create the .db file.
+RUN mkdir -p /tmp/runtime-cache /tmp/runtime-data
 
 # --- runner: distroless --------------------------------------------
 # No shell, no apt, no package manager. Only the Node binary and the
@@ -75,16 +80,22 @@ WORKDIR /app
 ENV NODE_ENV=production \
     NEXT_TELEMETRY_DISABLED=1 \
     PORT=3000 \
-    HOSTNAME=0.0.0.0
+    HOSTNAME=0.0.0.0 \
+    DB_PATH=/app/data/phantom.db
 
 # Standalone bundle: server.js + trimmed node_modules + .next/server.
 # .next/static, public/, and .next/cache live outside standalone —
 # copy by hand with --chown so the nonroot user (uid 65532) can
 # read/write them. public/ holds the PWA icons + manifest assets.
+# data/ is the SQLite directory; mount a volume there in production
+# to survive container replacement.
 COPY --from=builder --chown=nonroot:nonroot /app/.next/standalone ./
 COPY --from=builder --chown=nonroot:nonroot /app/.next/static ./.next/static
 COPY --from=builder --chown=nonroot:nonroot /app/public ./public
 COPY --from=builder --chown=nonroot:nonroot /tmp/runtime-cache ./.next/cache
+COPY --from=builder --chown=nonroot:nonroot /tmp/runtime-data ./data
+
+VOLUME ["/app/data"]
 
 USER nonroot
 
