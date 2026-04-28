@@ -125,14 +125,53 @@ export function Tile({
           <path d="M 66 88 L 69 91 L 66 94 L 63 91 Z" fill="#e60022" />
         </g>
       ) : (
-        <text x="38" y="80" textAnchor="middle" className={s.questionText} style={{ fill: '#e60022' }}>
-          ?
-        </text>
+        // Layered "?" face — a soft contrast echo for depth, the main
+        // red glyph in front, plus diagonal slash accents in the
+        // corners for a P5-style "mystery / unknown" feel.
+        <g>
+          <text
+            x="38"
+            y="80"
+            textAnchor="middle"
+            className={s.questionText}
+            style={{ fill: numberColor, opacity: 0.18 }}
+            transform="translate(-3 -2)"
+          >
+            ?
+          </text>
+          <text
+            x="38"
+            y="80"
+            textAnchor="middle"
+            className={s.questionText}
+            style={{ fill: '#e60022' }}
+          >
+            ?
+          </text>
+          <g stroke="#e60022" strokeWidth="1.6" strokeLinecap="round" opacity="0.85">
+            <line x1="14" y1="44" x2="22" y2="36" />
+            <line x1="58" y1="92" x2="66" y2="84" />
+          </g>
+          <circle cx="11" cy="38" r="1.6" fill="#e60022" />
+          <circle cx="69" cy="94" r="1.6" fill="#e60022" />
+        </g>
       )}
     </svg>
   );
 
-  const inlineDelay: React.CSSProperties = { animationDelay: `${index * 35}ms` };
+  // For face-down opponent tiles in the PICK A TILE phase, layer the
+  // tileSelectablePulse keyframe AFTER the entrance animation. We set
+  // `animation` inline because Panda emits `s.tile`'s longhand
+  // `animation-name` AFTER any class-level shorthand override, so a
+  // class-based animation gets eaten by the cascade — inline always
+  // wins. tileSelectablePulse itself is defined in styles/global.css
+  // (outside the @layer base wrapper) so it bypasses Panda config.
+  const showPulse = selectable && !selected && !pending;
+  const inlineDelay: React.CSSProperties = showPulse
+    ? {
+        animation: `tileIn 0.45s cubic-bezier(0.16, 1, 0.3, 1) ${index * 35}ms backwards, tileSelectablePulse 0.75s ease-in-out ${500 + index * 60}ms infinite`,
+      }
+    : { animationDelay: `${index * 35}ms` };
 
   const decorations = (
     <>

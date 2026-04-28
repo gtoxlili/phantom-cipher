@@ -72,3 +72,22 @@
 
   a { color: inherit; text-decoration: none; }
 }
+
+/**
+ * Standalone keyframe — kept out of the @layer base wrapper so it's
+ * always available regardless of Panda config picking it up. Used by
+ * face-down opponent tiles during the PICK A TILE phase to signal
+ * "tap me", mirroring the deck's draw-phase pulse: aggressive sway +
+ * red drop-shadow halo that breathes in and out (the same P5 motif
+ * deckPulse uses for the draw piles).
+ */
+@keyframes tileSelectablePulse {
+  0%, 100% {
+    transform: rotate(-2deg) scale(1);
+    filter: drop-shadow(0 0 0 rgba(230, 0, 34, 0));
+  }
+  50% {
+    transform: rotate(-1deg) scale(1.06);
+    filter: drop-shadow(0 0 12px rgba(230, 0, 34, 0.9));
+  }
+}

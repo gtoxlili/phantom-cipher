@@ -94,6 +94,13 @@ export default defineConfig({
           '0%, 100%': { transform: 'rotate(-1deg) translateY(-12px)' },
           '50%': { transform: 'rotate(1deg) translateY(-16px)' },
         },
+        // Idle wobble + lift for face-down opponent tiles that the
+        // current player can target — same intent as `deckPulse` so
+        // the affordance reads consistently across draw and guess.
+        selectablePulse: {
+          '0%, 100%': { transform: 'rotate(-2deg) translateY(0) scale(1)' },
+          '50%': { transform: 'rotate(1deg) translateY(-4px) scale(1.05)' },
+        },
         selectedShimmer: {
           '0%, 100%': { filter: 'drop-shadow(0 0 0 rgba(230, 0, 34, 0))' },
           '50%': { filter: 'drop-shadow(0 0 12px rgba(230, 0, 34, 0.85))' },
