@@ -1,0 +1,76 @@
+name: Build & Publish Image
+
+on:
+  push:
+    branches: [main]
+    # Pure docs / license tweaks shouldn't burn ~5min of multi-arch
+    # build time. Anything that affects the runtime artifact is not
+    # in this list.
+    paths-ignore:
+      - '**.md'
+      - 'LICENSE'
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # Don't cancel mid-build: the SHA-tagged image for an intermediate
+  # commit is occasionally useful for bisecting deploys, and pushing
+  # a flurry of commits to main isn't typical anyway.
+  cancel-in-progress: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # QEMU lets a single amd64 runner cross-compile arm64 layers.
+      # Slower than a native arm64 runner, but free on the standard
+      # GitHub-hosted plan — fine for an image this size.
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Produces both a stable :latest tag (for the deploy command
+      # in the README) and a per-commit :sha-<short> tag for
+      # traceability / rollbacks.
+      - name: Compute tags & labels
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=latest
+            type=sha,format=short
+
+      - name: Build & push
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # GHA cache keyed on the workflow — a no-source-change
+          # rebuild reuses the panda codegen and Next.js compile
+          # output instead of starting from scratch.
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
