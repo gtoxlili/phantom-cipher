@@ -1,10 +1,11 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { Suspense, useRef, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAtom, useSetAtom } from 'jotai';
 import clsx from 'clsx';
 import { AnimatePresence, motion } from 'motion/react';
+import { ArrowLeftIcon, PlayIcon, SparkleIcon } from '@phosphor-icons/react';
 import { Sketch } from '@/components/Sketch';
 import { intentHostAtom, myNameAtom } from '@/lib/atoms';
 import { pickRandomCodename } from '@/lib/codenames';
@@ -61,7 +62,48 @@ const itemVariants = {
   exit: { opacity: 0, y: -10, transition: { duration: 0.14 } },
 };
 
+/**
+ * Suspense fallback — renders only the static brand chrome (Sketch
+ * background + title block) without the action panel that depends on
+ * `useSearchParams()`. The action panel will mount in via its existing
+ * AnimatePresence panel transition once HomeInner resolves, so the
+ * loading→ready handoff feels like the panel "slides in" rather than
+ * a hard swap.
+ */
+function HomeFallback() {
+  return (
+    <main className={s.main}>
+      <Sketch />
+      <section className={s.titleArea}>
+        <div className={s.titleBlock}>
+          <div className={s.titleEyebrow}>
+            <span>· EST · MMXXVI · TOKYO ·</span>
+          </div>
+          <h1 className={s.title}>
+            <span className={s.titleRow1}><span className={s.titleText}>达芬奇</span></span>
+            <span className={s.titleRow2}><span className={s.titleText}>密码</span></span>
+          </h1>
+          <div className={s.subtitle}>DA VINCI&apos;S CIPHER</div>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+/**
+ * Wrap everything that touches `useSearchParams()` in a Suspense
+ * boundary so Next.js can prerender the static shell at build time
+ * without bailing out to client-only render.
+ */
 export default function Home() {
+  return (
+    <Suspense fallback={<HomeFallback />}>
+      <HomeInner />
+    </Suspense>
+  );
+}
+
+function HomeInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [name, setName] = useAtom(myNameAtom);
@@ -167,7 +209,7 @@ export default function Home() {
                         <span className={s.btnSubLight}>CREATE NEW</span>
                       </span>
                     </span>
-                    <span className={s.btnArrow}>▶</span>
+                    <span className={s.btnArrow}><PlayIcon weight="fill" size="1em" /></span>
                   </button>
                 </motion.div>
                 <motion.div variants={itemVariants}>
@@ -182,7 +224,7 @@ export default function Home() {
                         <span className={s.btnSubDark}>ENTER WITH CODE</span>
                       </span>
                     </span>
-                    <span className={s.btnArrow}>▶</span>
+                    <span className={s.btnArrow}><PlayIcon weight="fill" size="1em" /></span>
                   </button>
                 </motion.div>
               </div>
@@ -212,7 +254,11 @@ export default function Home() {
             >
               <RoomForm
                 title="创建棋局"
-                submitLabel="开局 ▶"
+                submitLabel={
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35em' }}>
+                    开局<PlayIcon weight="fill" size="0.85em" />
+                  </span>
+                }
                 error={error}
                 onBack={() => { setMode('menu'); setError(''); }}
                 onSubmit={goCreate}
@@ -242,7 +288,11 @@ export default function Home() {
             >
               <RoomForm
                 title="持密码入局"
-                submitLabel="进入 ▶"
+                submitLabel={
+                  <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35em' }}>
+                    进入<PlayIcon weight="fill" size="0.85em" />
+                  </span>
+                }
                 error={error}
                 onBack={() => { setMode('menu'); setError(''); }}
                 onSubmit={goJoin}
@@ -300,7 +350,7 @@ function RoomForm({
   onBack,
 }: {
   title: string;
-  submitLabel: string;
+  submitLabel: React.ReactNode;
   fields: FieldDef[];
   error: string;
   onSubmit: () => void;
@@ -326,16 +376,23 @@ function RoomForm({
           />
           {f.onShuffle && (
             <button type="button" className={s.shuffleBtn} onClick={f.onShuffle}>
-              <span className={s.shuffleIcon}>✦</span>
+              <span className={s.shuffleIcon}><SparkleIcon weight="fill" size="1em" /></span>
               <span>随机代号 / SHUFFLE</span>
-              <span className={s.shuffleIcon}>✦</span>
+              <span className={s.shuffleIcon}><SparkleIcon weight="fill" size="1em" /></span>
             </button>
           )}
         </label>
       ))}
       {error && <div className={s.error}>{error}</div>}
       <div className={s.formActions}>
-        <button type="button" className={s.btnText} onClick={onBack}>← BACK</button>
+        <button
+          type="button"
+          className={s.btnText}
+          onClick={onBack}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35em' }}
+        >
+          <ArrowLeftIcon weight="bold" size="1em" />BACK
+        </button>
         <button type="submit" className={s.submit}>
           <span className={s.btnLabel}>{submitLabel}</span>
         </button>

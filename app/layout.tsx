@@ -34,6 +34,12 @@ const notoSC = Noto_Sans_SC({
 });
 
 export const metadata: Metadata = {
+  // Resolves relative URLs in icons / og:image / twitter:image to
+  // absolute URLs at build time. SITE_URL comes from .env.production
+  // (`https://cipher.gtio.work`) — dev falls back to localhost so
+  // OG previews simply won't be useful in dev (which is fine, they
+  // get regenerated per deploy anyway).
+  metadataBase: new URL(process.env.SITE_URL ?? 'http://localhost:3477'),
   // Object form sets the home-page title via `default` and reserves
   // `template` for any future nested route titles (e.g. `/room/ABCD`
   // could surface "ROOM · ABCD" without losing the brand suffix).
@@ -77,9 +83,15 @@ export const metadata: Metadata = {
     ],
     apple: '/apple-touch-icon.png',
   },
-  // Drives WeChat / Telegram / Twitter share-link previews. WeChat
-  // pulls title + description + first og:image when the link gets
-  // forwarded inside a chat — the Joker icon makes the preview pop.
+  // Share-link previews. og-image.png is 1200×1200 (1:1) with a SOLID
+  // #0a0a0a background — WeChat strongly prefers square images, and
+  // refuses to render transparent PNGs reliably on iPhone.
+  //
+  // Caveat: WeChat's H5 link-preview behaviour is not documented and
+  // is unstable for sites without an Official Account + JS-SDK
+  // integration. Even with perfect tags, the card may show as a
+  // bare link in some chat contexts — that's WeChat's policy, not
+  // a bug we can fix from the page side.
   openGraph: {
     title: 'TAKE THEIR CIPHER · 达芬奇密码',
     description: '二十四块密码 · 唯一的胜者。',
@@ -88,12 +100,26 @@ export const metadata: Metadata = {
     siteName: '怪盗密码',
     images: [
       {
-        url: '/icon-512x512.png',
-        width: 512,
-        height: 512,
+        url: '/og-image.png',
+        width: 1200,
+        height: 1200,
         alt: '达芬奇密码 · TAKE THEIR CIPHER',
       },
     ],
+  },
+  // Twitter card — `summary_large_image` for the bigger preview.
+  twitter: {
+    card: 'summary_large_image',
+    title: 'TAKE THEIR CIPHER · 达芬奇密码',
+    description: '二十四块密码 · 唯一的胜者。',
+    images: ['/og-image.png'],
+  },
+  // WeChat / 老式 social parsers besides og:* — Schema.org's
+  // itemprop and the legacy `name="image"` are sometimes the only
+  // signals certain crawlers pick up. Cheap insurance.
+  other: {
+    'image': 'https://cipher.gtio.work/og-image.png',
+    'msapplication-TileImage': '/og-image.png',
   },
 };
 

@@ -30,6 +30,13 @@
     text-rendering: optimizeLegibility;
     touch-action: manipulation;
     letter-spacing: 0.01em;
+    /* Force "text" presentation for ambiguous Unicode chars like
+       ▶ ◀ ⚠ — iOS / macOS Safari otherwise falls back to Apple Color
+       Emoji and renders them as colored emoji. Supported on Safari
+       17+, Chrome 118+, Firefox 116+ — covers the vast majority of
+       2026 users. Older browsers see the original glyph (still
+       functional, just slightly off-style). */
+    font-variant-emoji: text;
   }
 
   body::before {

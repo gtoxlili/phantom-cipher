@@ -2,6 +2,7 @@
 
 import { useAtomValue } from 'jotai';
 import clsx from 'clsx';
+import { PlayIcon } from '@phosphor-icons/react';
 import { gameViewAtom } from '@/lib/atoms';
 import { useGameActions } from '@/lib/hooks/useGameActions';
 import type { Color } from '@/lib/types';
@@ -45,13 +46,18 @@ export function ActionZone() {
       const n = v.state.players.length;
       const ready = n >= 2;
       // Make explicit that any count between 2 and 4 is enough to start.
-      const label = ready
-        ? `开局 START · ${n} 玩家 ▶`
-        : `等待玩家 · ${n}/2 · MIN 2`;
       return (
         <section className={s.zone}>
           <button className={s.startBtn} disabled={!ready} onClick={actions.start} type="button">
-            <span>{label}</span>
+            <span>
+              {ready ? (
+                <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35em' }}>
+                  开局 START · {n} 玩家<PlayIcon weight="fill" size="0.85em" />
+                </span>
+              ) : (
+                `等待玩家 · ${n}/2 · MIN 2`
+              )}
+            </span>
           </button>
         </section>
       );
@@ -75,7 +81,12 @@ export function ActionZone() {
           </div>
           {v.isHost ? (
             <button className={clsx(shared.btnPrimary, s.endResetBtn)} onClick={actions.reset} type="button">
-              <span className={shared.skewInner}>再来一局 ▶</span>
+              <span
+                className={shared.skewInner}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: '0.35em' }}
+              >
+                再来一局<PlayIcon weight="fill" size="0.85em" />
+              </span>
             </button>
           ) : (
             <div className={s.endHint}>WAIT FOR HOST</div>

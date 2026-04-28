@@ -35,7 +35,12 @@ RUN npm install -g pnpm@${PNPM_VERSION}
 # --- deps: install full dep tree (incl. devDeps) for the build -----
 FROM base AS deps
 WORKDIR /app
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+# panda.config.ts is needed alongside package files because the `prepare`
+# script (panda codegen) runs after `pnpm install` and would otherwise
+# fail with ERR_PANDA_CONFIG_NOT_FOUND. Codegen only reads the config
+# itself (not the source it references in `include`), so this is enough
+# to satisfy the hook and produces a complete styled-system/ folder.
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml panda.config.ts ./
 # devDeps (panda, types, ts) are needed at build time. Override
 # NODE_ENV so any postinstall hook reading it doesn't decide it's
 # production and skip them.

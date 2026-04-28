@@ -2,6 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
+import { ArrowLeftIcon, PlayIcon, SparkleIcon } from '@phosphor-icons/react';
 import { Sketch } from '@/components/Sketch';
 import { currentRoomCodeAtom, myNameAtom } from '@/lib/atoms';
 import { pickRandomCodename } from '@/lib/codenames';
@@ -43,12 +44,25 @@ export function NamePromptView({ onCancel }: { onCancel: () => void }) {
           onKeyDown={(e) => { if (e.key === 'Enter') submit(); }}
         />
         <button className={s.shuffleBtn} onClick={shuffle} type="button">
-          <span className={s.shuffleIcon}>✦</span>
+          <span className={s.shuffleIcon}><SparkleIcon weight="fill" size="1em" /></span>
           <span>随机代号 / SHUFFLE</span>
-          <span className={s.shuffleIcon}>✦</span>
+          <span className={s.shuffleIcon}><SparkleIcon weight="fill" size="1em" /></span>
         </button>
-        <button className={s.submit} onClick={submit} disabled={!draft.trim()}>入局 ▶</button>
-        <button className={s.linkBtn} onClick={onCancel}>← BACK TO LOBBY</button>
+        <button
+          className={s.submit}
+          onClick={submit}
+          disabled={!draft.trim()}
+          style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.35em' }}
+        >
+          入局<PlayIcon weight="fill" size="0.85em" />
+        </button>
+        <button
+          className={s.linkBtn}
+          onClick={onCancel}
+          style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.35em' }}
+        >
+          <ArrowLeftIcon weight="bold" size="0.9em" />BACK TO LOBBY
+        </button>
       </div>
     </main>
   );

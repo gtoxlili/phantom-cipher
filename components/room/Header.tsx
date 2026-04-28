@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useAtomValue, useSetAtom } from 'jotai';
+import { CheckIcon } from '@phosphor-icons/react';
 import { currentRoomCodeAtom, showLogAtom } from '@/lib/atoms';
 import * as s from './Header.css';
 
@@ -30,7 +31,16 @@ export function Header({ onBack }: { onBack: () => void }) {
       <div className={s.codeWrap} onClick={copyLink}>
         <span className={s.codeLabel}>· CIPHER KEY ·</span>
         <span className={s.code}>{code}</span>
-        <span className={s.copyHint}>{copied ? 'COPIED ✓' : 'TAP TO SHARE'}</span>
+        <span
+          className={s.copyHint}
+          style={copied ? { display: 'inline-flex', alignItems: 'center', gap: '0.35em' } : undefined}
+        >
+          {copied ? (
+            <>COPIED<CheckIcon weight="bold" size="0.9em" /></>
+          ) : (
+            'TAP TO SHARE'
+          )}
+        </span>
       </div>
       <button className={s.iconBtn} onClick={() => setShowLog((v) => !v)} aria-label="日志">
         <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
