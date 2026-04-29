@@ -553,88 +553,85 @@ export const statsLink = css({
 });
 
 /* =====================================================================
- * FOOTER —— 一行原 tagline + 一行作者署名（GitHub + 邮件）
- * 视觉跟 statsLink 同源：skewX(-8deg) ink 边、blood 阴影 hover、
- * 内部 span 反向 skewX 抵消保持文字水平
+ * FOOTER —— 双行 column flex（tagline / byline 各占一行）
+ *
+ * 设计选择：
+ *   1. 永远两行，不依赖字体宽度做断点——避免在 320/375/414 之间
+ *      换行位置漂移导致"残尾"（之前 wrap 出 `@gtoxlili ✉ ★` 单飘
+ *      第二行视觉很怪）
+ *   2. 视觉克制：所有文字继承 0.4 opacity 的 muted 调性，跟原 footer
+ *      一脉相承；链接默认透明 border-bottom，hover 才翻 blood 红 +
+ *      显形下划线
+ *   3. tap target：链接靠 padding 凑出 ≥24px hit area，移动端不靠
+ *      盒子撑大保留文字感
  * ===================================================================== */
 export const footer = css({
   gridArea: { lg: 'footer' },
   position: 'relative',
   marginTop: { base: 'auto', lg: '40px' },
-  padding: { base: '28px 20px 0', lg: '24px 0 0' },
-  textAlign: 'center',
+  padding: { base: '28px 16px 24px', lg: '24px 0 0' },
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
-  gap: { base: '14px', lg: '16px' },
+  rowGap: { base: '8px', lg: '6px' },
+  fontFamily: 'display',
+  fontStyle: 'italic',
+  letterSpacing: '0.32em',
+  textTransform: 'uppercase',
+  color: 'rgba(250, 250, 243, 0.4)',
   borderTop: { lg: '1px solid rgba(230, 0, 34, 0.18)' },
 });
 
 export const footerTagline = css({
-  fontFamily: 'display',
-  fontStyle: 'italic',
-  letterSpacing: '0.32em',
-  color: 'rgba(250, 250, 243, 0.4)',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '8px',
   fontSize: { base: '11px', lg: '13px' },
-  textTransform: 'uppercase',
-  '&::before': { content: '"★︎"', color: 'blood', marginRight: '8px' },
-  '&::after': { content: '"★︎"', color: 'blood', marginLeft: '8px' },
 });
 
-export const byline = css({
+export const footerStar = css({
+  color: 'blood',
+  opacity: 0.7,
+});
+
+export const footerByline = css({
   display: 'inline-flex',
   alignItems: 'center',
   gap: { base: '8px', lg: '10px' },
-  paddingBottom: { base: '12px', lg: '0' },
 });
 
-export const bylineLabel = css({
+export const footerCreditLabel = css({
   fontFamily: 'condensed',
   fontWeight: 700,
-  fontSize: { base: '9px', lg: '10px' },
-  letterSpacing: '0.32em',
-  textTransform: 'uppercase',
-  color: 'rgba(250, 250, 243, 0.42)',
-  fontStyle: 'italic',
+  fontStyle: 'normal',
+  fontSize: { base: '9px', lg: '11px' },
+  letterSpacing: '0.36em',
 });
 
-export const bylineLink = css({
+/* 链接：默认低调（跟周围文字一个 opacity），hover 时翻血红
+ * + 出现"假下划线"（border-bottom）。用 border 而不是 text-decoration
+ * 是为了能控制偏移和粗细，跟 P5 的硬边块感更搭 */
+export const footerLink = css({
   fontFamily: 'condensed',
   fontWeight: 700,
-  fontSize: { base: '11px', lg: '13px' },
+  fontStyle: 'normal',
   letterSpacing: '0.18em',
-  padding: { base: '4px 10px', lg: '5px 12px' },
-  background: 'transparent',
+  fontSize: { base: '11px', lg: '13px' },
   color: 'paper',
-  border: '1.5px solid var(--colors-paper)',
-  transform: 'skewX(-8deg)',
-  transition: 'all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1)',
-  '& > span': { display: 'inline-block', transform: 'skewX(8deg)' },
+  opacity: 0.6,
+  padding: '2px 4px',
+  borderBottom: '1.5px solid transparent',
+  transition: 'color 0.16s ease, opacity 0.16s ease, border-color 0.16s ease',
+  textTransform: 'lowercase',
   _hover: {
-    background: 'blood',
-    borderColor: 'blood',
-    color: 'paper',
-    boxShadow: '3px 3px 0 var(--colors-paper)',
-    transform: 'skewX(-8deg) translate(-1px, -1px)',
+    color: 'blood',
+    opacity: 1,
+    borderBottomColor: 'blood',
   },
-});
-
-export const bylineMail = css({
-  display: 'inline-flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  width: { base: '28px', lg: '30px' },
-  height: { base: '28px', lg: '30px' },
-  fontSize: { base: '14px', lg: '15px' },
-  color: 'paper',
-  background: 'transparent',
-  border: '1.5px solid var(--colors-paper)',
-  transform: 'skewX(-8deg)',
-  transition: 'all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1)',
-  _hover: {
-    background: 'blood',
-    borderColor: 'blood',
-    boxShadow: '3px 3px 0 var(--colors-paper)',
-    transform: 'skewX(-8deg) translate(-1px, -1px)',
+  _focusVisible: {
+    color: 'blood',
+    opacity: 1,
+    outline: '1.5px solid var(--colors-blood)',
+    outlineOffset: '2px',
   },
 });

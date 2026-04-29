@@ -279,20 +279,24 @@ export default function Home() {
       </a>
 
       <footer class={s.footer}>
-        <div class={s.footerTagline}>made with ink &amp; pixels</div>
-        <div class={s.byline}>
-          <span class={s.bylineLabel}>· crafted by ·</span>
+        <div class={s.footerTagline}>
+          <span class={s.footerStar}>★︎</span>
+          <span>made with ink &amp; pixels</span>
+          <span class={s.footerStar}>★︎</span>
+        </div>
+        <div class={s.footerByline}>
+          <span class={s.footerCreditLabel}>crafted by</span>
           <a
-            class={s.bylineLink}
+            class={s.footerLink}
             href="https://github.com/gtoxlili"
             target="_blank"
             rel="noopener noreferrer"
             aria-label="作者 GitHub"
           >
-            <span>@GTOXLILI</span>
+            @gtoxlili
           </a>
           <a
-            class={s.bylineMail}
+            class={s.footerLink}
             href="mailto:gtoxlili@outlook.com"
             aria-label="发邮件给作者"
             title="gtoxlili@outlook.com"
