@@ -14,6 +14,7 @@ use serde::Serialize;
 use std::sync::Arc;
 
 pub mod actions;
+pub mod players;
 pub mod stats;
 pub mod ws;
 
@@ -57,5 +58,6 @@ pub fn router(state: SharedState) -> Router {
         .route("/api/room/{code}/leave", post(actions::leave_room))
         .route("/api/room/{code}/ws", get(ws::ws_handler))
         .route("/api/stats", get(stats::stats))
+        .route("/api/players/{pid}", get(players::get_player))
         .with_state(state)
 }

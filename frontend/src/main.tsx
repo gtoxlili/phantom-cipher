@@ -24,6 +24,10 @@ import '@fontsource/oswald/700.css';
 // 昵称那几秒就开始 wasm init + 服务端 identify，不等导航到 /room/:code
 // 才启动。一进 Room 几乎肯定已经算完，没有"等指纹"的卡顿
 import '@/stores/identity';
+// profile 模块挂个 effect，拿到 visitor_id 就拉服务端 players.display_name
+// 给昵称输入框预填——老玩家清 localStorage / 换设备但 fuzzy 匹配
+// 仍能拉回 visitor_id 的场景下，不用从头输名字
+import '@/stores/profile';
 
 import 'styled-system/styles.css';
 import './styles/global.css';

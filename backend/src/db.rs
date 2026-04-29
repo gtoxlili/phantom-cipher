@@ -350,6 +350,36 @@ pub fn recent_matches(pool: &DbPool, limit: i64) -> Vec<RecentMatch> {
     .unwrap_or_default()
 }
 
+/// 单玩家档案——给"老用户进 Home 页时预填上次的昵称"用，配合
+/// inf-fingerprint 把"我是谁"传递性体现到客户端默认值。
+#[derive(serde::Serialize)]
+pub struct PlayerProfile {
+    pub id: String,
+    pub display_name: String,
+    pub matches_played: i64,
+    pub matches_won: i64,
+    pub last_seen: i64,
+}
+
+pub fn player_by_id(pool: &DbPool, id: &str) -> Option<PlayerProfile> {
+    let conn = pool.get().ok()?;
+    conn.query_row(
+        "SELECT id, display_name, matches_played, matches_won, last_seen
+         FROM players WHERE id = ?",
+        params![id],
+        |row| {
+            Ok(PlayerProfile {
+                id: row.get(0)?,
+                display_name: row.get(1)?,
+                matches_played: row.get(2)?,
+                matches_won: row.get(3)?,
+                last_seen: row.get(4)?,
+            })
+        },
+    )
+    .ok()
+}
+
 pub fn totals(pool: &DbPool) -> Totals {
     let Ok(conn) = pool.get() else {
         return Totals {

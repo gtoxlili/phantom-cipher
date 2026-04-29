@@ -1,30 +1,45 @@
-// 标签页级的小状态：昵称、是否以房主意图打开 home 页。
-// 跟 identity.ts（localStorage 缓存的指纹身份）分开管，因为这俩
-// 的语义不一样——身份要跨 tab 一致，昵称只对当前 tab 有意义
-// （用户开两个 tab 演两个玩家时各自起名）。
+// 客户端持久状态：
+//   - myName: 昵称——跟 inf-fingerprint visitor_id 一样跨 tab、关浏览器
+//     记住，用 localStorage。语义上要跟服务端 players.display_name
+//     对齐：服务端这条是"该 player_id 最近一局用的昵称"，客户端就保留
+//     "该浏览器最近用过的昵称"，下次进来直接预填，不用再输。
+//   - intentHost: "用户在 home 页点了创建还是加入"，标签页级意图，
+//     跟身份/账号无关，sessionStorage 即可（关 tab 就丢，符合预期）。
 //
-// 注：playerId 已经搬到 identity.ts，那里走的是 inf-fingerprint
-// + localStorage 缓存的稳定 ID 路径。
+// 文件名 session.ts 是历史遗留——之前两个值都是 sessionStorage，现在
+// myName 升级了。re-export 在 game.ts，业务代码从 @/stores/game 引，
+// 文件名不暴露给调用方，先不改。
 
 import { createEffect, createMemo, createSignal, on } from 'solid-js';
 
-function sessionSignal<T>(key: string, initial: T) {
+type StorageKind = 'local' | 'session';
+
+function pickStorage(kind: StorageKind): Storage | null {
+  if (typeof window === 'undefined') return null;
+  try {
+    return kind === 'local' ? window.localStorage : window.sessionStorage;
+  } catch {
+    // Safari 隐私模式有时连 storage 对象都拿不到
+    return null;
+  }
+}
+
+function persistedSignal<T>(key: string, initial: T, kind: StorageKind) {
+  const store = pickStorage(kind);
   let stored: T = initial;
-  if (typeof sessionStorage !== 'undefined') {
-    const raw = sessionStorage.getItem(key);
-    if (raw !== null) {
-      try {
-        stored = JSON.parse(raw) as T;
-      } catch {
-        // 旧版本写进去的、或者被人手动改坏了——忽略，回退到初值
-      }
+  if (store) {
+    try {
+      const raw = store.getItem(key);
+      if (raw !== null) stored = JSON.parse(raw) as T;
+    } catch {
+      // 旧版本写进去的、或者被人手动改坏了——忽略，回退到初值
     }
   }
   const [get, set] = createSignal<T>(stored);
   createEffect(
     on(get, (v) => {
       try {
-        sessionStorage?.setItem(key, JSON.stringify(v));
+        store?.setItem(key, JSON.stringify(v));
       } catch {
         // Safari 隐私模式 / 配额满都会 throw，丢就丢
       }
@@ -33,7 +48,25 @@ function sessionSignal<T>(key: string, initial: T) {
   return [get, set] as const;
 }
 
-export const [myName, setMyName] = sessionSignal<string>('davinci-name', '');
-export const [intentHost, setIntentHost] = sessionSignal<boolean>('davinci-host', false);
+// 一次性迁移：老版本 davinci-name 在 sessionStorage，搬到 localStorage。
+// 已经搬过的下次进来 sessionStorage 已空，迁移条件不再成立，幂等。
+//
+// 不删 sessionStorage 那条不行——会让"sessionStorage 有值 + 用户在
+// 这个 tab 改名"的状态在下次启动时被错误识别成"老用户、迁移"。删了
+// 干净。
+if (typeof window !== 'undefined') {
+  try {
+    const legacy = window.sessionStorage.getItem('davinci-name');
+    if (legacy !== null && window.localStorage.getItem('davinci-name') === null) {
+      window.localStorage.setItem('davinci-name', legacy);
+      window.sessionStorage.removeItem('davinci-name');
+    }
+  } catch {
+    // ignore — 隐私模式 / 配额，老用户重新输一次昵称即可
+  }
+}
+
+export const [myName, setMyName] = persistedSignal<string>('davinci-name', '', 'local');
+export const [intentHost, setIntentHost] = persistedSignal<boolean>('davinci-host', false, 'session');
 
 export const needName = createMemo(() => !myName());
