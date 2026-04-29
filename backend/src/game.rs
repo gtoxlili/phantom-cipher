@@ -510,24 +510,18 @@ impl Game {
             target_player_id: target_player_id.to_string(),
             guesser_id: player_id.to_string(),
             correct,
-            number,
-            color: tile_snapshot.color,
-            joker: tile_snapshot.joker,
+            // 猜错只发骨架——真实属性留在服务端，避免 ws/last_reveal 把
+            // joker 这种关键机密透给观察者。猜对时三项都填全，因为这时
+            // 信息已经公开了
+            number: if correct { number } else { None },
+            color: if correct { Some(tile_snapshot.color) } else { None },
+            joker: if correct { Some(tile_snapshot.joker) } else { None },
         };
         self.last_reveal = Some(reveal.clone());
 
         let guess_label = match number {
             None => format!("{}-", cn(tile_snapshot.color)),
             Some(n) => format!("{}{}", cn(tile_snapshot.color), n),
-        };
-        let truth_label = if tile_snapshot.joker {
-            format!("{}-", cn(tile_snapshot.color))
-        } else {
-            format!(
-                "{}{}",
-                cn(tile_snapshot.color),
-                tile_snapshot.number.unwrap_or(0)
-            )
         };
         let cur_name = self.players[cur_idx].name.clone();
         let target_name = self.players[target_idx].name.clone();
@@ -557,7 +551,7 @@ impl Game {
             self.phase = Phase::Continuing;
         } else {
             self.add_log(format!(
-                "{cur_name} 猜测 {target_name} 的 {guess_label} ✗︎ — 实为 {truth_label}"
+                "{cur_name} 猜测 {target_name} 的 {guess_label} ✗︎"
             ));
             if let Some(mut pd) = self.players[cur_idx].pending_draw.take() {
                 pd.revealed = true;
@@ -741,7 +735,21 @@ impl Game {
             log: snap.log,
             log_counter: snap.log_counter,
             winner_id: snap.winner_id,
-            last_reveal: snap.last_reveal,
+            // 旧版本写盘的 last_reveal 在猜错分支也带着真实 color/joker。
+            // 升级后的进程 rehydrate 时这里把猜错的那几个字段抹掉，
+            // 避免旧帧污染数据在第一次 to_public_state 时再发出去
+            last_reveal: snap.last_reveal.map(|r| {
+                if r.correct {
+                    r
+                } else {
+                    RevealInfo {
+                        number: None,
+                        color: None,
+                        joker: None,
+                        ..r
+                    }
+                }
+            }),
             started_at: snap.started_at,
         }
     }

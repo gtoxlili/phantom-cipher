@@ -52,9 +52,11 @@ export interface RevealInfo {
   targetPlayerId: string;
   guesserId: string;
   correct: boolean;
-  number: number | null;
-  color: Color;
-  joker: boolean;
+  // 后端在猜错时不发这三个字段——joker 是机密，color 牌背可见无需重复，
+  // number 是猜测者输入的不命中时不发。前端只读 correct + tileId + guesserId
+  number?: number | null;
+  color?: Color;
+  joker?: boolean;
 }
 
 export interface PublicGameState {

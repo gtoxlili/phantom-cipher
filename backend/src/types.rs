@@ -87,9 +87,16 @@ pub struct RevealInfo {
     #[serde(rename = "guesserId")]
     pub guesser_id: String,
     pub correct: bool,
+    // 猜错时这三个字段一律为 None：joker 是真实属性，对其他玩家是机密；
+    // color 虽然牌背面就能看出，但没必要在 wire 上重复；number 是猜测者
+    // 自己输入的，命中时等于真实值，不命中时干脆不发，前端反正只用 correct
+    // + tileId + guesserId 做命中/失手动画
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub number: Option<u8>,
-    pub color: Color,
-    pub joker: bool,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub color: Option<Color>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub joker: Option<bool>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
