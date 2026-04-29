@@ -1,0 +1,19 @@
+# 按目标架构指定 CPU 基线，让 rustc 用上 SIMD / BMI2 / FMA 等
+# 现代指令集。这层只对 release 构建有意义（debug 不会跨 LTO 优化
+# 这些路径），CI 多架构产物每个 target 各自看自己这一段。
+#
+# - x86-64-v3：Intel Haswell（2013）/ AMD Excavator（2015）起的 ISA 子集，
+#   AVX2 + BMI2 + FMA + MOVBE 全打开；现在生产机是 EPYC-Rome 完全覆盖。
+#   理论上对 msgpack 编码、SQLite 内部 hash、serde_json 解析有 5-10% 增益。
+#   兼容性边界：往前能跑到 Haswell 时代的所有 x86 服务器，再老的（Sandy
+#   Bridge 之类）跑不动——但谁还在 2026 年部署 2012 年前的服务器。
+#
+# - aarch64：保持 generic ARMv8。生产 ARM 环境太杂（Graviton、RPi、
+#   Apple Silicon、各家国产 ARM），指定具体 microarch 容易在某台机
+#   上爆 illegal instruction。
+
+[target.x86_64-unknown-linux-gnu]
+rustflags = ["-C", "target-cpu=x86-64-v3"]
+
+[target.x86_64-unknown-linux-musl]
+rustflags = ["-C", "target-cpu=x86-64-v3"]
