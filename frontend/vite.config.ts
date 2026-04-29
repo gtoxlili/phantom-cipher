@@ -1,9 +1,38 @@
 import { defineConfig } from 'vite';
 import solidPlugin from 'vite-plugin-solid';
+import { compression } from 'vite-plugin-compression2';
 import path from 'node:path';
+import { constants as zlibConstants } from 'node:zlib';
 
 export default defineConfig({
-  plugins: [solidPlugin()],
+  plugins: [
+    solidPlugin(),
+    // 构建期预压缩——产物旁边出 .br / .gz 兄弟文件。
+    //
+    // 服务器侧 nginx 已配 `brotli_static on; gzip_static on`，但
+    // Vite 默认不产 .br/.gz，导致 *_static 完全没生效，每个未缓存
+    // 请求让 nginx 实时压一次（level 5 中庸值）。预压缩后：
+    //
+    //   - br quality 11（最高比）一次性压好，nginx 直接 sendfile，
+    //     CPU 开销归零
+    //   - 比 nginx 运行时 level 5 再小 10-20%
+    //   - CF 边缘缓存的也是更小的版本，下行带宽双重省
+    //
+    // threshold: 1024 跟 nginx brotli_min_length / gzip_min_length
+    // 对齐——< 1KB 的小文件压不动，省得污染目录
+    compression({
+      algorithm: 'brotliCompress',
+      exclude: [/\.(br|gz|woff2?)$/],
+      threshold: 1024,
+      compressionOptions: { params: { [zlibConstants.BROTLI_PARAM_QUALITY]: 11 } },
+    }),
+    compression({
+      algorithm: 'gzip',
+      exclude: [/\.(br|gz|woff2?)$/],
+      threshold: 1024,
+      compressionOptions: { level: 9 },
+    }),
+  ],
   resolve: {
     alias: {
       '@': path.resolve(import.meta.dirname, 'src'),

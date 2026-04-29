@@ -28,6 +28,11 @@ pub async fn fallback(req: Request, dist_dir: String) -> Response {
         .get("x-forwarded-proto")
         .and_then(|v| v.to_str().ok())
         .map(str::to_string);
+    let accept_encoding = req
+        .headers()
+        .get(header::ACCEPT_ENCODING)
+        .and_then(|v| v.to_str().ok())
+        .map(str::to_string);
 
     if method != Method::GET && method != Method::HEAD {
         return (StatusCode::METHOD_NOT_ALLOWED, "method not allowed").into_response();
@@ -42,15 +47,44 @@ pub async fn fallback(req: Request, dist_dir: String) -> Response {
 
     let last_seg = raw.rsplit('/').next().unwrap_or("");
     if last_seg.contains('.') {
-        return serve_asset(&dist_dir, raw, is_head).await;
+        return serve_asset(&dist_dir, raw, is_head, accept_encoding.as_deref()).await;
     }
 
     serve_spa(&dist_dir, uri.path(), host.as_deref(), scheme_hint.as_deref(), is_head).await
 }
 
-async fn serve_asset(dist_dir: &str, rel_path: &str, is_head: bool) -> Response {
-    let file_path = format!("{dist_dir}/{rel_path}");
-    let bytes = match tokio::fs::read(&file_path).await {
+/// Vite 构建期产 `.br` / `.gz` 兄弟文件（vite-plugin-compression2，br
+/// quality 11 / gzip level 9）。这里按客户端 Accept-Encoding 选最好
+/// 的那个直接送回，nginx 看到 Content-Encoding 就跳过 runtime 压缩，
+/// CF 边缘也存的是更小的版本。woff2 字体内部已经是 brotli 压过的，
+/// Vite 那边 exclude 了，这里也对应找不到 .br，自然 fallback 到原文件。
+async fn serve_asset(
+    dist_dir: &str,
+    rel_path: &str,
+    is_head: bool,
+    accept_encoding: Option<&str>,
+) -> Response {
+    let base_path = format!("{dist_dir}/{rel_path}");
+    let mime = mime_for(&base_path);
+    let cache = cache_for(&base_path);
+
+    let prefers_br = accept_encoding.is_some_and(|ae| accepts_encoding(ae, "br"));
+    let prefers_gzip = accept_encoding.is_some_and(|ae| accepts_encoding(ae, "gzip"));
+
+    // br 优先 —— 同等 Accept-Encoding 下比 gzip 小约 15%
+    if prefers_br {
+        if let Ok(b) = tokio::fs::read(format!("{base_path}.br")).await {
+            return build_compressed_response(b, mime, cache, "br", is_head);
+        }
+    }
+    if prefers_gzip {
+        if let Ok(b) = tokio::fs::read(format!("{base_path}.gz")).await {
+            return build_compressed_response(b, mime, cache, "gzip", is_head);
+        }
+    }
+
+    // 没有预压缩兄弟文件（图标、woff2 等）或客户端不支持 → 回原文件
+    let bytes = match tokio::fs::read(&base_path).await {
         Ok(b) => b,
         Err(_) => {
             return Response::builder()
@@ -62,11 +96,47 @@ async fn serve_asset(dist_dir: &str, rel_path: &str, is_head: bool) -> Response 
     let len = bytes.len();
     let body = if is_head { Body::empty() } else { Body::from(bytes) };
     Response::builder()
-        .header(header::CONTENT_TYPE, mime_for(&file_path))
-        .header(header::CACHE_CONTROL, cache_for(&file_path))
+        .header(header::CONTENT_TYPE, mime)
+        .header(header::CACHE_CONTROL, cache)
         .header(header::CONTENT_LENGTH, len)
+        .header(header::VARY, "Accept-Encoding")
         .body(body)
         .expect("response build")
+}
+
+fn build_compressed_response(
+    bytes: Vec<u8>,
+    mime: &str,
+    cache: &str,
+    encoding: &str,
+    is_head: bool,
+) -> Response {
+    let len = bytes.len();
+    let body = if is_head { Body::empty() } else { Body::from(bytes) };
+    Response::builder()
+        .header(header::CONTENT_TYPE, mime)
+        .header(header::CACHE_CONTROL, cache)
+        .header(header::CONTENT_LENGTH, len)
+        .header(header::CONTENT_ENCODING, encoding)
+        .header(header::VARY, "Accept-Encoding")
+        .body(body)
+        .expect("response build")
+}
+
+/// 在 Accept-Encoding 字段里查指定编码是否可用。
+/// 简化处理——不解析 q-value（q=0 表示明确拒绝，但极少见，一般客户端
+/// 要么列出来要么不列），逗号 + 分号都当分隔符切，命中且不带 `q=0`
+/// 就算支持。
+fn accepts_encoding(accept_encoding: &str, encoding: &str) -> bool {
+    accept_encoding
+        .split(',')
+        .map(str::trim)
+        .any(|part| {
+            let mut segs = part.split(';').map(str::trim);
+            let name = segs.next().unwrap_or("");
+            let rejected = segs.any(|s| s.eq_ignore_ascii_case("q=0") || s.eq_ignore_ascii_case("q=0.0"));
+            !rejected && name.eq_ignore_ascii_case(encoding)
+        })
 }
 
 async fn serve_spa(
