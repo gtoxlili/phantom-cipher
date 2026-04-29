@@ -62,3 +62,8 @@ jobs:
           # 不同分支之间不会互相覆盖
           cache-from: type=gha,scope=${{ github.ref_name }}
           cache-to: type=gha,mode=max,scope=${{ github.ref_name }}
+          # inf-fingerprint 限流豁免 key——build-arg 方式注入，仓库
+          # 代码不见 key。Dockerfile 里 frontend-builder 把它转成
+          # VITE_INF_FP_API_KEY 环境变量喂给 vite build
+          build-args: |
+            INF_FP_API_KEY=${{ secrets.INF_FP_API_KEY }}

@@ -10,7 +10,6 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@fingerprintjs/fingerprintjs": "^5.2.0",
     "@fontsource/bebas-neue": "^5.2.7",
     "@fontsource/inter": "^5.2.8",
     "@fontsource/oswald": "^5.2.8",
@@ -19,6 +18,7 @@
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.16.1",
     "clsx": "^2.1.1",
+    "inf-fingerprint": "^0.1.29",
     "msgpackr": "^1.11.10",
     "solid-js": "^1.9.12",
     "solid-motionone": "^1.0.4"

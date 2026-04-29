@@ -20,9 +20,9 @@ import '@fontsource/oswald/500.css';
 import '@fontsource/oswald/600.css';
 import '@fontsource/oswald/700.css';
 
-// 早 import identity 是为了让 FingerprintJS 在 Home 页用户输入
-// 昵称那几秒就开始算指纹，而不是等导航到 /room/:code 才启动。
-// 一进 Room 几乎肯定已经算完，没有"等指纹"的卡顿
+// 早 import identity 是为了让 inf-fingerprint 在 Home 页用户输入
+// 昵称那几秒就开始 wasm init + 服务端 identify，不等导航到 /room/:code
+// 才启动。一进 Room 几乎肯定已经算完，没有"等指纹"的卡顿
 import '@/stores/identity';
 
 import 'styled-system/styles.css';

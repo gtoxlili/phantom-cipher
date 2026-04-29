@@ -18,9 +18,12 @@ import { startGameStream } from '@/lib/ws';
  * 把 WS 拉起来。后面的 UI 全靠 store 驱动，没有 Context、没有
  * prop drilling。
  *
- * playerId 由 stores/identity.ts 在模块加载时就备好了：能拿到
- * localStorage 缓存的指纹就同步用，否则先 UUID 占位，FingerprintJS
- * 异步算完再悄悄 upgrade。
+ * playerId 由 stores/identity.ts 在模块加载时就备好了：复访时能从
+ * localStorage 镜像（key=davinci-fp-id）同步读出来直接用；首访时
+ * playerId 起步是空字符串，inf-fingerprint wasm init + 服务端
+ * identify 返回后才 set 进来——这期间 join effect 会因 `!pid` 短路
+ * 等待，避免"UUID 占位 → 切真身份"的 race（join 进去服务端记的是
+ * UUID，后续动作改用真 ID 发会被回 not in room）。
  *
  * `mounted` signal 卡一下 first paint，避免 sessionStorage 还没
  * 读出来就先闪一帧错误的分支（NamePrompt vs Board）。
@@ -39,10 +42,10 @@ export default function Room() {
 
   onMount(() => setMounted(true));
 
-  // 等 myName + playerId 都就绪了再 join。playerId 头一次访问时
-  // 是 UUID 兜底，~300ms 后会被 FingerprintJS 升级——这个 effect
-  // 会在升级时再触发一次（pid 变了），但 joined=true 已经 short
-  // circuit 掉重复 join。
+  // 等 myName + playerId 都就绪了再 join。首访时 playerId 一开始是
+  // 空字符串，inf-fingerprint identify 返回（~几百 ms～1s）后才
+  // set 进来——这个 effect 在 set 时再触发一次拿到真 pid，joined=true
+  // 已经 short circuit 掉重复 join。
   createEffect(
     on(
       () => [myName(), playerId(), joined()] as const,

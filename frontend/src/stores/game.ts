@@ -101,7 +101,7 @@ export {
 } from './session';
 
 export {
-  // 浏览器级身份：FingerprintJS visitorId + localStorage 缓存
+  // 浏览器级身份：inf-fingerprint visitor_id + localStorage 镜像
   playerId,
   setPlayerId,
 } from './identity';

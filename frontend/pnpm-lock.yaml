@@ -8,9 +8,6 @@ importers:
 
   .:
     dependencies:
-      '@fingerprintjs/fingerprintjs':
-        specifier: ^5.2.0
-        version: 5.2.0
       '@fontsource/bebas-neue':
         specifier: ^5.2.7
         version: 5.2.7
@@ -35,6 +32,9 @@ importers:
       clsx:
         specifier: ^2.1.1
         version: 2.1.1
+      inf-fingerprint:
+        specifier: ^0.1.29
+        version: 0.1.29
       msgpackr:
         specifier: ^1.11.10
         version: 1.11.10
@@ -332,9 +332,6 @@ packages:
     engines: {node: '>=18'}
     cpu: [x64]
     os: [win32]
-
-  '@fingerprintjs/fingerprintjs@5.2.0':
-    resolution: {integrity: sha512-j+2nInkwCQNTJcNhOjvkGM/nLRTuGJTC6xai4quqvUpjob2ssrGwBZjS7k55nOmKvge7qvJT2nS3i/IRvQSTQA==}
 
   '@fontsource/bebas-neue@5.2.7':
     resolution: {integrity: sha512-DsmBrmq55d9BCU0mt4DT4RZDdH8vhWRKEUOfbuNB1EEjMuwbtFvM8N+3gIlkYSFbsb10P8Q19BV5OdpMu2h0fA==}
@@ -1048,6 +1045,9 @@ packages:
   iconv-lite@0.7.2:
     resolution: {integrity: sha512-im9DjEDQ55s9fL4EYzOAv0yMqmMBSZp6G0VvFyTMPKWxiSBHUj9NW/qqLmXUwXrrM7AvqSlTCfvqRb0cM8yYqw==}
     engines: {node: '>=0.10.0'}
+
+  inf-fingerprint@0.1.29:
+    resolution: {integrity: sha512-+AmPJaGtnCPaPZiQ++MC8pLxNI9C3pLZPBLubqLvZ3ndI/hOcHLFejtqDFtW1eFF2YdhuHnl5/LLsq2uNz7pRQ==}
 
   inherits@2.0.4:
     resolution: {integrity: sha512-k/vGaX4/Yla3WzyMCvTQOXYeIHvqOKtnqBduzTHpzpQZzAskKMhZ2K+EnBiSM9zGSoIFeMpXKxa4dYeZIQqewQ==}
@@ -2007,8 +2007,6 @@ snapshots:
   '@esbuild/win32-x64@0.25.12':
     optional: true
 
-  '@fingerprintjs/fingerprintjs@5.2.0': {}
-
   '@fontsource/bebas-neue@5.2.7': {}
 
   '@fontsource/inter@5.2.8': {}
@@ -2874,6 +2872,8 @@ snapshots:
   iconv-lite@0.7.2:
     dependencies:
       safer-buffer: 2.1.2
+
+  inf-fingerprint@0.1.29: {}
 
   inherits@2.0.4: {}
 

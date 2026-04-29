@@ -32,6 +32,11 @@ COPY frontend/package.json frontend/pnpm-lock.yaml ./
 RUN --mount=type=cache,id=pnpm-store-fe,target=/root/.pnpm-store \
     pnpm install --frozen-lockfile
 COPY frontend/ ./
+# inf-fingerprint 限流豁免 key——CI 走 GitHub Secret，本地构建不
+# 传则为空（identify() 会 omit apiKey 字段，依然可工作）。Vite 检测
+# 到 VITE_ 前缀环境变量自动 inline 进 import.meta.env
+ARG INF_FP_API_KEY=""
+ENV VITE_INF_FP_API_KEY=$INF_FP_API_KEY
 RUN pnpm build
 
 # --- backend-builder: cargo --release with bundled SQLite -----------

@@ -3,7 +3,7 @@
 // 的语义不一样——身份要跨 tab 一致，昵称只对当前 tab 有意义
 // （用户开两个 tab 演两个玩家时各自起名）。
 //
-// 注：playerId 已经搬到 identity.ts，那里走的是 FingerprintJS
+// 注：playerId 已经搬到 identity.ts，那里走的是 inf-fingerprint
 // + localStorage 缓存的稳定 ID 路径。
 
 import { createEffect, createMemo, createSignal, on } from 'solid-js';

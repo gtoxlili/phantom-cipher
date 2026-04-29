@@ -27,6 +27,10 @@ export default defineConfig({
         }),
         defineAlgorithm('gzip', { level: 9 }),
       ],
+      // 显式 include：插件默认 pattern (`html|xml|css|json|js|mjs|svg|yaml|yml|toml`)
+      // 不含 .wasm，inf-fingerprint 那个 345KB 的 wasm 主体不压就是 ~250KB
+      // 浪费下行，加进来后 br q=11 能压到 ~95KB
+      include: [/\.(html|xml|css|json|js|mjs|svg|wasm)$/],
       exclude: [/\.(br|gz|woff2?)$/],
       threshold: 1024,
     }),
