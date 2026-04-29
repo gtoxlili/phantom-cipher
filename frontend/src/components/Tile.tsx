@@ -213,9 +213,19 @@ export function Tile(props: TileProps) {
         </div>
       }
     >
+      {/*
+        onClick 必须裹一层 wrapper 而不是直接 `onClick={props.onClick}`：
+        Solid 的 DOM 事件绑定不是反应式的，prop 变化不会重绑监听器。
+        外层 `<Show when={props.onClick}>` 在 truthy/falsy 切换时会重
+        新挂载 button，看似"修好"了；但万一调用方让 props.onClick 在
+        truthy → 另一个 truthy（不同闭包）之间切换，旧 handler 会被
+        永久保留——跟 Deck.tsx 之前那个 VIOLET 点不动的 bug 同款
+        触发条件。这层 wrapper 让绑定函数永远稳定，body 在 click 时
+        才读 props.onClick，跟反应式绑定等价。
+      */}
       <button
         class={className()}
-        onClick={props.onClick}
+        onClick={() => props.onClick?.()}
         disabled={!props.selectable && !!props.faceDown && !props.ownedHidden}
         style={inlineDelay()}
         type="button"

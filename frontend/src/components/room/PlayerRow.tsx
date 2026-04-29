@@ -114,6 +114,12 @@ export function PlayerRow(props: PlayerRowProps) {
                   selected={props.selectedTileId === c().id}
                   selectable={props.canTarget && !c().revealed && props.player.alive}
                   highlight={isRevealing() ? (props.reveal?.correct ? 'correct' : 'wrong') : null}
+                  // 这里把 onClick 写成 `cond ? fn : undefined` 是依赖
+                  // Tile 内部用的 wrapper（onClick={() => props.onClick?.()}）——
+                  // 那一层让 DOM 绑定不再受 props.onClick 闭包变化影响。
+                  // 如果哪天 Tile 改回 `onClick={props.onClick}` 直绑，
+                  // 这里就是 Deck.tsx 之前 VIOLET 点不动 bug 的同款源头，
+                  // 必须改成永远传函数 + 在内部判断 canTarget。
                   onClick={
                     props.onTileTap && !c().revealed && props.player.alive && props.canTarget
                       ? () => props.onTileTap!(c().id)
