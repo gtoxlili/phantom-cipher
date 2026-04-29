@@ -1,4 +1,4 @@
-import { createSignal, For, Show, type JSX } from 'solid-js';
+import { createSignal, Index, Show, type JSX } from 'solid-js';
 import { useNavigate, useSearchParams } from '@solidjs/router';
 import { Motion, Presence } from 'solid-motionone';
 import { spring } from '@motionone/dom';
@@ -311,30 +311,32 @@ function RoomForm(props: {
   return (
     <form class={s.form} onSubmit={(e) => { e.preventDefault(); props.onSubmit(); }}>
       <h2 class={s.formTitle}><span>{props.title}</span></h2>
-      {/* 必须用 <For>：父组件每次 signal 变更都会让 fields 数组引用刷新，
-          原来的 `.map()` 会在 setup 阶段执行一次，要么把 input 永久绑死成
-          初值，要么每次 signal 变都拆掉重挂载（焦点丢失、光标跳到末尾）。
-          For 配合稳定 key 让 input 元素跨更新复用。
-          `f.value` 类型已改成 `() => string` 的 accessor —— `value={f.value()}`
-          才是真正反应式的绑定，跟 React 的 `value={f.value}` 行为对齐。 */}
-      <For each={props.fields}>
+      {/* Solid 官方文档明确推荐：input 字段、字符串、数字这种"按位置稳定、
+          内容会变"的列表用 <Index> 而不是 <For>。
+          - <For> 按引用 identity 配对，父组件每次 signal 变都让 fields
+            数组引用刷新，整列会拆掉重挂载（焦点丢失、光标跳末尾）。
+          - <Index> 按位置配对，f 是 accessor，fields 数组引用变化也只更新
+            内容，DOM 不重建。
+          配合 `f().value` 这一层 accessor（FieldDef.value: () => string），
+          input 的 value 真正反应式更新，行为跟 React `value={state}` 对齐。 */}
+      <Index each={props.fields}>
         {(f) => (
           <label class={s.field}>
-            <span class={s.fieldLabel}>{f.label}</span>
+            <span class={s.fieldLabel}>{f().label}</span>
             <input
-              class={clsx(f.mono ? s.inputMono : s.input)}
-              value={f.value()}
-              onInput={(e) => f.onChange(e.currentTarget.value)}
-              placeholder={f.placeholder}
-              maxLength={f.maxLength}
-              autofocus={f.autoFocus}
-              inputMode={f.mono ? 'text' : undefined}
-              autocapitalize={f.mono ? 'characters' : 'off'}
+              class={clsx(f().mono ? s.inputMono : s.input)}
+              value={f().value()}
+              onInput={(e) => f().onChange(e.currentTarget.value)}
+              placeholder={f().placeholder}
+              maxLength={f().maxLength}
+              autofocus={f().autoFocus}
+              inputMode={f().mono ? 'text' : undefined}
+              autocapitalize={f().mono ? 'characters' : 'off'}
               autocomplete="off"
               spellcheck={false}
             />
-            <Show when={f.onShuffle}>
-              <button type="button" class={s.shuffleBtn} onClick={() => f.onShuffle?.()}>
+            <Show when={f().onShuffle}>
+              <button type="button" class={s.shuffleBtn} onClick={() => f().onShuffle?.()}>
                 <span class={s.shuffleIcon}><SparkleIcon size="1em" /></span>
                 <span>随机代号 / SHUFFLE</span>
                 <span class={s.shuffleIcon}><SparkleIcon size="1em" /></span>
@@ -342,7 +344,7 @@ function RoomForm(props: {
             </Show>
           </label>
         )}
-      </For>
+      </Index>
       <Show when={props.error}>
         <div class={s.error}>{props.error}</div>
       </Show>

@@ -4,7 +4,7 @@
 // verbatim from @phosphor-icons/react's "fill" / "bold" defs. Every
 // icon shares the 256×256 viewBox and inherits color via currentColor.
 
-import type { JSX } from 'solid-js';
+import { mergeProps, splitProps, type JSX } from 'solid-js';
 
 type Weight = 'fill' | 'bold' | 'regular';
 
@@ -15,16 +15,26 @@ interface IconProps extends Omit<JSX.SvgSVGAttributes<SVGSVGElement>, 'size'> {
   size?: string | number;
 }
 
+// 用 splitProps 把 weight/size 从 props 中拆出来再用 getter 引用
+// props.size——这样维持 Solid 反应式语义（直接 `const { size } = props`
+// 会冻结成首次渲染的值，是官方文档明确点名的反例）。当下所有调用处
+// 传的都是静态字面量，行为不变；改正是为了未来万一传 signal 时也对。
 function svgProps(props: IconProps) {
-  const { weight: _w, size, ...rest } = props;
-  return {
-    xmlns: 'http://www.w3.org/2000/svg',
-    width: size ?? '1em',
-    height: size ?? '1em',
-    fill: 'currentColor',
-    viewBox: '0 0 256 256',
-    ...rest,
-  } as JSX.SvgSVGAttributes<SVGSVGElement>;
+  const [, rest] = splitProps(props, ['weight', 'size']);
+  return mergeProps(
+    {
+      xmlns: 'http://www.w3.org/2000/svg',
+      get width() {
+        return props.size ?? '1em';
+      },
+      get height() {
+        return props.size ?? '1em';
+      },
+      fill: 'currentColor',
+      viewBox: '0 0 256 256',
+    },
+    rest,
+  ) as JSX.SvgSVGAttributes<SVGSVGElement>;
 }
 
 /** Solid triangle pointing right. */
