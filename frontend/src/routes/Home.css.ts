@@ -637,9 +637,16 @@ export const footerLink = css({
 });
 
 /* 邮件 icon 链接：跟 footerLink 共享 hover/focus 翻红效果，但
- * SVG 不需要 letter-spacing/text-transform 这些文字属性。padding
- * 加宽一点让 icon 视觉居中，同时凑出 ≥24px 触摸命中区。SVG 用
- * currentColor 跟 a 的 color 自动联动，hover 时一起翻 blood。 */
+ * SVG 不需要 letter-spacing/text-transform 这些文字属性。
+ *
+ * 横向 padding 故意跟 footerLink 一致（4px）：之前给 6/7px 是为了
+ * 让触摸区严格 ≥24px，结果 @gtoxlili → envelope 间距比 crafted by
+ * → @gtoxlili 多 6px，视觉明显不均。改 4px 全方向后 mobile envelope
+ * 触摸区 22×22 略低于 24 推荐值但接近，desktop 24×24 达标——视觉
+ * 间距优先级换触摸区那 2px 是合理取舍（envelope 是辅助 icon 不是
+ * 高频操作）。
+ *
+ * SVG 用 currentColor 跟 a 的 color 自动联动，hover 时一起翻 blood。 */
 export const footerMailLink = css({
   display: 'inline-flex',
   alignItems: 'center',
@@ -647,7 +654,7 @@ export const footerMailLink = css({
   fontSize: { base: '13px', lg: '15px' },
   color: 'paper',
   opacity: 0.6,
-  padding: { base: '4px 6px', lg: '4px 7px' },
+  padding: '4px',
   borderBottom: '1.5px solid transparent',
   transition: 'color 0.16s ease, opacity 0.16s ease, border-color 0.16s ease',
   _hover: {
