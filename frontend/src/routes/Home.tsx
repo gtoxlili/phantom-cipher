@@ -286,23 +286,28 @@ export default function Home() {
         </div>
         <div class={s.footerByline}>
           <span class={s.footerCreditLabel}>crafted by</span>
-          <a
-            class={s.footerLink}
-            href="https://github.com/gtoxlili"
-            target="_blank"
-            rel="noopener noreferrer"
-            aria-label="作者 GitHub"
-          >
-            @gtoxlili
-          </a>
-          <a
-            class={s.footerMailLink}
-            href="mailto:gtoxlili@outlook.com"
-            aria-label="发邮件给作者"
-            title="gtoxlili@outlook.com"
-          >
-            <EnvelopeIcon size="1.05em" />
-          </a>
+          {/* @gtoxlili + envelope 当作"作者 ID + 联系方式"一组，
+              用嵌套 inline-flex 包起来，gap=0，让它们紧贴；外层
+              byline 的 gap 只管"crafted by → 这一组"的间距 */}
+          <span class={s.footerByPair}>
+            <a
+              class={s.footerLink}
+              href="https://github.com/gtoxlili"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="作者 GitHub"
+            >
+              @gtoxlili
+            </a>
+            <a
+              class={s.footerMailLink}
+              href="mailto:gtoxlili@outlook.com"
+              aria-label="发邮件给作者"
+              title="gtoxlili@outlook.com"
+            >
+              <EnvelopeIcon size="1.05em" />
+            </a>
+          </span>
         </div>
       </footer>
     </main>

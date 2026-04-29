@@ -600,6 +600,15 @@ export const footerByline = css({
   gap: { base: '8px', lg: '10px' },
 });
 
+/* @gtoxlili + envelope 一组：gap=0 让它们紧贴，envelope link 自己
+ * 在 footerMailLink 里把左 padding 抹零，最终视觉间距只剩 footerLink
+ * 自己的 padding-right (4px)，跟 "crafted by → @gtoxlili" 那段
+ * 8-10px 拉开层级，整体读出来像"crafted by · {作者ID 联系方式}" */
+export const footerByPair = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+});
+
 export const footerCreditLabel = css({
   fontFamily: 'condensed',
   fontWeight: 700,
@@ -654,7 +663,10 @@ export const footerMailLink = css({
   fontSize: { base: '13px', lg: '15px' },
   color: 'paper',
   opacity: 0.6,
-  padding: '4px',
+  // 左 padding 抹零——@gtoxlili 跟 envelope 紧贴。视觉间距只靠
+  // @gtoxlili 自己 padding-right (4px) 撑开，跟"crafted by → @gtoxlili"
+  // 那段 8-10px gap 拉开层级
+  padding: '4px 4px 4px 0',
   borderBottom: '1.5px solid transparent',
   transition: 'color 0.16s ease, opacity 0.16s ease, border-color 0.16s ease',
   _hover: {
