@@ -83,15 +83,19 @@ export function setReveal(info: RevealInfo) {
 // 把零散的状态合并成一个总入口，方便 import 时一行搞定。
 // 用 named exports 是因为 tree-shake 友好，IDE 自动补全也更好。
 export {
-  // 身份相关
+  // 标签页级状态：昵称 / 房主意图
   myName,
   setMyName,
-  playerId,
-  setPlayerId,
   intentHost,
   setIntentHost,
   needName,
 } from './session';
+
+export {
+  // 浏览器级身份：FingerprintJS visitorId + localStorage 缓存
+  playerId,
+  setPlayerId,
+} from './identity';
 
 export {
   // toast 队列

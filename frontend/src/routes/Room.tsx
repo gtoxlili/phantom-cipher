@@ -9,18 +9,21 @@ import {
   playerId,
   setCurrentRoomCode,
   setIntentHost,
-  setPlayerId,
 } from '@/stores/game';
 import { actions } from '@/lib/api';
 import { startGameStream } from '@/lib/ws';
 
 /**
- * `/room/:code` 路由的入口组件——把房间码写进 store、补一个 pid、
- * 自动 join、再把 WS 拉起来。后面的 UI 全靠 store 驱动，没有
- * Context、没有 prop drilling。
+ * `/room/:code` 路由的入口组件——把房间码写进 store、自动 join、
+ * 把 WS 拉起来。后面的 UI 全靠 store 驱动，没有 Context、没有
+ * prop drilling。
  *
- * 用 `mounted` signal 卡一下 first paint，避免 sessionStorage 还没
- * 读出来时先闪一帧错误的分支（NamePrompt vs Board）。
+ * playerId 由 stores/identity.ts 在模块加载时就备好了：能拿到
+ * localStorage 缓存的指纹就同步用，否则先 UUID 占位，FingerprintJS
+ * 异步算完再悄悄 upgrade。
+ *
+ * `mounted` signal 卡一下 first paint，避免 sessionStorage 还没
+ * 读出来就先闪一帧错误的分支（NamePrompt vs Board）。
  */
 export default function Room() {
   const params = useParams<{ code: string }>();
@@ -34,17 +37,12 @@ export default function Room() {
   });
   onCleanup(() => setCurrentRoomCode(''));
 
-  // Stable per-tab UUID. The id is persisted in sessionStorage via the
-  // store's initialiser; this effect just guarantees it's populated.
-  onMount(() => {
-    if (!playerId()) setPlayerId(crypto.randomUUID());
-    setMounted(true);
-  });
+  onMount(() => setMounted(true));
 
-  // Fire the join action when both name & pid are ready. The `on(...,
-  // {defer: true})` would let us run on subsequent changes only; here
-  // we want the first tick after both are present, so we gate with
-  // `joined`.
+  // 等 myName + playerId 都就绪了再 join。playerId 头一次访问时
+  // 是 UUID 兜底，~300ms 后会被 FingerprintJS 升级——这个 effect
+  // 会在升级时再触发一次（pid 变了），但 joined=true 已经 short
+  // circuit 掉重复 join。
   createEffect(
     on(
       () => [myName(), playerId(), joined()] as const,

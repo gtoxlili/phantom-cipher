@@ -1,10 +1,10 @@
-// 与 sessionStorage 绑定的小工具。原版 Jotai 的 atomWithStorage
-// 干的是同样的事——读初值的时候同步从 sessionStorage 拿，写的时候
-// 顺带写回去。Solid 没有现成的 helper，自己做一层很薄就够了。
+// 标签页级的小状态：昵称、是否以房主意图打开 home 页。
+// 跟 identity.ts（localStorage 缓存的指纹身份）分开管，因为这俩
+// 的语义不一样——身份要跨 tab 一致，昵称只对当前 tab 有意义
+// （用户开两个 tab 演两个玩家时各自起名）。
 //
-// 注意只用 sessionStorage（标签页级），不是 localStorage。两边
-// 行为差很多：sessionStorage 不跨 tab、关 tab 即销毁，正好就是
-// 我们想要的"每个 tab 一个玩家身份"语义。
+// 注：playerId 已经搬到 identity.ts，那里走的是 FingerprintJS
+// + localStorage 缓存的稳定 ID 路径。
 
 import { createEffect, createMemo, createSignal, on } from 'solid-js';
 
@@ -33,7 +33,6 @@ function sessionSignal<T>(key: string, initial: T) {
   return [get, set] as const;
 }
 
-export const [playerId, setPlayerId] = sessionSignal<string>('davinci-pid', '');
 export const [myName, setMyName] = sessionSignal<string>('davinci-name', '');
 export const [intentHost, setIntentHost] = sessionSignal<boolean>('davinci-host', false);
 
