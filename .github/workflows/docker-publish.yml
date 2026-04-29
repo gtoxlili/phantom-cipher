@@ -2,12 +2,8 @@ name: Build & Publish Image
 
 on:
   push:
-    branches:
-      - main
-      - 'experimental/**'
-    # Pure docs / license tweaks shouldn't burn ~5min of multi-arch
-    # build time. Anything that affects the runtime artifact is not
-    # in this list.
+    branches: [main]
+    # 文档 / license 改动不该烧 5 分钟多架构构建
     paths-ignore:
       - '**.md'
       - 'LICENSE'
@@ -15,9 +11,7 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  # Don't cancel mid-build: the SHA-tagged image for an intermediate
-  # commit is occasionally useful for bisecting deploys, and pushing
-  # a flurry of commits to main isn't typical anyway.
+  # 不取消已在跑的——单 commit 的 :sha-xxxxxxx 镜像偶尔回滚要用
   cancel-in-progress: false
 
 env:
@@ -32,50 +26,36 @@ jobs:
       packages: write
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      # QEMU lets a single amd64 runner cross-compile arm64 layers.
-      # Slower than a native arm64 runner, but free on the standard
-      # GitHub-hosted plan — fine for an image this size.
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
+      # QEMU 让单台 amd64 runner 能交叉编 arm64 层。比原生 arm64 慢，
+      # 但免费档够用，多花点构建时间换不用维护多个 runner pool。
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to GHCR
-        uses: docker/login-action@v3
+      - uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      # main → :latest + :sha-<short>.
-      # experimental/* → :experimental + :experimental-sha-<short>.
-      # That way the :latest deployment command in the README keeps
-      # pointing at the production image, while experimental work
-      # still lands in GHCR for the deploy machine to pull.
-      - name: Compute tags & labels
-        id: meta
+      # :latest 给部署命令固定指，:sha-<short> 给回滚和 bisect 用
+      - id: meta
         uses: docker/metadata-action@v5
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
-            type=sha,format=short,enable=${{ github.ref == 'refs/heads/main' }}
-            type=raw,value=experimental,enable=${{ startsWith(github.ref, 'refs/heads/experimental/') }}
-            type=raw,value=experimental-{{sha}},enable=${{ startsWith(github.ref, 'refs/heads/experimental/') }}
+            type=raw,value=latest
+            type=sha,format=short
 
-      - name: Build & push
-        uses: docker/build-push-action@v6
+      - uses: docker/build-push-action@v6
         with:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          # GHA cache keyed on the workflow + ref so experimental
-          # and main builds don't trash each other's layer cache.
+          # GHA 缓存按 ref 隔离——同一分支多次 push 共享层缓存，
+          # 不同分支之间不会互相覆盖
           cache-from: type=gha,scope=${{ github.ref_name }}
           cache-to: type=gha,mode=max,scope=${{ github.ref_name }}

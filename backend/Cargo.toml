@@ -36,7 +36,7 @@ thiserror = "2.0.18"
 tokio = { version = "1.52.1", features = ["macros", "rt-multi-thread", "signal", "sync", "time", "io-util", "fs", "net"] }
 tokio-stream = { version = "0.1.18", features = ["sync"] }
 tower = "0.5.3"
-tower-http = { version = "0.6.8", features = ["fs", "compression-br", "compression-gzip", "trace", "set-header", "cors"] }
+tower-http = { version = "0.6.8", features = ["fs", "trace", "set-header", "cors"] }
 tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
 uuid = { version = "1.23.1", features = ["v4", "serde"] }

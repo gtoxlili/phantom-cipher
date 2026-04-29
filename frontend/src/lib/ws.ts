@@ -28,6 +28,12 @@ const unpackr = new Unpackr({ useRecords: false });
 const RECONNECT_INITIAL_MS = 800;
 const RECONNECT_MAX_MS = 30_000;
 
+// 心跳间隔。NAT / 反代的 idle 超时通常 30~60s 一刀切，挑 25s 比
+// 大多数中间设备的下限再短一拍，足够让连接看起来"活的"。发送的是
+// 空文本帧，服务端 run_ws 的读循环本来就 drain 掉所有非 close 的
+// 帧，不需要后端配合做任何事。
+const HEARTBEAT_INTERVAL_MS = 25_000;
+
 /**
  * Open a WebSocket to the active room and pipe inbound binary
  * frames into the corresponding Solid signals. The hook is
@@ -39,6 +45,7 @@ const RECONNECT_MAX_MS = 30_000;
 export function startGameStream(ready: () => boolean) {
   let socket: WebSocket | null = null;
   let reconnectTimer: number | undefined;
+  let heartbeatTimer: number | undefined;
   let reconnectAttempt = 0;
   let teardown: (() => void) | null = null;
 
@@ -49,11 +56,19 @@ export function startGameStream(ready: () => boolean) {
     }
   }
 
+  function clearHeartbeat() {
+    if (heartbeatTimer !== undefined) {
+      window.clearInterval(heartbeatTimer);
+      heartbeatTimer = undefined;
+    }
+  }
+
   function close() {
     clearReconnect();
+    clearHeartbeat();
     if (socket) {
-      // Listeners removed first so an in-flight close doesn't
-      // schedule a new reconnect on top of the explicit teardown.
+      // 先卸 listener 再 close——避免 in-flight 的 close 事件
+      // 又触发一次重连，跟手动 teardown 撞车
       socket.onopen = null;
       socket.onclose = null;
       socket.onerror = null;
@@ -61,7 +76,7 @@ export function startGameStream(ready: () => boolean) {
       try {
         socket.close();
       } catch {
-        /* already closed */
+        // 已经关了
       }
       socket = null;
     }
@@ -78,18 +93,30 @@ export function startGameStream(ready: () => boolean) {
     ws.addEventListener('open', () => {
       reconnectAttempt = 0;
       setConnected(true);
+      // 连接稳定后才开始心跳。close 时统一清。
+      clearHeartbeat();
+      heartbeatTimer = window.setInterval(() => {
+        if (ws.readyState === WebSocket.OPEN) {
+          // 空文本帧——服务端 receive loop 会消费掉，反代/NAT 看到
+          // 字节流不会判定 idle
+          try {
+            ws.send('');
+          } catch {
+            // 写失败说明连接已经死了，让 onclose 接管重连
+          }
+        }
+      }, HEARTBEAT_INTERVAL_MS);
     });
     ws.addEventListener('error', () => {
-      // The error event fires before close; let close() handle
-      // the reconnect scheduling.
+      // error 事件会先于 close 触发，重连调度统一交给 onclose
       setConnected(false);
     });
     ws.addEventListener('close', (ev) => {
       setConnected(false);
-      // 1000 (normal) and 1001 (going-away) are explicit closes —
-      // typically our own teardown, the server shutting down, or
-      // navigation. Reconnect on anything that isn't a clean exit.
-      if (socket !== ws) return; // superseded by a newer connect
+      clearHeartbeat();
+      // 1000/1001 是干净关闭（自己 teardown / 服务端 shutdown /
+      // 浏览器导航），不重连；其他 code 都视为意外断开
+      if (socket !== ws) return;
       socket = null;
       if (ev.code === 1000 || ev.code === 1001) return;
       scheduleReconnect(code, pid);

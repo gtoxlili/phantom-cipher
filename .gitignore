@@ -43,3 +43,7 @@ data/
 *.db-journal
 *.db-shm
 *.db-wal
+
+# 生产环境 nginx 配置——只在本地维护，部署时直接拖到生产机；
+# 仓库里不存这种带域名 / 证书路径 / 内网拓扑的玩意
+nginx-conf/

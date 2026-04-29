@@ -24,7 +24,6 @@ use axum::extract::Request;
 use axum::routing::any;
 use axum::Router;
 use std::sync::Arc;
-use tower_http::compression::CompressionLayer;
 use tower_http::trace::TraceLayer;
 
 #[tokio::main(flavor = "multi_thread")]
@@ -43,6 +42,10 @@ async fn main() -> Result<()> {
         disconnect,
     });
 
+    // 压缩这层故意没挂——前面的 nginx（Cloudflare 边缘 + KTLS 那台）
+    // 在 proxy_set_header Accept-Encoding "" 把请求里的编码协商抹掉，
+    // 由它统一做 brotli/gzip。在 Rust 这边再加一层只是死代码 + 让
+    // 二进制变大。哪天裸跑（不过 nginx）再补 CompressionLayer。
     let dist = cfg.dist_dir.clone();
     let app = Router::new()
         .merge(routes::router(state))
@@ -50,8 +53,7 @@ async fn main() -> Result<()> {
             let dist = dist.clone();
             async move { spa::fallback(req, dist).await }
         }))
-        .layer(TraceLayer::new_for_http())
-        .layer(CompressionLayer::new().br(true).gzip(true));
+        .layer(TraceLayer::new_for_http());
 
     let listener = tokio::net::TcpListener::bind(("0.0.0.0", cfg.port)).await?;
     tracing::info!(port = cfg.port, rooms_loaded = store.len(), "phantom-cipher listening");
