@@ -20,10 +20,30 @@ import {
 } from '@/stores/game';
 import type { ServerEvent } from '@/types';
 
-// `useRecords: false` keeps msgpackr off its compact "record"
-// extension type so the wire format is portable with the Rust
-// backend's standard map encoding.
-const unpackr = new Unpackr({ useRecords: false });
+// msgpackr 解码配置——这两个 flag 加起来才能正确处理我们的 wire。
+//
+// `useRecords: false`：不走 msgpackr 的 record 扩展类型，跟 Rust
+// 端 rmp-serde 默认输出的标准 map 编码对齐。
+//
+// `int64AsNumber: true`：把 i64/u64 一律解成 Number 而不是 BigInt。
+// rmp-serde 把 i64 时间戳编成 msgpack 64-bit 整数，msgpackr 默认
+// 解出来是 BigInt，前端做 `deadline - Date.now()` 这种算术会撞
+// "Cannot mix BigInt and other types"——这是 SYSTEM CRASH 弹窗的
+// 实际肇事者。
+//
+// 转 Number 会不会丢精度：JS Number 精确表达 ±2^53 ≈ 9×10^15。
+// 我们所有的 i64/u64 字段都人工验证过在范围内：
+//   - ms epoch 时间戳 ~1.7×10^12  → 撑到公元 287,396 年才溢出
+//   - matches.id / log_counter 自增 → 281 万亿条记录后才溢出
+//   - matches_played/won、duration_ms、deck count、reveal number、
+//     player tile position …                                 → 上千以内
+// Stats 端点走 JSON（无 i64 类型，浏览器一律解 Number）也是同款
+// 假设——本来就是同一边界。
+//
+// 哪天真塞了一个超过 2^53 的整数（雪花 ID、加密 nonce），需要回
+// 来重审这条决策：要么把那个字段改 string，要么单独写个 unpacker
+// 把这一个字段保留成 BigInt。
+const unpackr = new Unpackr({ useRecords: false, int64AsNumber: true });
 
 const RECONNECT_INITIAL_MS = 800;
 const RECONNECT_MAX_MS = 30_000;
