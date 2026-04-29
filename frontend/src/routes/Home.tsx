@@ -1,11 +1,11 @@
-import { createSignal, Show, type JSX } from 'solid-js';
+import { createSignal, For, Show, type JSX } from 'solid-js';
 import { useNavigate, useSearchParams } from '@solidjs/router';
 import { Motion, Presence } from 'solid-motionone';
 import { spring } from '@motionone/dom';
 import clsx from 'clsx';
 import { Sketch } from '@/components/Sketch';
 import { ArrowLeftIcon, PlayIcon, SparkleIcon } from '@/components/icons';
-import { intentHost, myName, setIntentHost, setMyName } from '@/stores/game';
+import { myName, setIntentHost, setMyName } from '@/stores/game';
 import { pickRandomCodename } from '@/lib/codenames';
 import * as s from './Home.css';
 
@@ -218,7 +218,7 @@ export default function Home() {
                   {
                     key: 'name',
                     label: 'Codename · 你的代号',
-                    value: myName() ?? '',
+                    value: () => myName() ?? '',
                     onChange: (v) => { setMyName(v); setError(''); },
                     placeholder: 'JOKER',
                     maxLength: 16,
@@ -251,7 +251,7 @@ export default function Home() {
                   {
                     key: 'name',
                     label: 'Codename · 你的代号',
-                    value: myName() ?? '',
+                    value: () => myName() ?? '',
                     onChange: (v) => { setMyName(v); setError(''); },
                     placeholder: 'JOKER',
                     maxLength: 16,
@@ -261,7 +261,7 @@ export default function Home() {
                   {
                     key: 'code',
                     label: 'Cipher Key · 房间密码',
-                    value: code(),
+                    value: () => code(),
                     onChange: (v) => { setCode(v.toUpperCase().replace(/[^A-Z0-9]/g, '').slice(0, 4)); setError(''); },
                     placeholder: 'XXXX',
                     maxLength: 4,
@@ -286,7 +286,11 @@ export default function Home() {
 interface FieldDef {
   key: string;
   label: string;
-  value: string;
+  /** Accessor — Solid 反应式：组件 setup 阶段只跑一次，靠 getter 在每次
+   *  渲染或变化时重新读取最新值。如果改回 `value: string`，父组件每次
+   *  改 signal 都会让 fields 数组引用换新，下面的 <For> 会拆掉重挂载，
+   *  输入框失焦、光标跳到末尾——这就是 React→Solid 迁移的经典坑。 */
+  value: () => string;
   onChange: (v: string) => void;
   placeholder?: string;
   maxLength?: number;
@@ -307,30 +311,38 @@ function RoomForm(props: {
   return (
     <form class={s.form} onSubmit={(e) => { e.preventDefault(); props.onSubmit(); }}>
       <h2 class={s.formTitle}><span>{props.title}</span></h2>
-      {props.fields.map((f) => (
-        <label class={s.field}>
-          <span class={s.fieldLabel}>{f.label}</span>
-          <input
-            class={clsx(f.mono ? s.inputMono : s.input)}
-            value={f.value}
-            onInput={(e) => f.onChange(e.currentTarget.value)}
-            placeholder={f.placeholder}
-            maxLength={f.maxLength}
-            autofocus={f.autoFocus}
-            inputMode={f.mono ? 'text' : undefined}
-            autocapitalize={f.mono ? 'characters' : 'off'}
-            autocomplete="off"
-            spellcheck={false}
-          />
-          {f.onShuffle && (
-            <button type="button" class={s.shuffleBtn} onClick={f.onShuffle}>
-              <span class={s.shuffleIcon}><SparkleIcon size="1em" /></span>
-              <span>随机代号 / SHUFFLE</span>
-              <span class={s.shuffleIcon}><SparkleIcon size="1em" /></span>
-            </button>
-          )}
-        </label>
-      ))}
+      {/* 必须用 <For>：父组件每次 signal 变更都会让 fields 数组引用刷新，
+          原来的 `.map()` 会在 setup 阶段执行一次，要么把 input 永久绑死成
+          初值，要么每次 signal 变都拆掉重挂载（焦点丢失、光标跳到末尾）。
+          For 配合稳定 key 让 input 元素跨更新复用。
+          `f.value` 类型已改成 `() => string` 的 accessor —— `value={f.value()}`
+          才是真正反应式的绑定，跟 React 的 `value={f.value}` 行为对齐。 */}
+      <For each={props.fields}>
+        {(f) => (
+          <label class={s.field}>
+            <span class={s.fieldLabel}>{f.label}</span>
+            <input
+              class={clsx(f.mono ? s.inputMono : s.input)}
+              value={f.value()}
+              onInput={(e) => f.onChange(e.currentTarget.value)}
+              placeholder={f.placeholder}
+              maxLength={f.maxLength}
+              autofocus={f.autoFocus}
+              inputMode={f.mono ? 'text' : undefined}
+              autocapitalize={f.mono ? 'characters' : 'off'}
+              autocomplete="off"
+              spellcheck={false}
+            />
+            <Show when={f.onShuffle}>
+              <button type="button" class={s.shuffleBtn} onClick={() => f.onShuffle?.()}>
+                <span class={s.shuffleIcon}><SparkleIcon size="1em" /></span>
+                <span>随机代号 / SHUFFLE</span>
+                <span class={s.shuffleIcon}><SparkleIcon size="1em" /></span>
+              </button>
+            </Show>
+          </label>
+        )}
+      </For>
       <Show when={props.error}>
         <div class={s.error}>{props.error}</div>
       </Show>
