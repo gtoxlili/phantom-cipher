@@ -21,20 +21,23 @@
 // 所以**不是**真正的"账号系统"——只是"比 sessionStorage UUID 更
 // 接近真实玩家身份的近似"。要严格的多设备身份还是得做账号。
 
-import init, { identify } from 'inf-fingerprint';
+import init, { identify, type IdentifyOptions } from 'inf-fingerprint';
 import { createSignal } from 'solid-js';
 
 const STORAGE_KEY = 'davinci-fp-id';
 const FP_ENDPOINT = 'https://fp.influo-ai.com/v1/identify';
-// 限流豁免 key，从 GitHub Secrets → Docker build-arg → Vite define
-// 走 import.meta.env 注入。仓库代码里**不再 hardcode**（公开仓库
-// clone 就泄露），但 vite build 完成后这个值仍然会被 inline 进 dist
-// 的 JS——浏览器端任何 secret 都是这个命运，CI 注入的目标只是让
-// 仓库代码层干净。本地开发在 frontend/.env.local 填值（已 gitignored）。
+// 限流豁免 key，运维层（nginx/网关/WAF）匹配此 key 的请求会绕过
+// 常规限流。从 GitHub Secrets → Docker build-arg → Vite define 走
+// import.meta.env 注入：仓库代码不 hardcode（公开仓库 clone 就
+// 泄露），CI 构建时才装进去。本地开发在 frontend/.env.local 填值
+// （已 gitignored）。
 //
-// 文档 §八 也说浏览器场景这个 key 给业务逻辑用没意义（服务端不校验），
-// 它只对运维层"命中此 key 则限流豁免"才生效——所以即使 CI 没注入、
-// 此变量为空，identify() 也能正常工作，只是不享受限流豁免。
+// vite build 后这个值仍然会被 inline 进 dist 的 JS——任何前端 secret
+// 都是这个命运，CI 注入的目标只是让仓库代码层干净 + key 轮换不需要
+// 改代码（改 GitHub Secret 重 build 即可）。
+//
+// 没注入时 FP_API_KEY 为空，identify() 仍正常工作，只是不享受限流
+// 豁免——本地 dev 没填值也能跑。
 const FP_API_KEY = import.meta.env.VITE_INF_FP_API_KEY ?? '';
 
 function readCached(): string | null {
@@ -74,12 +77,11 @@ void (async () => {
   try {
     // wasm 模块加载——首次 ~50-100ms，浏览器后续自动缓存
     await init();
-    const result = await identify({
-      endpoint: FP_ENDPOINT,
-      // 没注入时 FP_API_KEY 是空字符串——干脆 omit 字段，避免
-      // 给 inf-fingerprint SDK 传一个 falsy 串
-      ...(FP_API_KEY ? { apiKey: FP_API_KEY } : {}),
-    });
+    // FP_API_KEY 没注入就 omit 整个字段（IdentifyOptions.apiKey 是
+    // optional），避免给 SDK 传一个 falsy 空串扰乱 SDK 内部判断
+    const opts: IdentifyOptions = { endpoint: FP_ENDPOINT };
+    if (FP_API_KEY) opts.apiKey = FP_API_KEY;
+    const result = await identify(opts);
 
     // offline 降级（服务端不可达）：文档明确警告 visitor_id 是本地
     // xxh3 哈希，"不要持久化或作为业务主键"。这里按"没缓存退化成
