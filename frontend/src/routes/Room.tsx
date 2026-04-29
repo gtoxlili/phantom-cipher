@@ -15,16 +15,12 @@ import { actions } from '@/lib/api';
 import { startGameStream } from '@/lib/ws';
 
 /**
- * Combined entry point for `/room/:code`. The active room code, player
- * id, and join state all live in module-level Solid stores — no React
- * context, no prop drilling.
+ * `/room/:code` 路由的入口组件——把房间码写进 store、补一个 pid、
+ * 自动 join、再把 WS 拉起来。后面的 UI 全靠 store 驱动，没有
+ * Context、没有 prop drilling。
  *
- * Mount-gated because the NamePrompt-vs-Board branch reads from
- * sessionStorage-backed signals, which are populated synchronously from
- * sessionStorage on import. The mount gate keeps the visible branch
- * decision deferred to a tick after onMount so any URL-driven side
- * effects (like persisting the room code) are in flight first — same
- * intent as the original Next.js hydration gate.
+ * 用 `mounted` signal 卡一下 first paint，避免 sessionStorage 还没
+ * 读出来时先闪一帧错误的分支（NamePrompt vs Board）。
  */
 export default function Room() {
   const params = useParams<{ code: string }>();

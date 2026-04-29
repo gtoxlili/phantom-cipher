@@ -29,15 +29,14 @@ function DeckChoice(props: {
 }
 
 export function ActionZone() {
-  const v = gameView;
 
   return (
-    <Show when={v().state}>
+    <Show when={gameView().state}>
       <Show
-        when={v().state!.phase !== 'waiting'}
+        when={gameView().state!.phase !== 'waiting'}
         fallback={
           <Show
-            when={v().isHost}
+            when={gameView().isHost}
             fallback={
               <section class={s.zone}>
                 <div class={s.waitingMsg}>WAITING FOR HOST</div>
@@ -46,7 +45,7 @@ export function ActionZone() {
           >
             {(() => {
               // Make explicit that any count between 2 and 4 is enough to start.
-              const n = () => v().state!.players.length;
+              const n = () => gameView().state!.players.length;
               const ready = () => n() >= 2;
               return (
                 <section class={s.zone}>
@@ -69,25 +68,25 @@ export function ActionZone() {
         }
       >
         <Show
-          when={v().state!.phase === 'ended'}
+          when={gameView().state!.phase === 'ended'}
           fallback={
             <Show
               when={
-                v().phase === 'drawing' ||
-                v().phase === 'placing' ||
-                v().phase === 'guessing' ||
-                v().phase === 'continuing'
+                gameView().phase === 'drawing' ||
+                gameView().phase === 'placing' ||
+                gameView().phase === 'guessing' ||
+                gameView().phase === 'continuing'
               }
               fallback={<section class={s.zone} />}
             >
               <section class={s.zone}>
                 <DeckChoice
-                  blackCount={v().deckBlackCount}
-                  whiteCount={v().deckWhiteCount}
-                  canDraw={v().canDraw}
+                  blackCount={gameView().deckBlackCount}
+                  whiteCount={gameView().deckWhiteCount}
+                  canDraw={gameView().canDraw}
                   onDraw={(c) => actions.draw(c)}
                 />
-                <Show when={v().phase === 'continuing' && v().isMyTurn}>
+                <Show when={gameView().phase === 'continuing' && gameView().isMyTurn}>
                   <div class={s.continueGroup}>
                     <button class={shared.btnPrimary} onClick={() => actions.decideContinue(true)} type="button">
                       <span class={shared.skewInner}>继续 PRESS ON</span>
@@ -102,8 +101,8 @@ export function ActionZone() {
           }
         >
           {(() => {
-            const winner = () => v().state!.players.find((p) => p.id === v().state!.winnerId);
-            const won = () => !!v().myId && v().state!.winnerId === v().myId;
+            const winner = () => gameView().state!.players.find((p) => p.id === gameView().state!.winnerId);
+            const won = () => !!gameView().myId && gameView().state!.winnerId === gameView().myId;
             return (
               <section class={s.zone}>
                 <div class={s.endPanel}>
@@ -114,7 +113,7 @@ export function ActionZone() {
                     </span>
                   </div>
                   <Show
-                    when={v().isHost}
+                    when={gameView().isHost}
                     fallback={<div class={s.endHint}>WAIT FOR HOST</div>}
                   >
                     <button class={clsx(shared.btnPrimary, s.endResetBtn)} onClick={() => actions.reset()} type="button">

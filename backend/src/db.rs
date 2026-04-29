@@ -1,13 +1,11 @@
-//! SQLite persistence layer — direct port of lib/db.ts.
+//! SQLite 持久化层。
 //!
-//! Same schema, same pragmas, same idempotent archival semantics.
-//! r2d2 + rusqlite gives a small connection pool (default 10) so
-//! reads from the stats endpoint don't block writes from action
-//! handlers. WAL mode lets the writer run alongside readers.
-//!
-//! Snapshot bodies are stored as MessagePack bytes in a BLOB
-//! column rather than JSON text — same shape, ~30% smaller, and
-//! a clean swap from the original `TEXT NOT NULL` column.
+//! - WAL + busy_timeout + synchronous=NORMAL：单写多读，足够本场景
+//! - r2d2 池子 8 条连接：动作和统计能并行，互不阻塞
+//! - 房间快照存 BLOB（msgpack）而不是 TEXT（JSON），列名照旧但
+//!   payload 小 ~30%
+//! - matches 表 UNIQUE(code, started_at) + INSERT ON CONFLICT DO
+//!   NOTHING 让归档天然幂等，重复调不会脏数据
 
 use crate::types::{GameSnapshot, LogEntry, Phase};
 use anyhow::Result;

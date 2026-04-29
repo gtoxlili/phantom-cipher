@@ -3,15 +3,14 @@ import type { PublicPlayer } from '@/types';
 import { PlayerRow } from './PlayerRow';
 
 export function OpponentRow(props: { player: PublicPlayer }) {
-  const v = gameView;
 
-  const isCurrent = () => v().state?.currentPlayerId === props.player.id;
-  const isPlayerHost = () => v().state?.hostId === props.player.id;
+  const isCurrent = () => gameView().state?.currentPlayerId === props.player.id;
+  const isPlayerHost = () => gameView().state?.hostId === props.player.id;
   // While the picker is open, drop the "tappable" affordance on every
   // tile — pulse, hover state, etc. The backdrop blocks taps anyway,
   // so visual urgency at this point is just background noise.
   const pickerOpen = () => !!selectedTile();
-  const canTarget = () => v().canGuess && props.player.alive && !pickerOpen();
+  const canTarget = () => gameView().canGuess && props.player.alive && !pickerOpen();
 
   return (
     <PlayerRow

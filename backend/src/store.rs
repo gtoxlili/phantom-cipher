@@ -1,25 +1,17 @@
-//! Room registry + broadcast wiring.
+//! 房间注册表 + 状态广播。
 //!
-//! Each Room wraps a `parking_lot::Mutex<Game>` (the rule engine
-//! is sync) plus a `DashMap` of subscriber channels — one mpsc
-//! per connected WebSocket. The hot-path optimization that makes
-//! this rewrite earn its keep:
+//! 每个 `Room` 包一个 `parking_lot::Mutex<Game>`（规则机是同步的），
+//! 加上一份 `DashMap` 存放每条 WebSocket 的发送端。
 //!
-//!   - Public state: serialized **once** per notify(), the
-//!     resulting `Bytes` is fanned out to all subscribers via
-//!     reference-counted `Arc`. Node sent N JSON.stringify calls
-//!     per broadcast; we send 1 + N zero-copy ref bumps.
-//!
-//!   - Private state: serialized per-player (it has to be — each
-//!     player sees their own hand) but each subscriber gets only
-//!     their own `Arc`, no allocation duplication.
-//!
-//! The WebSocket task drains its mpsc and writes binary frames;
-//! it never holds the Game lock.
+//! 性能上唯一值得说的优化：
+//!   公共状态每次 notify 只序列化一次，结果包成 `Arc<Bytes>`，再
+//!   原子地把同一份字节扇出给所有订阅者——比起原 Node 版每个订阅者
+//!   一次 JSON.stringify 至少省下一个数量级。
+//!   私有状态本就因人而异（每人手牌不同），只能逐人序列化。
 
 use crate::db::{self, ArchiveInput, ArchiveParticipant, DbPool};
 use crate::game::{Game, GameError, GameResult};
-use crate::types::{Phase, ServerEvent};
+use crate::types::{GameSnapshot, Phase, RevealInfo, ServerEvent};
 use bytes::Bytes;
 use dashmap::DashMap;
 use parking_lot::Mutex;
@@ -43,7 +35,7 @@ impl Room {
         }
     }
 
-    pub fn from_snapshot(snap: crate::types::GameSnapshot) -> Self {
+    pub fn from_snapshot(snap: GameSnapshot) -> Self {
         let code = snap.code.clone();
         Self {
             code,
@@ -56,13 +48,10 @@ impl Room {
         self.subscribers.len()
     }
 
-    /// Register a subscriber and immediately push them the current
-    /// public + their own private state. Returns the receiving end
-    /// of an mpsc the caller (the WS task) drains and writes to
-    /// the wire.
+    /// 注册一个订阅者，立刻把当前的公共 + 自己的私有状态各推一帧
+    /// 进它的 mpsc。返回的 Receiver 由 WS 任务消费写到 socket。
     pub fn subscribe(&self, player_id: &str) -> mpsc::UnboundedReceiver<Arc<Bytes>> {
         let (tx, rx) = mpsc::unbounded_channel();
-        // Initial state push (msgpack frames).
         {
             let game = self.state.lock();
             if let Some(pub_bytes) = serialize_public(&game) {
@@ -80,8 +69,8 @@ impl Room {
         self.subscribers.remove(player_id);
     }
 
-    /// Re-broadcast public state to everyone, plus per-player
-    /// private. Pre-serializes public exactly once.
+    /// 把当前公共状态广播给所有订阅者，再附带一份各人自己的私有
+    /// 状态。公共部分整体序列化一次。
     pub fn notify(&self) {
         let game = self.state.lock();
         let Some(pub_bytes) = serialize_public(&game) else {
@@ -89,7 +78,7 @@ impl Room {
         };
         let pub_arc: Arc<Bytes> = Arc::new(pub_bytes);
         for entry in self.subscribers.iter() {
-            // Cheap: Arc clone is one atomic increment.
+            // 公共部分零拷贝复用，只是 Arc 计数 +1
             let _ = entry.value().send(pub_arc.clone());
             if let Some(priv_bytes) = serialize_private_for(&game, entry.key()) {
                 let _ = entry.value().send(Arc::new(priv_bytes));
@@ -97,9 +86,9 @@ impl Room {
         }
     }
 
-    /// One-shot reveal broadcast — same payload to everyone, no
-    /// per-player customization.
-    pub fn emit_reveal(&self, info: &crate::types::RevealInfo) {
+    /// 翻牌结果广播。所有人收到的都是同一帧——客户端动画想要单独
+    /// 一个事件，而不是从 public state 里去比对差异。
+    pub fn emit_reveal(&self, info: &RevealInfo) {
         let bytes = match rmp_serde::to_vec_named(&ServerEvent::Reveal(info.clone())) {
             Ok(b) => Bytes::from(b),
             Err(_) => return,
@@ -112,8 +101,7 @@ impl Room {
 }
 
 fn serialize_public(game: &Game) -> Option<Bytes> {
-    let pub_state = game.to_public_state();
-    rmp_serde::to_vec_named(&ServerEvent::Public(pub_state))
+    rmp_serde::to_vec_named(&ServerEvent::Public(game.to_public_state()))
         .ok()
         .map(Bytes::from)
 }
@@ -125,7 +113,7 @@ fn serialize_private_for(game: &Game, player_id: &str) -> Option<Bytes> {
         .map(Bytes::from)
 }
 
-// ---------- Store ----------
+// ---- Store ----------------------------------------------------------
 
 pub struct Store {
     rooms: DashMap<String, Arc<Room>>,
@@ -140,6 +128,7 @@ impl Store {
         }
     }
 
+    /// 启动时把磁盘上还在 rooms 表里的房间还原回内存。
     pub fn rehydrate(&self) {
         let snaps = db::load_all_room_snapshots(&self.db);
         let n = snaps.len();
@@ -168,75 +157,89 @@ impl Store {
         self.rooms.len()
     }
 
-    pub fn each<F: FnMut(&Arc<Room>)>(&self, mut f: F) {
-        for entry in self.rooms.iter() {
-            f(entry.value());
-        }
+    /// 把房间码规整成大写六字符——同时服务用户输入容错和路由防御。
+    pub fn sanitize_code(raw: &str) -> String {
+        raw.trim().chars().take(6).collect::<String>().to_uppercase()
     }
 
-    /// Drop empty rooms — called after each leave. Mirrors the
-    /// gameStore.cleanup() behavior of the original.
+    /// 房间空了就连同磁盘记录一起清掉。每次 leave 之后都会调一次。
     pub fn cleanup(&self, code: &str) {
-        let drop = if let Some(room) = self.rooms.get(code) {
-            let game = room.state.lock();
-            game.players.is_empty() && room.subscribers.is_empty()
-        } else {
-            return;
-        };
-        if drop {
+        let should_drop = self
+            .rooms
+            .get(code)
+            .map(|room| {
+                let g = room.state.lock();
+                g.players.is_empty() && room.subscribers.is_empty()
+            })
+            .unwrap_or(false);
+        if should_drop {
             self.rooms.remove(code);
             db::delete_room(&self.db, code);
         }
     }
 
-    /// Persist the room's current snapshot, plus archive the match
-    /// if it just ended. Idempotent — archive_match has a UNIQUE
-    /// constraint so duplicate calls are no-ops.
+    /// 持久化房间快照，如果对局刚好走到 `ended` 还顺手归档。
+    /// `archive_match` 是幂等的（matches 表上 UNIQUE(code, started_at)），
+    /// 重复调用不会脏数据。
     pub fn persist_and_maybe_archive(&self, room: &Room) {
-        let snap = {
+        let to_archive = {
             let game = room.state.lock();
-            let snap = game.to_snapshot();
-            // Archive if game is in 'ended' phase + has a started_at.
             if matches!(game.phase, Phase::Ended) {
-                if let Some(started_at) = game.started_at {
-                    let winner_name = game
-                        .winner_id
-                        .as_ref()
-                        .and_then(|wid| game.players.iter().find(|p| &p.id == wid))
-                        .map(|p| p.name.clone());
-                    let participants = game
-                        .players
-                        .iter()
-                        .map(|p| ArchiveParticipant {
-                            player_id: p.id.clone(),
-                            name: p.name.clone(),
-                            is_winner: game.winner_id.as_deref() == Some(&p.id),
-                            is_host: p.id == game.host_id,
-                        })
-                        .collect();
-                    let input = ArchiveInput {
-                        code: game.code.clone(),
-                        winner_id: game.winner_id.clone(),
-                        winner_name,
-                        player_count: game.players.len(),
-                        started_at,
-                        ended_at: now_ms(),
-                        log: game.log.clone(),
-                        participants,
-                    };
-                    drop(game);
-                    db::archive_match(&self.db, input);
-                    return self.persist_room_only(room);
-                }
+                game.started_at.map(|started| build_archive(&game, started))
+            } else {
+                None
             }
-            snap
         };
+        if let Some(archive) = to_archive {
+            db::archive_match(&self.db, archive);
+        }
+        let snap = room.state.lock().to_snapshot();
         db::persist_room(&self.db, &snap);
     }
 
-    fn persist_room_only(&self, room: &Room) {
-        let snap = room.state.lock().to_snapshot();
-        db::persist_room(&self.db, &snap);
+    /// 锁住房间状态、跑一次 mutation、自动 persist + notify。
+    /// 所有动作（draw/guess/place/...）都从这里走，避免有人忘记
+    /// 在 mutate 之后广播。
+    pub fn mutate<F, T>(&self, code: &str, f: F) -> GameResult<T>
+    where
+        F: FnOnce(&mut Game) -> GameResult<T>,
+    {
+        let room = self.get(code).ok_or(GameError::RoomNotFound)?;
+        let result = {
+            let mut game = room.state.lock();
+            f(&mut *game)?
+        };
+        self.persist_and_maybe_archive(&room);
+        room.notify();
+        Ok(result)
+    }
+}
+
+fn build_archive(game: &Game, started_at: i64) -> ArchiveInput {
+    let winner_name = game
+        .winner_id
+        .as_ref()
+        .and_then(|wid| game.players.iter().find(|p| &p.id == wid))
+        .map(|p| p.name.clone());
+    let participants = game
+        .players
+        .iter()
+        .map(|p| ArchiveParticipant {
+            player_id: p.id.clone(),
+            name: p.name.clone(),
+            is_winner: game.winner_id.as_deref() == Some(&p.id),
+            is_host: p.id == game.host_id,
+        })
+        .collect();
+    ArchiveInput {
+        code: game.code.clone(),
+        winner_id: game.winner_id.clone(),
+        winner_name,
+        player_count: game.players.len(),
+        started_at,
+        ended_at: now_ms(),
+        log: game.log.clone(),
+        participants,
     }
 }
 
@@ -246,30 +249,4 @@ fn now_ms() -> i64 {
         .duration_since(UNIX_EPOCH)
         .map(|d| d.as_millis() as i64)
         .unwrap_or(0)
-}
-
-pub fn sanitize_code(raw: &str) -> String {
-    raw.trim().chars().take(6).collect::<String>().to_uppercase()
-}
-
-// ---------- High-level mutation entrypoint ----------
-//
-// All Server-Action equivalents go through `with_room` so that
-// persistence + notify always happen together after a successful
-// mutation. Rust's borrow checker forces the lock-then-mutate-then-
-// release pattern, which prevents the action layer from forgetting
-// to broadcast.
-
-pub fn with_room<F, T>(store: &Store, code: &str, f: F) -> GameResult<T>
-where
-    F: FnOnce(&mut Game) -> GameResult<T>,
-{
-    let room = store.get(code).ok_or(GameError::RoomNotFound)?;
-    let result = {
-        let mut game = room.state.lock();
-        f(&mut *game)?
-    };
-    store.persist_and_maybe_archive(&room);
-    room.notify();
-    Ok(result)
 }

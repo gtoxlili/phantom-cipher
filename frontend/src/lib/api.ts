@@ -1,9 +1,7 @@
-// REST client for Server-Action equivalents. Errors surface as
-// notifications via the toast queue — same UX as the original
-// `report()` helper in lib/hooks/useGameActions.ts.
+// 把每个动作映射成一个 POST。响应只关心 `ok` 字段，失败统一
+// 弹 toast——错误信息后端已经写好中文了，UI 直接照抄即可。
 //
-// All endpoints are POSTed with JSON; the WebSocket carries
-// state pushes (binary msgpack).
+// 状态推送走 WebSocket，不在这层。
 
 import { currentRoomCode, playerId, pushNotification, setSelectedTile } from '@/stores/game';
 import type { Color } from '@/types';

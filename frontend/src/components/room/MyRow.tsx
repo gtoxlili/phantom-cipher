@@ -3,23 +3,22 @@ import { gameView, revealEvent } from '@/stores/game';
 import { PlayerRow } from './PlayerRow';
 
 export function MyRow() {
-  const v = gameView;
 
   return (
-    <Show when={v().me}>
+    <Show when={gameView().me}>
       <PlayerRow
-        player={v().me!}
+        player={gameView().me!}
         isMe
-        tiles={v().myHand.map((t) => ({
+        tiles={gameView().myHand.map((t) => ({
           id: t.id,
           color: t.color,
           revealed: t.revealed,
           number: t.number ?? undefined,
           joker: t.joker,
-          pending: v().pendingTileId === t.id,
+          pending: gameView().pendingTileId === t.id,
         }))}
-        current={v().isMyTurn}
-        host={v().isHost}
+        current={gameView().isMyTurn}
+        host={gameView().isHost}
         canTarget={false}
         selectedTileId={null}
         reveal={revealEvent()}

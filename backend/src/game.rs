@@ -1,10 +1,9 @@
-//! Core rule engine — direct port of lib/game.ts.
+//! 规则引擎——所有相位转移都在这里。
 //!
-//! All phase transitions live here. Mutating callers (HTTP handlers
-//! in routes/) hold an exclusive lock on the Room and call methods
-//! on the Game; the Room then re-publishes the cached snapshot to
-//! every subscriber. The class has no awareness of broadcasting;
-//! it stays a pure state machine.
+//! 设计成一个纯状态机：自己不知道有 WebSocket / 不知道有 SQLite，
+//! 也不主动通知任何人。调用方（routes/actions.rs）拿独占锁、跑
+//! mutation、然后由 `Store::mutate` 统一处理 persist 和广播。
+//! 这样测试这块就只是同步的方法调用，不用拉起 tokio。
 
 use crate::types::{
     Color, GameSnapshot, LogEntry, Phase, PrivateState, PublicGameState, PublicPlayer, PublicTile,

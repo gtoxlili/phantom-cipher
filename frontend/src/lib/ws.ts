@@ -1,17 +1,12 @@
-// WebSocket + MessagePack client. Replaces the SSE / EventSource
-// path from the original lib/hooks/useGameStream.ts.
+// WebSocket + MessagePack 客户端。
 //
-// On every state change the backend pre-serializes a single
-// MessagePack frame and fans it out via Arc<Bytes>; the browser
-// decodes it with `msgpackr.unpack()` and dispatches by tag.
+// 服务端每次状态变更只 msgpack 一帧、Arc<Bytes> 扇出给所有订阅者；
+// 这边 msgpackr.unpack 出来按 tag 派发到 publicState / privateState
+// / reveal 三个 signal。
 //
-// Auto-reconnect on close. EventSource auto-reconnects natively;
-// raw WebSocket does not. Unbacked, a flaky cellular link or a
-// proxy idle-timeout would silently drop the player into a stale-
-// state tab with no recovery short of a manual reload. Reconnect
-// uses an exponential-backoff with a 30s ceiling and a jitter so
-// a thousand players reconnecting after a brief blip don't all
-// pile onto the server in the same millisecond.
+// 一定要自己写重连——浏览器原生 WebSocket 没有，断了就是死的。
+// 用指数回退 + jitter 是为了：单个用户偶尔抖动很快恢复；服务端
+// 重启时所有玩家不会在同一毫秒踩上去。
 
 import { onCleanup, createEffect, on } from 'solid-js';
 import { Unpackr } from 'msgpackr';

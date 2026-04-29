@@ -1,9 +1,12 @@
-//! Idle-room sweeper — port of lib/sweeper.ts.
+//! 闲置房间清扫器。
 //!
-//! Phase-aware TTL: 1h for waiting/ended (lobbies, scoreboards),
-//! 6h for in-flight games. Runs every 5 minutes plus an immediate
-//! pass at boot (to clean up anything left behind by a previous
-//! process).
+//! 关页面不会触发显式 leave，只会 markDisconnected——所以光靠玩家
+//! 行为没办法把"开了房没人来"或者"重启之后所有人都没回来"的
+//! 僵尸房间清掉。这里按相位分两档 TTL 兜底：
+//!   - waiting / ended：1 小时（等待大厅 + 终局画面）
+//!   - 进行中：6 小时（一局打两小时也算正常）
+//!
+//! 还有订阅者就跳过。启动时立即扫一次，之后每 5 分钟一轮。
 
 use crate::db;
 use crate::store::Store;

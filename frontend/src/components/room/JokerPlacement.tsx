@@ -13,13 +13,12 @@ import * as s from './JokerPlacement.css';
  * rest of the hand and drop a `+` slot before each tile and after the last.
  */
 export function JokerPlacement() {
-  const v = gameView;
 
-  const visible = () => v().phase === 'placing' && v().isMyTurn && !!v().pendingTileId;
+  const visible = () => gameView().phase === 'placing' && gameView().isMyTurn && !!gameView().pendingTileId;
   const pending = () =>
-    visible() ? v().myHand.find((t) => t.id === v().pendingTileId) : undefined;
+    visible() ? gameView().myHand.find((t) => t.id === gameView().pendingTileId) : undefined;
   const others = () =>
-    visible() ? v().myHand.filter((t) => t.id !== v().pendingTileId) : [];
+    visible() ? gameView().myHand.filter((t) => t.id !== gameView().pendingTileId) : [];
   const slots = () =>
     Array.from({ length: others().length + 1 }, (_, i) => i);
 
