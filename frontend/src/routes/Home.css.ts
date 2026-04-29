@@ -635,3 +635,30 @@ export const footerLink = css({
     outlineOffset: '2px',
   },
 });
+
+/* 邮件 icon 链接：跟 footerLink 共享 hover/focus 翻红效果，但
+ * SVG 不需要 letter-spacing/text-transform 这些文字属性。padding
+ * 加宽一点让 icon 视觉居中，同时凑出 ≥24px 触摸命中区。SVG 用
+ * currentColor 跟 a 的 color 自动联动，hover 时一起翻 blood。 */
+export const footerMailLink = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  fontSize: { base: '13px', lg: '15px' },
+  color: 'paper',
+  opacity: 0.6,
+  padding: { base: '4px 6px', lg: '4px 7px' },
+  borderBottom: '1.5px solid transparent',
+  transition: 'color 0.16s ease, opacity 0.16s ease, border-color 0.16s ease',
+  _hover: {
+    color: 'blood',
+    opacity: 1,
+    borderBottomColor: 'blood',
+  },
+  _focusVisible: {
+    color: 'blood',
+    opacity: 1,
+    outline: '1.5px solid var(--colors-blood)',
+    outlineOffset: '2px',
+  },
+});

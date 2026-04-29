@@ -4,7 +4,7 @@ import { Motion, Presence } from 'solid-motionone';
 import { spring } from '@motionone/dom';
 import clsx from 'clsx';
 import { Sketch } from '@/components/Sketch';
-import { ArrowLeftIcon, PlayIcon, SparkleIcon } from '@/components/icons';
+import { ArrowLeftIcon, EnvelopeIcon, PlayIcon, SparkleIcon } from '@/components/icons';
 import { myName, setIntentHost, setMyName } from '@/stores/game';
 import { pickRandomCodename } from '@/lib/codenames';
 import * as s from './Home.css';
@@ -296,12 +296,12 @@ export default function Home() {
             @gtoxlili
           </a>
           <a
-            class={s.footerLink}
+            class={s.footerMailLink}
             href="mailto:gtoxlili@outlook.com"
             aria-label="发邮件给作者"
             title="gtoxlili@outlook.com"
           >
-            ✉
+            <EnvelopeIcon size="1.05em" />
           </a>
         </div>
       </footer>
