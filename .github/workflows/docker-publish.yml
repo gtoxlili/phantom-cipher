@@ -11,8 +11,11 @@ on:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  # 不取消已在跑的——单 commit 的 :sha-xxxxxxx 镜像偶尔回滚要用
-  cancel-in-progress: false
+  # 新 push 自动掐掉前面在跑的——25 分钟的多架构构建排队等很烦，
+  # 而且我们极少需要中间 commit 的 :sha-xxxxxxx 单独镜像。如果将来
+  # 要回滚到某个 commit 单独构建，手动用 workflow_dispatch 触发一
+  # 下就行
+  cancel-in-progress: true
 
 env:
   REGISTRY: ghcr.io
