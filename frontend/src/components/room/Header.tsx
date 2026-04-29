@@ -1,6 +1,6 @@
 import { createSignal, Show } from 'solid-js';
 import { CheckIcon } from '@/components/icons';
-import { currentRoomCode, setShowLog } from '@/stores/game';
+import { connected, currentRoomCode, setShowLog } from '@/stores/game';
 import * as s from './Header.css';
 
 export function Header(props: { onBack: () => void }) {
@@ -35,6 +35,18 @@ export function Header(props: { onBack: () => void }) {
           </Show>
         </span>
       </div>
+      {/*
+        WS 连接状态指示器。connected=true 时整个元素 hidden（aria 也
+        hidden），不抢视觉。一旦掉线立刻在 code label 旁亮起 blood
+        色 chip + pulsing dot，玩家能感知到"正在重连"——之前默默
+        重连导致 UI 看似卡死，玩家以为 bug。
+      */}
+      <Show when={!connected()}>
+        <div class={s.disconnected} role="status" aria-live="polite">
+          <span class={s.dot} aria-hidden="true" />
+          <span>RECONNECTING</span>
+        </div>
+      </Show>
       <button class={s.iconBtn} onClick={() => setShowLog((v) => !v)} aria-label="日志">
         <svg width="18" height="18" viewBox="0 0 20 20" fill="none">
           <path d="M3 5h14M3 10h14M3 15h10" stroke="currentColor" stroke-width="2" stroke-linecap="round" />

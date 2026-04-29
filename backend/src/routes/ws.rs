@@ -10,13 +10,20 @@
 
 use super::SharedState;
 use crate::store::Room;
-use axum::extract::ws::{Message, WebSocket, WebSocketUpgrade};
+use axum::extract::ws::{CloseCode, CloseFrame, Message, WebSocket, WebSocketUpgrade};
 use axum::extract::{Path, Query, State};
 use axum::http::StatusCode;
 use axum::response::{IntoResponse, Response};
 use bytes::Bytes;
 use serde::Deserialize;
 use std::sync::Arc;
+
+// 自定义 close code（WebSocket 协议把 4000-4999 留给应用自定义）。
+// 客户端按这两个 code 区分要不要重连——之前一律走默认 1000，
+// "网络抖动我自己关你"和"你被同 pid 的新连接顶替了"两种场景在
+// 客户端看来一样，导致网络抖动场景下客户端不重连、UI 卡死。
+const CLOSE_REPLACED: CloseCode = 4000; // 客户端不该重连
+const CLOSE_SEND_FAILED: CloseCode = 4001; // 客户端应该重连
 
 #[derive(Deserialize)]
 pub struct WsParams {
@@ -84,13 +91,33 @@ async fn run_ws(socket: WebSocket, room: Arc<Room>, pid: String) {
     let mut rx = room.subscribe(&pid);
 
     let send_task = tokio::spawn(async move {
-        while let Some(arc_bytes) = rx.recv().await {
-            // Bytes 自己就是 Arc 计数的，clone 等于 +1
-            let frame: Bytes = (*arc_bytes).clone();
-            if sender.send(Message::Binary(frame)).await.is_err() {
-                break;
+        // 退出原因决定 close code，客户端据此决定是否重连
+        let close = loop {
+            match rx.recv().await {
+                None => {
+                    // mpsc tx 被 drop——大概率是同 pid 新连接把
+                    // subscribers map 里的 entry 替换掉了。告诉
+                    // 客户端"你被替了，别重连"
+                    break CloseFrame {
+                        code: CLOSE_REPLACED,
+                        reason: "replaced".into(),
+                    };
+                }
+                Some(arc_bytes) => {
+                    // Bytes 自己就是 Arc 计数的，clone 等于 +1
+                    let frame: Bytes = (*arc_bytes).clone();
+                    if sender.send(Message::Binary(frame)).await.is_err() {
+                        // 写失败——TCP 半开 / 网络抖动 / 客户端
+                        // 没接住。让客户端重连
+                        break CloseFrame {
+                            code: CLOSE_SEND_FAILED,
+                            reason: "send_failed".into(),
+                        };
+                    }
+                }
             }
-        }
+        };
+        let _ = sender.send(Message::Close(Some(close))).await;
         let _ = sender.close().await;
     });
 

@@ -114,11 +114,14 @@ export function startGameStream(ready: () => boolean) {
     ws.addEventListener('close', (ev) => {
       setConnected(false);
       clearHeartbeat();
-      // 1000/1001 是干净关闭（自己 teardown / 服务端 shutdown /
-      // 浏览器导航），不重连；其他 code 都视为意外断开
       if (socket !== ws) return;
       socket = null;
-      if (ev.code === 1000 || ev.code === 1001) return;
+      // 4000 = 服务端明确通知"你的 subscriber 槽被同 pid 新连接顶替"
+      // ——这种情况下重连只会跟另一个 tab 互相挤回去，所以不重连。
+      // 其它所有情况（包括 1000/1001/1006/4001/4xxx）一律重连：
+      // 我们这边主动调 close() 时已经把 onclose 解绑了，根本走不到
+      // 这里；既然走到了 onclose 又不是 4000，就是真意外断开。
+      if (ev.code === 4000) return;
       scheduleReconnect(code, pid);
     });
     ws.addEventListener('message', (ev) => {

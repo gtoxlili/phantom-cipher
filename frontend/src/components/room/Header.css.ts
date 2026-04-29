@@ -77,3 +77,38 @@ export const copyHint = css({
   textTransform: 'uppercase',
   fontWeight: 700,
 });
+
+// 重连指示器：blood 底白字 chip + 脉冲圆点。只在 connected=false
+// 时显示；正常连接时整个元素被 <Show> 卸掉，不占布局也不参与 hit
+// test。脉动动画借现成的 pulseRed 关键帧
+export const disconnected = css({
+  position: 'absolute',
+  top: 'max(10px, env(safe-area-inset-top, 0px))',
+  left: '50%',
+  transform: 'translateX(-50%) skewX(-8deg)',
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '6px',
+  padding: '4px 10px',
+  background: 'blood',
+  color: 'paper',
+  border: '2px solid var(--colors-paper)',
+  fontFamily: 'condensed',
+  fontWeight: 700,
+  fontSize: '9px',
+  letterSpacing: '0.24em',
+  textTransform: 'uppercase',
+  boxShadow: '3px 3px 0 var(--colors-ink)',
+  pointerEvents: 'none',
+  zIndex: 4,
+  animation: 'pulseRed 1.4s ease-in-out infinite',
+  '& > span:last-child': { transform: 'skewX(8deg)' },
+});
+
+export const dot = css({
+  width: '7px',
+  height: '7px',
+  borderRadius: '50%',
+  background: 'paper',
+  animation: 'blink 0.9s ease-in-out infinite',
+});
