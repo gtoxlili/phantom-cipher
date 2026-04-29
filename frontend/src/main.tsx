@@ -29,6 +29,7 @@ import './styles/global.css';
 
 const Home = lazy(() => import('./routes/Home'));
 const Room = lazy(() => import('./routes/Room'));
+const Stats = lazy(() => import('./routes/Stats'));
 
 /**
  * Last-resort fallback when a render path throws — broken msgpack
@@ -111,6 +112,7 @@ function App() {
       <MetaProvider>
         <Router>
           <Route path="/" component={Home} />
+          <Route path="/stats" component={Stats} />
           <Route path="/room/:code" component={Room} />
           <Route path="*" component={Home} />
         </Router>

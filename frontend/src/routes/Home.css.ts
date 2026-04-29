@@ -524,6 +524,35 @@ export const submit = css({
 });
 
 /* =====================================================================
+ * STATS NAV LINK —— 右上角悬浮，不抢主视觉。点了进 /stats
+ * ===================================================================== */
+export const statsLink = css({
+  position: 'fixed',
+  top: { base: 'max(14px, env(safe-area-inset-top, 0px))', lg: '24px' },
+  right: { base: '14px', lg: '32px' },
+  zIndex: 5,
+  fontFamily: 'condensed',
+  fontWeight: 700,
+  fontSize: { base: '10px', lg: '12px' },
+  letterSpacing: '0.22em',
+  textTransform: 'uppercase',
+  padding: { base: '6px 10px', lg: '8px 14px' },
+  background: 'paper',
+  color: 'ink',
+  border: '2px solid var(--colors-ink)',
+  boxShadow: '3px 3px 0 var(--colors-blood)',
+  transform: 'skewX(-8deg)',
+  transition: 'all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1)',
+  '& > span': { display: 'inline-block', transform: 'skewX(8deg)' },
+  _hover: {
+    background: 'blood',
+    color: 'paper',
+    boxShadow: '5px 5px 0 var(--colors-paper)',
+    transform: 'skewX(-8deg) translate(-1px, -1px)',
+  },
+});
+
+/* =====================================================================
  * FOOTER
  * ===================================================================== */
 export const footer = css({

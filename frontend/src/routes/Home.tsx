@@ -274,6 +274,10 @@ export default function Home() {
         </Presence>
       </section>
 
+      <a href="/stats" class={s.statsLink} aria-label="排行榜">
+        <span>★ 排行榜 // STATS</span>
+      </a>
+
       <footer class={s.footer}>made with ink &amp; pixels</footer>
     </main>
   );
