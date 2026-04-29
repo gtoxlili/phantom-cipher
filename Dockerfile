@@ -13,9 +13,13 @@
 #     -v phantom-cipher-data:/app/data \
 #     phantom-cipher
 
-ARG RUST_IMAGE=rust:1.95-slim-bookworm
+# bookworm/debian12 → trixie/debian13 升级。生产宿主已经在跑 trixie，
+# 编译机和 runtime 镜像也跟着 13，避免一台机器上各自 glibc 版本错位
+# 引发的奇怪问题。alpine 不动——node 用 alpine 比任何 slim 变种都
+# 小一截（53 MB vs 77 MB），首层拉镜像更快。
+ARG RUST_IMAGE=rust:1.95-slim-trixie
 ARG NODE_IMAGE=node:24-alpine
-ARG RUNTIME_IMAGE=gcr.io/distroless/cc-debian12:nonroot
+ARG RUNTIME_IMAGE=gcr.io/distroless/cc-debian13:nonroot
 
 # --- frontend-builder: pnpm + vite + panda --------------------------
 FROM ${NODE_IMAGE} AS frontend-builder
