@@ -55,12 +55,19 @@ pub struct PublicTile {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct PublicPlayer {
     pub id: String,
     pub name: String,
     pub tiles: Vec<PublicTile>,
     pub alive: bool,
     pub connected: bool,
+    /// 该玩家断线后的 forfeit 截止时间（ms epoch）。在 `disconnect`
+    /// 模块 schedule 时被服务端设上、cancel/leave 时清掉。前端拿
+    /// 这个跟 Date.now() 减一下显示倒计时，给"队友看着对手 30 秒
+    /// 出局"那一段一个具体进度感
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub pending_forfeit_at: Option<i64>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]

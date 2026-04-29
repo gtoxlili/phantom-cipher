@@ -28,6 +28,9 @@ export interface PublicPlayer {
   tiles: PublicTile[];
   alive: boolean;
   connected: boolean;
+  /** 玩家断线后的 forfeit 截止时间（ms epoch）。前端用来显示
+   *  "X 秒后自动出局"倒计时；undefined 表示没有挂起的 forfeit。 */
+  pendingForfeitAt?: number;
 }
 
 export type Phase =

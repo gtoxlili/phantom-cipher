@@ -85,6 +85,9 @@ pub struct ServerPlayer {
     pub alive: bool,
     /// In-memory only: never persisted, never serialized into snapshots.
     pub connected: bool,
+    /// 同样 in-memory only。WS 关闭时被 `DisconnectTimers::schedule`
+    /// 设成 now+30s，重连或 forfeit 时清掉。
+    pub pending_forfeit_at: Option<i64>,
 }
 
 #[derive(Debug)]
@@ -226,6 +229,7 @@ impl Game {
             pending_position: None,
             alive: true,
             connected: true,
+            pending_forfeit_at: None,
         };
         self.players.push(player);
         self.add_log(log_msg);
@@ -272,6 +276,8 @@ impl Game {
             let was_alive = self.players[idx].alive;
             self.players[idx].connected = false;
             self.players[idx].alive = false;
+            // forfeit 已经发生了，倒计时字段不再有意义
+            self.players[idx].pending_forfeit_at = None;
             if let Some(pd) = self.players[idx].pending_draw.take() {
                 let mut pending = pd;
                 pending.revealed = true;
@@ -725,6 +731,7 @@ impl Game {
                     pending_position: p.pending_position,
                     alive: p.alive,
                     connected: false,
+                    pending_forfeit_at: None,
                 })
                 .collect(),
             deck_black: snap.deck_black,
@@ -814,6 +821,10 @@ impl Game {
             tiles,
             alive: p.alive,
             connected: p.connected,
+            // 已经不活的玩家就别再 surface 倒计时了——AFK forfeit
+            // 已经把他打成 alive=false，剩下的只是 UI 看到他出局。
+            // 没有 alive 这层 gate 的话最后一帧会闪过 "0 秒"
+            pending_forfeit_at: if p.alive { p.pending_forfeit_at } else { None },
         }
     }
 

@@ -125,6 +125,32 @@ export const offlineTag = css({
   fontFamily: 'condensed',
 });
 
+// AFK forfeit 倒计时 chip——blood 底白字 + 脉冲圆点。借 pulseRed
+// 让这条信息持续抢眼，避免对手以为画面卡死了
+export const forfeitTag = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '4px',
+  background: 'blood',
+  color: 'paper',
+  padding: '2px 7px',
+  fontFamily: 'display',
+  fontStyle: 'italic',
+  fontSize: '11px',
+  letterSpacing: '0.1em',
+  border: '1.5px solid var(--colors-paper)',
+  boxShadow: '2px 2px 0 var(--colors-ink)',
+  animation: 'pulseRed 1.6s ease-in-out infinite',
+});
+
+export const forfeitDot = css({
+  width: '6px',
+  height: '6px',
+  borderRadius: '50%',
+  background: 'paper',
+  animation: 'blink 0.9s ease-in-out infinite',
+});
+
 const handBase = {
   display: 'flex',
   flexWrap: 'wrap',

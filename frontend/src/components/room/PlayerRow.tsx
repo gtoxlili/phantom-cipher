@@ -2,8 +2,16 @@ import { Show } from 'solid-js';
 import { Key } from '@solid-primitives/keyed';
 import clsx from 'clsx';
 import { Tile } from '@/components/Tile';
+import { nowMs } from '@/stores/game';
 import type { PublicPlayer, RevealInfo } from '@/types';
 import * as s from './PlayerRow.css';
+
+/** 把 forfeit 截止时间换成"还剩 X 秒"，已经过期就给 0。
+ *  服务端时钟跟客户端 ±几秒漂移在 30 秒窗口里也无所谓，看到
+ *  -1 也只会显示 0 秒。 */
+function forfeitSecondsLeft(deadline: number, now: number): number {
+  return Math.max(0, Math.ceil((deadline - now) / 1000));
+}
 
 export interface PlayerCell {
   id: string;
@@ -57,6 +65,24 @@ export function PlayerRow(props: PlayerRowProps) {
           </Show>
           <Show when={!props.player.connected && !props.isMe}>
             <span class={s.offlineTag}>OFF</span>
+          </Show>
+          {/* AFK forfeit 倒计时——只对队友（!isMe）显示，自己看着
+              自己 30 秒倒计时没意义。`alive` 那一关由后端在
+              to_public_player 里把 pending_forfeit_at 清空时已经
+              做过了，但前端再 gate 一次防御性更强。 */}
+          <Show
+            when={
+              !props.isMe &&
+              props.player.alive &&
+              props.player.pendingForfeitAt !== undefined
+            }
+          >
+            <span class={s.forfeitTag}>
+              <span class={s.forfeitDot} aria-hidden="true" />
+              <span>
+                {forfeitSecondsLeft(props.player.pendingForfeitAt!, nowMs())}s
+              </span>
+            </span>
           </Show>
         </div>
       </div>

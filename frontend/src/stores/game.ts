@@ -80,6 +80,15 @@ export function setReveal(info: RevealInfo) {
   revealTimer = window.setTimeout(() => setRevealEvent(null), 1500);
 }
 
+// 全局每秒一次的"现在"信号——给 forfeit 倒计时这种需要逐秒
+// 走时的 UI 用。一个 setInterval 全局共享，比每个组件各自起
+// 一个 timer 更经济。
+const [nowMs, setNowMs] = createSignal(Date.now());
+if (typeof window !== 'undefined') {
+  window.setInterval(() => setNowMs(Date.now()), 1000);
+}
+export { nowMs };
+
 // 把零散的状态合并成一个总入口，方便 import 时一行搞定。
 // 用 named exports 是因为 tree-shake 友好，IDE 自动补全也更好。
 export {

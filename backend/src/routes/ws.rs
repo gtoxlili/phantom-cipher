@@ -51,8 +51,9 @@ pub async fn ws_handler(
         }
     }
 
-    // 同一个 pid 重新连进来，把还在跑的 forfeit 定时器取消掉
-    state.disconnect.cancel(&code, &pid);
+    // 同一个 pid 重新连进来：取消 forfeit 定时器 + 清玩家身上的
+    // pending_forfeit_at 字段（队友 UI 倒计时即时消失）
+    state.disconnect.cancel(&state.store, &code, &pid);
 
     // 翻 connected=true。如果原来就是 false（重启 rehydrate 后
     // 默认就是 false），broadcast 一次让队友看到我回来了
