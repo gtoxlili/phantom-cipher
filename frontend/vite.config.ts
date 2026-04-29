@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import solidPlugin from 'vite-plugin-solid';
-import { compression } from 'vite-plugin-compression2';
+import { compression, defineAlgorithm } from 'vite-plugin-compression2';
 import path from 'node:path';
 import { constants as zlibConstants } from 'node:zlib';
 
@@ -21,16 +21,14 @@ export default defineConfig({
     // threshold: 1024 跟 nginx brotli_min_length / gzip_min_length
     // 对齐——< 1KB 的小文件压不动，省得污染目录
     compression({
-      algorithm: 'brotliCompress',
+      algorithms: [
+        defineAlgorithm('brotliCompress', {
+          params: { [zlibConstants.BROTLI_PARAM_QUALITY]: 11 },
+        }),
+        defineAlgorithm('gzip', { level: 9 }),
+      ],
       exclude: [/\.(br|gz|woff2?)$/],
       threshold: 1024,
-      compressionOptions: { params: { [zlibConstants.BROTLI_PARAM_QUALITY]: 11 } },
-    }),
-    compression({
-      algorithm: 'gzip',
-      exclude: [/\.(br|gz|woff2?)$/],
-      threshold: 1024,
-      compressionOptions: { level: 9 },
     }),
   ],
   resolve: {

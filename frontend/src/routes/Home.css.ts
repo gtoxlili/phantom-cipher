@@ -553,7 +553,9 @@ export const statsLink = css({
 });
 
 /* =====================================================================
- * FOOTER
+ * FOOTER —— 一行原 tagline + 一行作者署名（GitHub + 邮件）
+ * 视觉跟 statsLink 同源：skewX(-8deg) ink 边、blood 阴影 hover、
+ * 内部 span 反向 skewX 抵消保持文字水平
  * ===================================================================== */
 export const footer = css({
   gridArea: { lg: 'footer' },
@@ -561,13 +563,78 @@ export const footer = css({
   marginTop: { base: 'auto', lg: '40px' },
   padding: { base: '28px 20px 0', lg: '24px 0 0' },
   textAlign: 'center',
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: { base: '14px', lg: '16px' },
+  borderTop: { lg: '1px solid rgba(230, 0, 34, 0.18)' },
+});
+
+export const footerTagline = css({
   fontFamily: 'display',
   fontStyle: 'italic',
   letterSpacing: '0.32em',
   color: 'rgba(250, 250, 243, 0.4)',
   fontSize: { base: '11px', lg: '13px' },
   textTransform: 'uppercase',
-  borderTop: { lg: '1px solid rgba(230, 0, 34, 0.18)' },
   '&::before': { content: '"★︎"', color: 'blood', marginRight: '8px' },
   '&::after': { content: '"★︎"', color: 'blood', marginLeft: '8px' },
+});
+
+export const byline = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: { base: '8px', lg: '10px' },
+  paddingBottom: { base: '12px', lg: '0' },
+});
+
+export const bylineLabel = css({
+  fontFamily: 'condensed',
+  fontWeight: 700,
+  fontSize: { base: '9px', lg: '10px' },
+  letterSpacing: '0.32em',
+  textTransform: 'uppercase',
+  color: 'rgba(250, 250, 243, 0.42)',
+  fontStyle: 'italic',
+});
+
+export const bylineLink = css({
+  fontFamily: 'condensed',
+  fontWeight: 700,
+  fontSize: { base: '11px', lg: '13px' },
+  letterSpacing: '0.18em',
+  padding: { base: '4px 10px', lg: '5px 12px' },
+  background: 'transparent',
+  color: 'paper',
+  border: '1.5px solid var(--colors-paper)',
+  transform: 'skewX(-8deg)',
+  transition: 'all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1)',
+  '& > span': { display: 'inline-block', transform: 'skewX(8deg)' },
+  _hover: {
+    background: 'blood',
+    borderColor: 'blood',
+    color: 'paper',
+    boxShadow: '3px 3px 0 var(--colors-paper)',
+    transform: 'skewX(-8deg) translate(-1px, -1px)',
+  },
+});
+
+export const bylineMail = css({
+  display: 'inline-flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  width: { base: '28px', lg: '30px' },
+  height: { base: '28px', lg: '30px' },
+  fontSize: { base: '14px', lg: '15px' },
+  color: 'paper',
+  background: 'transparent',
+  border: '1.5px solid var(--colors-paper)',
+  transform: 'skewX(-8deg)',
+  transition: 'all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1)',
+  _hover: {
+    background: 'blood',
+    borderColor: 'blood',
+    boxShadow: '3px 3px 0 var(--colors-paper)',
+    transform: 'skewX(-8deg) translate(-1px, -1px)',
+  },
 });

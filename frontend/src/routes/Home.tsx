@@ -278,7 +278,29 @@ export default function Home() {
         <span>★ 排行榜 // STATS</span>
       </a>
 
-      <footer class={s.footer}>made with ink &amp; pixels</footer>
+      <footer class={s.footer}>
+        <div class={s.footerTagline}>made with ink &amp; pixels</div>
+        <div class={s.byline}>
+          <span class={s.bylineLabel}>· crafted by ·</span>
+          <a
+            class={s.bylineLink}
+            href="https://github.com/gtoxlili"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="作者 GitHub"
+          >
+            <span>@GTOXLILI</span>
+          </a>
+          <a
+            class={s.bylineMail}
+            href="mailto:gtoxlili@outlook.com"
+            aria-label="发邮件给作者"
+            title="gtoxlili@outlook.com"
+          >
+            ✉
+          </a>
+        </div>
+      </footer>
     </main>
   );
 }
