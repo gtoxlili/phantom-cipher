@@ -136,6 +136,27 @@ export default defineConfig({
           '0%': { opacity: '0', transform: 'translateY(8px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
+        // 路由 loader 的牌堆洗牌——三张牌轮流跳到顶上来回切。
+        // 每张牌共用同一段动画但 animation-delay 错开 0/0.27/0.54s，
+        // 形成"持续洗"的视觉。z-index 在动画里也轮转一圈，让"被洗到
+        // 顶上"的牌真的盖在另两张上面。
+        loaderShuffle: {
+          '0%, 100%': { transform: 'translate(-22px, 8px) rotate(-14deg)', zIndex: '1' },
+          '33%': { transform: 'translate(0, -10px) rotate(2deg) scale(1.04)', zIndex: '3' },
+          '66%': { transform: 'translate(22px, 8px) rotate(14deg)', zIndex: '2' },
+        },
+        // P5 红色横幅滑入：从左外侧斜推进来，到位后固定 skew 角度
+        loaderRibbon: {
+          '0%': { opacity: '0', transform: 'translateX(-40px) skewX(-12deg)' },
+          '60%': { opacity: '1', transform: 'translateX(6px) skewX(-9deg)' },
+          '100%': { transform: 'translateX(0) skewX(-9deg)' },
+        },
+        // "解读密码"四个字逐字 slamIn——错开 delay 营造打字感
+        loaderGlyphSlam: {
+          '0%': { opacity: '0', transform: 'translateY(-22px) rotate(-8deg) scale(1.3)' },
+          '70%': { opacity: '1', transform: 'translateY(2px) rotate(1deg) scale(1)' },
+          '100%': { opacity: '1', transform: 'translateY(0) rotate(0) scale(1)' },
+        },
       },
     },
   },

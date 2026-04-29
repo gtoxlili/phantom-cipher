@@ -3,6 +3,7 @@ import { render } from 'solid-js/web';
 import { Router, Route } from '@solidjs/router';
 import { MetaProvider } from '@solidjs/meta';
 import { ErrorBoundary, lazy, Suspense, type JSX } from 'solid-js';
+import { RouteLoading } from '@/components/RouteLoading';
 
 // Self-host the Latin display + body faces via fontsource. fonts.googleapis.com
 // is unreliable inside mainland China (firewalled / inconsistent), so we
@@ -102,32 +103,6 @@ function FatalError(props: { err: unknown; reset: () => void }): JSX.Element {
       >
         重新连接 // RESTART
       </button>
-    </main>
-  );
-}
-
-// 路由级 Suspense fallback——路由 chunk 是 lazy() 加载的，没有
-// Suspense 边界 Solid 文档明确说 lazy 组件会渲染成空字符串
-// （"renders an empty string until the module resolves"），快网络
-// 几乎没感觉，慢 3G 会看到一闪空白。这层最小骨架保持视觉连续性。
-function RouteLoading(): JSX.Element {
-  return (
-    <main
-      style={{
-        'min-height': '100dvh',
-        display: 'flex',
-        'align-items': 'center',
-        'justify-content': 'center',
-        background: '#0a0a0a',
-        color: '#fafaf3',
-        'font-family': "'Bebas Neue', 'Oswald', sans-serif",
-        'letter-spacing': '0.4em',
-        'font-size': '20px',
-        'font-style': 'italic',
-        opacity: 0.55,
-      }}
-    >
-      · · ·
     </main>
   );
 }
