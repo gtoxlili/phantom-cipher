@@ -15,9 +15,21 @@ export function Deck(props: {
   const stackCount = () => Math.max(stack(), 1);
   return (
     <div class={s.deckGroup}>
+      {/*
+        onClick 永远绑一个无脑 wrapper——Solid 的事件 handler 不是
+        反应式的，`onClick={cond ? fn : undefined}` 这种条件三元表
+        达式只在初次渲染绑一次。如果初次渲染时 canDraw=false（不是
+        本玩家先手的回合），onClick 会被永久绑成 undefined，等回合
+        转过来 canDraw 变 true、按钮看起来活了，**点击其实没人接
+        手**——这就是之前 VIOLET / 红蔷薇"牌堆亮着却点不动"的 bug。
+
+        正确做法：onClick 永远是 `() => props.onDraw()`，让浏览器
+        原生的 `disabled` 属性来拦截不该响应的点击（disabled 上的
+        button 浏览器层面就不触发 click 事件）。
+      */}
       <button
         class={clsx(s.deck, props.canDraw && !empty() && s.deckActive, empty() && s.deckEmpty)}
-        onClick={props.canDraw && !empty() ? props.onDraw : undefined}
+        onClick={() => props.onDraw()}
         disabled={!props.canDraw || empty()}
         aria-label={isBlack() ? '抽黑牌' : '抽白牌'}
         type="button"
