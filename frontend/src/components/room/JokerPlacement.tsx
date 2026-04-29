@@ -26,12 +26,23 @@ export function JokerPlacement() {
   return (
     <Presence>
       <Show when={visible() && pending()}>
+        {/*
+         * solid-motionone's <Presence> only awaits motioncomplete on
+         * its outermost Motion child. When the outer (backdrop fade)
+         * completes faster than the inner (sheet slide-down spring),
+         * the inner gets cut off mid-animation. The fix: time the
+         * outer's exit to outlast the inner's spring settle (~0.4s
+         * for the parameters below) so Presence stays mounted long
+         * enough for both to finish. The fade itself reads slightly
+         * gentler than the original 0.18s — a fair trade for the
+         * exit motion playing through.
+         */}
         <Motion.div
           class={s.backdrop}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.18 }}
+          transition={{ duration: 0.42 }}
         >
           <Motion.div
             class={s.sheet}

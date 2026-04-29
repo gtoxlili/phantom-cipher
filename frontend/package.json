@@ -10,6 +10,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@fontsource/bebas-neue": "^5.2.7",
+    "@fontsource/inter": "^5.2.8",
+    "@fontsource/oswald": "^5.2.8",
     "@motionone/dom": "^10.18.0",
     "@solid-primitives/keyed": "^1.5.3",
     "@solidjs/meta": "^0.29.4",

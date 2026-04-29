@@ -1,14 +1,16 @@
 /**
- * Font variables — wired straight to the Google Fonts stylesheet
- * loaded in index.html. Matches the names that Next.js's font
- * loader exposed in the original implementation, so the Panda
- * config and inline references keep working without changes.
+ * Font variables — Latin faces (Bebas Neue / Inter / Oswald) come
+ * from the @fontsource imports in src/main.tsx, bundled into our
+ * own dist so the GFW doesn't gate first paint. Chinese glyphs
+ * fall back to the host OS's CJK font; the chain covers Apple,
+ * Windows, Adobe Source Han, and finally generic sans-serif.
  */
 :root {
   --font-display: 'Bebas Neue', sans-serif;
   --font-condensed: 'Oswald', sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-cn: 'Noto Sans SC', 'PingFang SC', sans-serif;
+  --font-cn: 'PingFang SC', 'Microsoft YaHei', 'Source Han Sans CN',
+    'Noto Sans CJK SC', 'Hiragino Sans GB', sans-serif;
 }
 
 /**

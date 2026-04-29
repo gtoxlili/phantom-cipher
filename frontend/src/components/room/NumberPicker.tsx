@@ -22,13 +22,18 @@ export function NumberPicker() {
   return (
     <Presence>
       <Show when={visible() && op() && tile() && selectedTile()}>
+        {/*
+         * Outer fade timed to outlast the inner spring slide so
+         * solid-motionone's Presence doesn't unmount mid-animation.
+         * Same trick as JokerPlacement; see the comment there.
+         */}
         <Motion.div
           class={s.backdrop}
           onClick={close}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.18 }}
+          transition={{ duration: 0.42 }}
         >
           <Motion.div
             class={s.sheet}

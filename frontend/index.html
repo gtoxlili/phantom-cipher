@@ -36,13 +36,11 @@
     <meta name="image" content="/og-image.png" />
     <meta name="msapplication-TileImage" content="/og-image.png" />
 
-    <!-- Preload the four font weights actually used on first paint. -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;700;900&family=Noto+Sans+SC:wght@700;900&family=Oswald:wght@500;600;700&display=swap"
-    />
+    <!-- Latin display + body faces are bundled via @fontsource and
+         imported from src/main.tsx. Chinese characters fall back to
+         the system font stack (PingFang SC / Microsoft YaHei /
+         Source Han Sans), so we don't reach across the GFW for
+         fonts.googleapis.com or fonts.gstatic.com on first paint. -->
   </head>
   <body>
     <div id="root"></div>

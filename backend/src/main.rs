@@ -22,7 +22,8 @@ mod types;
 
 use anyhow::Result;
 use axum::body::Body;
-use axum::http::{StatusCode, Uri, header};
+use axum::extract::Request;
+use axum::http::{Method, StatusCode, header};
 use axum::response::{IntoResponse, Response};
 use axum::{Router, routing::any};
 use std::sync::Arc;
@@ -68,9 +69,9 @@ async fn main() -> Result<()> {
     let dist_for_fallback = dist_dir.clone();
     let app: Router = Router::new()
         .merge(routes::router(state))
-        .fallback(any(move |uri: Uri| {
+        .fallback(any(move |req: Request| {
             let dist = dist_for_fallback.clone();
-            async move { spa_fallback(uri, dist).await }
+            async move { spa_fallback(req, dist).await }
         }))
         .layer(TraceLayer::new_for_http())
         .layer(CompressionLayer::new().br(true).gzip(true));
@@ -94,8 +95,29 @@ async fn main() -> Result<()> {
 }
 
 /// Hand-rolled SPA static handler. Path-with-extension → look for
-/// the file on disk; everything else → serve index.html.
-async fn spa_fallback(uri: Uri, dist_dir: String) -> Response {
+/// the file on disk; everything else → serve index.html with the
+/// SPA shell. HEAD responses share GET's headers but skip the body
+/// per RFC 9110 §9.3.2.
+async fn spa_fallback(req: Request, dist_dir: String) -> Response {
+    let method = req.method().clone();
+    let uri = req.uri().clone();
+    let host = req
+        .headers()
+        .get(header::HOST)
+        .and_then(|v| v.to_str().ok())
+        .map(str::to_string);
+    let scheme_hint = req
+        .headers()
+        .get("x-forwarded-proto")
+        .and_then(|v| v.to_str().ok())
+        .map(str::to_string);
+
+    let is_get_or_head = method == Method::GET || method == Method::HEAD;
+    let is_head = method == Method::HEAD;
+    if !is_get_or_head {
+        return (StatusCode::METHOD_NOT_ALLOWED, "method not allowed").into_response();
+    }
+
     let raw = uri.path().trim_start_matches('/');
     // Reject path traversal — anything with `..` or absolute paths.
     if raw.split('/').any(|seg| seg == ".." || seg.starts_with('.')) {
@@ -108,33 +130,117 @@ async fn spa_fallback(uri: Uri, dist_dir: String) -> Response {
         let file_path = format!("{dist_dir}/{raw}");
         if let Ok(bytes) = tokio::fs::read(&file_path).await {
             let mime = mime_type(&file_path);
-            return Response::builder()
+            let len = bytes.len();
+            let mut builder = Response::builder()
                 .header(header::CONTENT_TYPE, mime)
                 .header(header::CACHE_CONTROL, asset_cache(&file_path))
-                .body(Body::from(bytes))
+                .header(header::CONTENT_LENGTH, len);
+            // HEAD: declare the headers but drop the body.
+            let body = if is_head { Body::empty() } else { Body::from(bytes) };
+            return builder
+                .body(body)
                 .expect("response build")
                 .into_response();
         }
-        return (StatusCode::NOT_FOUND, "not found").into_response();
+        let mut builder = Response::builder().status(StatusCode::NOT_FOUND);
+        return builder
+            .body(if is_head { Body::empty() } else { Body::from("not found") })
+            .expect("response build")
+            .into_response();
     }
 
-    // SPA route — serve the entry HTML, with per-room metadata
-    // injection for /room/:code so share-card previews include
-    // the room code (the original Next.js app did this via
-    // generateMetadata; the static SPA needs the server's help).
+    // SPA route — serve the entry HTML, with per-room metadata +
+    // absolute-URL image rewrites so share crawlers (especially
+    // WeChat, which is finicky about relative og:image) get a
+    // canonical URL pointing at the real origin.
     let html_path = format!("{dist_dir}/index.html");
     let bytes = tokio::fs::read(&html_path).await.unwrap_or_default();
-    let body = if let Some(code) = extract_room_code(uri.path()) {
-        Body::from(inject_room_metadata(&bytes, &code))
+    let origin = host
+        .as_deref()
+        .map(|h| derive_origin(h, scheme_hint.as_deref()))
+        .filter(|o| !o.is_empty());
+    let html = if let Ok(text) = std::str::from_utf8(&bytes) {
+        let mut html = text.to_string();
+        if let Some(origin) = origin.as_deref() {
+            html = absolutize_image_meta(&html, origin);
+        }
+        if let Some(code) = extract_room_code(uri.path()) {
+            html = inject_room_metadata(&html, &code);
+        }
+        html.into_bytes()
     } else {
-        Body::from(bytes)
+        bytes
     };
+    let len = html.len();
+    let body = if is_head { Body::empty() } else { Body::from(html) };
     Response::builder()
         .header(header::CONTENT_TYPE, "text/html; charset=utf-8")
         .header(header::CACHE_CONTROL, "no-cache")
+        .header(header::CONTENT_LENGTH, len)
         .body(body)
         .expect("response build")
         .into_response()
+}
+
+/// Compose `https://example.com` from the Host header and an
+/// optional X-Forwarded-Proto hint. Falls back to https when the
+/// host has no port (assumed to be behind a TLS-terminating proxy)
+/// and to http for explicit numeric ports — same heuristic as
+/// most Rust web stacks default to.
+fn derive_origin(host: &str, forwarded_proto: Option<&str>) -> String {
+    if host.is_empty() {
+        return String::new();
+    }
+    let scheme = forwarded_proto.unwrap_or_else(|| {
+        // Without an explicit hint, lean on a common-case rule:
+        // a host like `localhost:3000` is almost always plain
+        // HTTP; a bare hostname behind a proxy is almost always
+        // HTTPS. This isn't airtight but it's right for ~all
+        // self-hosted deployments without explicit X-F-P.
+        if host.contains(':') && host.starts_with("localhost") {
+            "http"
+        } else if host.contains(':')
+            && host
+                .rsplit_once(':')
+                .and_then(|(_, p)| p.parse::<u16>().ok())
+                .is_some_and(|p| p != 80 && p != 443)
+        {
+            "http"
+        } else {
+            "https"
+        }
+    });
+    format!("{scheme}://{host}")
+}
+
+/// Rewrite the four image meta tags to absolute URLs. The
+/// original Next.js app did this implicitly via `metadataBase`;
+/// emitting absolute URLs is important for WeChat link cards in
+/// particular, which historically don't resolve relative paths.
+fn absolutize_image_meta(html: &str, origin: &str) -> String {
+    let pairs = [
+        (
+            r#"<meta property="og:image" content="/og-image.png" />"#,
+            format!(r#"<meta property="og:image" content="{origin}/og-image.png" />"#),
+        ),
+        (
+            r#"<meta name="twitter:image" content="/og-image.png" />"#,
+            format!(r#"<meta name="twitter:image" content="{origin}/og-image.png" />"#),
+        ),
+        (
+            r#"<meta name="image" content="/og-image.png" />"#,
+            format!(r#"<meta name="image" content="{origin}/og-image.png" />"#),
+        ),
+        (
+            r#"<meta name="msapplication-TileImage" content="/og-image.png" />"#,
+            format!(r#"<meta name="msapplication-TileImage" content="{origin}/og-image.png" />"#),
+        ),
+    ];
+    let mut out = html.to_string();
+    for (needle, replacement) in pairs {
+        out = out.replace(needle, &replacement);
+    }
+    out
 }
 
 /// `/room/<code>` (case-insensitive) → Some(uppercase code, max 6
@@ -163,16 +269,10 @@ fn extract_room_code(path: &str) -> Option<String> {
     }
 }
 
-/// Rewrite the four metadata tags that share-card crawlers care
-/// about: `<title>`, og:title, twitter:title, and the description
-/// pair. Every other tag (icons, og:image, manifest link, etc.)
-/// stays untouched. String-replace is fine here because index.html
-/// is our own controlled artifact and the placeholders are
-/// distinctive.
-fn inject_room_metadata(bytes: &[u8], code: &str) -> Vec<u8> {
-    let Ok(html) = std::str::from_utf8(bytes) else {
-        return bytes.to_vec();
-    };
+/// Rewrite the metadata tags share-card crawlers care about:
+/// `<title>`, og:title, twitter:title, and the description pair.
+/// Image tags are absolutized separately — see absolutize_image_meta.
+fn inject_room_metadata(html: &str, code: &str) -> String {
     let title = format!("入局 · {code} · 达芬奇密码");
     let og_title = format!("{code} · TAKE THEIR CIPHER");
     let desc = format!("入局 {code} — 二十四块密码 · 唯一的胜者。");
@@ -196,7 +296,7 @@ fn inject_room_metadata(bytes: &[u8], code: &str) -> Vec<u8> {
         r#"<meta name="twitter:description" content="二十四块密码 · 唯一的胜者。" />"#,
         &format!(r#"<meta name="twitter:description" content="{desc}" />"#),
     );
-    out.into_bytes()
+    out
 }
 
 fn mime_type(path: &str) -> &'static str {
