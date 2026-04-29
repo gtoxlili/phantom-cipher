@@ -118,15 +118,85 @@ async fn spa_fallback(uri: Uri, dist_dir: String) -> Response {
         return (StatusCode::NOT_FOUND, "not found").into_response();
     }
 
-    // SPA route — serve the entry HTML.
+    // SPA route — serve the entry HTML, with per-room metadata
+    // injection for /room/:code so share-card previews include
+    // the room code (the original Next.js app did this via
+    // generateMetadata; the static SPA needs the server's help).
     let html_path = format!("{dist_dir}/index.html");
     let bytes = tokio::fs::read(&html_path).await.unwrap_or_default();
+    let body = if let Some(code) = extract_room_code(uri.path()) {
+        Body::from(inject_room_metadata(&bytes, &code))
+    } else {
+        Body::from(bytes)
+    };
     Response::builder()
         .header(header::CONTENT_TYPE, "text/html; charset=utf-8")
         .header(header::CACHE_CONTROL, "no-cache")
-        .body(Body::from(bytes))
+        .body(body)
         .expect("response build")
         .into_response()
+}
+
+/// `/room/<code>` (case-insensitive) → Some(uppercase code, max 6
+/// chars). Anything else → None.
+fn extract_room_code(path: &str) -> Option<String> {
+    let trimmed = path.trim_start_matches('/');
+    let mut parts = trimmed.split('/');
+    let head = parts.next()?;
+    if !head.eq_ignore_ascii_case("room") {
+        return None;
+    }
+    let code = parts.next()?;
+    if parts.next().is_some() {
+        return None;
+    }
+    let normalized: String = code
+        .chars()
+        .filter(|c| c.is_ascii_alphanumeric())
+        .take(6)
+        .collect::<String>()
+        .to_ascii_uppercase();
+    if normalized.is_empty() {
+        None
+    } else {
+        Some(normalized)
+    }
+}
+
+/// Rewrite the four metadata tags that share-card crawlers care
+/// about: `<title>`, og:title, twitter:title, and the description
+/// pair. Every other tag (icons, og:image, manifest link, etc.)
+/// stays untouched. String-replace is fine here because index.html
+/// is our own controlled artifact and the placeholders are
+/// distinctive.
+fn inject_room_metadata(bytes: &[u8], code: &str) -> Vec<u8> {
+    let Ok(html) = std::str::from_utf8(bytes) else {
+        return bytes.to_vec();
+    };
+    let title = format!("入局 · {code} · 达芬奇密码");
+    let og_title = format!("{code} · TAKE THEIR CIPHER");
+    let desc = format!("入局 {code} — 二十四块密码 · 唯一的胜者。");
+    let mut out = html.replace(
+        "<title>TAKE THEIR CIPHER · 达芬奇密码</title>",
+        &format!("<title>{title}</title>"),
+    );
+    out = out.replace(
+        r#"<meta property="og:title" content="TAKE THEIR CIPHER · 达芬奇密码" />"#,
+        &format!(r#"<meta property="og:title" content="{og_title}" />"#),
+    );
+    out = out.replace(
+        r#"<meta name="twitter:title" content="TAKE THEIR CIPHER · 达芬奇密码" />"#,
+        &format!(r#"<meta name="twitter:title" content="{og_title}" />"#),
+    );
+    out = out.replace(
+        r#"<meta property="og:description" content="二十四块密码 · 唯一的胜者。" />"#,
+        &format!(r#"<meta property="og:description" content="{desc}" />"#),
+    );
+    out = out.replace(
+        r#"<meta name="twitter:description" content="二十四块密码 · 唯一的胜者。" />"#,
+        &format!(r#"<meta name="twitter:description" content="{desc}" />"#),
+    );
+    out.into_bytes()
 }
 
 fn mime_type(path: &str) -> &'static str {

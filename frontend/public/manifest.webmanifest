@@ -1,0 +1,47 @@
+{
+  "id": "davinci-cipher",
+  "name": "TAKE THEIR CIPHER // 达芬奇密码",
+  "short_name": "怪盗密码",
+  "description": "二十四块刻着数字的木牌 · 在藏匿与显露之间用演绎与直觉破译每一块尚未现身的密码。Take their cipher.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "categories": ["games"],
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "prefer_related_applications": false,
+  "icons": [
+    { "src": "/icon-192x192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/maskable-icon-512x512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png", "purpose": "any" }
+  ],
+  "screenshots": [
+    {
+      "src": "/og-image.png",
+      "sizes": "1200x1200",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "TAKE THEIR CIPHER"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "创建棋局",
+      "short_name": "新局",
+      "description": "开新房等友 — open a fresh table",
+      "url": "/?intent=create",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "持密码入局",
+      "short_name": "入局",
+      "description": "凭口令进入既有房间 — slip into an existing room",
+      "url": "/?intent=join",
+      "icons": [{ "src": "/icon-192x192.png", "sizes": "192x192" }]
+    }
+  ]
+}
