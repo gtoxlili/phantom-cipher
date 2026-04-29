@@ -735,21 +735,7 @@ impl Game {
             log: snap.log,
             log_counter: snap.log_counter,
             winner_id: snap.winner_id,
-            // 旧版本写盘的 last_reveal 在猜错分支也带着真实 color/joker。
-            // 升级后的进程 rehydrate 时这里把猜错的那几个字段抹掉，
-            // 避免旧帧污染数据在第一次 to_public_state 时再发出去
-            last_reveal: snap.last_reveal.map(|r| {
-                if r.correct {
-                    r
-                } else {
-                    RevealInfo {
-                        number: None,
-                        color: None,
-                        joker: None,
-                        ..r
-                    }
-                }
-            }),
+            last_reveal: snap.last_reveal,
             started_at: snap.started_at,
         }
     }
