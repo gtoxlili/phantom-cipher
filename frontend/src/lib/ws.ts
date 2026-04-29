@@ -87,18 +87,18 @@ export function startGameStream(ready: () => boolean) {
     clearReconnect();
     clearHeartbeat();
     if (socket) {
-      // 先卸 listener 再 close——避免 in-flight 的 close 事件
-      // 又触发一次重连，跟手动 teardown 撞车
-      socket.onopen = null;
-      socket.onclose = null;
-      socket.onerror = null;
-      socket.onmessage = null;
+      // 防 in-flight close 事件再触发一次重连：先抓住引用、立刻把
+      // 闭包变量 socket 清空，这样后续异步触发的 close 监听器里
+      // `if (socket !== ws) return` 会直接 short-circuit 出去。
+      // （注：监听器是用 addEventListener 挂的，靠 onclose=null
+      // 是解不掉的——这里走的是闭包变量状态守卫这条路。）
+      const old = socket;
+      socket = null;
       try {
-        socket.close();
+        old.close();
       } catch {
         // 已经关了
       }
-      socket = null;
     }
     setConnected(false);
   }
