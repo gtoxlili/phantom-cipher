@@ -11,9 +11,18 @@
 # - aarch64：保持 generic ARMv8。生产 ARM 环境太杂（Graviton、RPi、
 #   Apple Silicon、各家国产 ARM），指定具体 microarch 容易在某台机
 #   上爆 illegal instruction。
+#
+# - link-arg=-fuse-ld=mold：用 mold 替代 GNU ld，链接阶段从 ~3s 降到
+#   <1s。Debian 13 的 gcc 14 原生支持 -fuse-ld=mold，所以 builder
+#   只要 apt install mold 一个包，不用换 clang。仅影响构建时间不
+#   影响产物正确性；aarch64 一并启用——mold 不改代码生成，跟 target-cpu
+#   是不同维度的事，不破坏 generic ARMv8 的兼容性承诺。
 
 [target.x86_64-unknown-linux-gnu]
-rustflags = ["-C", "target-cpu=x86-64-v3"]
+rustflags = ["-C", "link-arg=-fuse-ld=mold", "-C", "target-cpu=x86-64-v3"]
 
 [target.x86_64-unknown-linux-musl]
-rustflags = ["-C", "target-cpu=x86-64-v3"]
+rustflags = ["-C", "link-arg=-fuse-ld=mold", "-C", "target-cpu=x86-64-v3"]
+
+[target.aarch64-unknown-linux-gnu]
+rustflags = ["-C", "link-arg=-fuse-ld=mold"]
