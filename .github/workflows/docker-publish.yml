@@ -27,9 +27,17 @@ jobs:
     permissions:
       contents: read
       packages: write
+    outputs:
+      # deploy job 拿这个去拉精确 commit 的镜像，避免依赖 ":latest 已经
+      # 在 registry 端更新" 的隐式时序假设
+      image_tag: ${{ steps.vars.outputs.image_tag }}
 
     steps:
       - uses: actions/checkout@v4
+
+      # short SHA 跟 metadata-action 的 type=sha,format=short 输出一致
+      - id: vars
+        run: echo "image_tag=sha-${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
 
       # QEMU 让单台 amd64 runner 能交叉编 arm64 层。比原生 arm64 慢，
       # 但免费档够用，多花点构建时间换不用维护多个 runner pool。
@@ -67,3 +75,70 @@ jobs:
           # VITE_INF_FP_API_KEY 环境变量喂给 vite build
           build-args: |
             INF_FP_API_KEY=${{ secrets.INF_FP_API_KEY }}
+
+  deploy:
+    needs: publish
+    runs-on: ubuntu-latest
+    permissions:
+      # GITHUB_TOKEN 拉 GHCR 私有镜像需要 packages:read
+      packages: read
+    steps:
+      # fork 仓库没配部署 secret 就跳过——镜像照旧 build/push 到 fork
+      # 自己的 GHCR，只是不远程登录陌生服务器。判断用 DEPLOY_SSH_KEY
+      # 这一个，其他几个 secret 没填 SSH 也连不上、报错更直白
+      - name: Check deploy config
+        id: cfg
+        env:
+          KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+        run: |
+          if [ -z "$KEY" ]; then
+            echo "::notice::DEPLOY_SSH_KEY 未配置，跳过远程部署"
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # 部署逻辑：登 GHCR → 拉 sha-<short> 精确镜像 → 干掉旧容器 → 跑新的
+      # → 清掉除当前 tag 外的同 repo 旧镜像（旧 SHA layer 累积会吃盘）。
+      # 用 SHA tag 不用 :latest 是为了原子部署 + 回滚——拉哪个 commit 一
+      # 目了然，回滚改 tag 即可，不用管 registry 端 :latest 是否就绪。
+      - name: SSH deploy
+        if: steps.cfg.outputs.skip != 'true'
+        uses: appleboy/ssh-action@v1.2.5
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            set -e
+            IMAGE_REPO="${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}"
+            IMAGE_TAG="${{ needs.publish.outputs.image_tag }}"
+            IMAGE="$IMAGE_REPO:$IMAGE_TAG"
+
+            # GHCR 默认 private——用 workflow 自带的 GITHUB_TOKEN 登录
+            # 拉镜像，token 只在本次 run 有效，不留长期凭据
+            echo '${{ secrets.GITHUB_TOKEN }}' | docker login ${{ env.REGISTRY }} -u '${{ github.actor }}' --password-stdin
+
+            docker pull "$IMAGE"
+            docker rm -f phantom-cipher 2>/dev/null || true
+            docker run -d \
+              --name phantom-cipher \
+              --restart unless-stopped \
+              --init \
+              -p ${{ secrets.DEPLOY_PORT }}:3000 \
+              --memory 512m \
+              --memory-swap 512m \
+              --ulimit nofile=65535:65535 \
+              --log-driver=json-file \
+              --log-opt max-size=10m \
+              --log-opt max-file=3 \
+              --log-opt compress=true \
+              -v phantom-cipher-data:/app/data \
+              "$IMAGE"
+
+            # 清掉除当前 tag 外的同 repo 旧镜像。grep 末尾留一个空格避免
+            # 误伤 (如 sha-abc 不会匹配到 sha-abcd)
+            docker images "$IMAGE_REPO" --format "{{.Repository}}:{{.Tag}} {{.ID}}" \
+              | grep -v ":$IMAGE_TAG " \
+              | awk '{print $2}' \
+              | xargs -r docker rmi 2>/dev/null || true
