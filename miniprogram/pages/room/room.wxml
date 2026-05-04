@@ -25,6 +25,7 @@
     mood="{{phaseMood}}"
   />
 
+  <!-- 中段：对手 + ActionZone，flex:1 撑开剩余空间，需要时滚动 -->
   <scroll-view class="scroll" scroll-y type="list" enhanced show-scrollbar="{{false}}">
     <!-- ========== Opponents ========== -->
     <view class="opponents-area">
@@ -127,32 +128,34 @@
       </block>
     </view>
 
-    <!-- ========== My Row ========== -->
-    <view class="my-area">
-      <block wx:if="{{me}}">
-        <player-row
-          player="{{me}}"
-          is-me="{{true}}"
-          tiles="{{myCells}}"
-          current="{{isMyTurn}}"
-          host="{{isHost}}"
-          can-target="{{false}}"
-          selected-tile-id=""
-          reveal-tile-id="{{revealTileId}}"
-          reveal-correct="{{revealCorrect}}"
-          now-ms="{{nowMs}}"
-          bind:tileTap="onMyTileTap"
-        />
-      </block>
-      <block wx:else>
-        <view class="connecting-msg">
-          <text>· CONNECTING · {{phase}} ·</text>
-        </view>
-      </block>
-    </view>
-
-    <view style="height: {{layout.safeBottom + 40}}px" />
+    <view style="height: 40rpx" />
   </scroll-view>
+
+  <!-- 自己的手牌区固定在底部，留出 home indicator 安全区。
+       不放进 scroll-view 是为了"自己的手牌永远可见"——跟 frontend 的
+       myArea 在 main flex 容器底部一致。 -->
+  <view class="my-area" style="padding-bottom: {{layout.safeBottom + 8}}px">
+    <block wx:if="{{me}}">
+      <player-row
+        player="{{me}}"
+        is-me="{{true}}"
+        tiles="{{myCells}}"
+        current="{{isMyTurn}}"
+        host="{{isHost}}"
+        can-target="{{false}}"
+        selected-tile-id=""
+        reveal-tile-id="{{revealTileId}}"
+        reveal-correct="{{revealCorrect}}"
+        now-ms="{{nowMs}}"
+        bind:tileTap="onMyTileTap"
+      />
+    </block>
+    <block wx:else>
+      <view class="connecting-msg">
+        <text>· CONNECTING · {{phase}} ·</text>
+      </view>
+    </block>
+  </view>
 
   <!-- ========== Modals & Overlays ========== -->
   <number-picker

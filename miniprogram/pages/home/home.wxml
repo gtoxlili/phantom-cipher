@@ -1,154 +1,151 @@
-<scroll-view
+<!--
+  顶层 flex column 布满 100vh：
+    - 上 padding = 胶囊安全区
+    - 下 padding = home indicator 安全区
+  内部：
+    - .scroll-area 走 flex:1，吃掉中间剩余空间，长内容滚动
+    - .footer 走 flex:0，永远贴在底部
+    - sketch / stats-link / notifications 用 fixed 浮层
+-->
+<view
   class="page"
-  scroll-y
-  type="list"
-  enhanced
-  show-scrollbar="{{false}}"
-  style="padding-top: {{layout.navBarHeight + 12}}px; padding-bottom: {{layout.safeBottom + 40}}px"
+  style="padding-top: {{layout.navBarHeight + 12}}px; padding-bottom: {{layout.safeBottom + 12}}px"
 >
   <sketch />
 
-  <view class="hero">
-    <view class="eyebrow"><text>· EST · MMXXVI · TOKYO ·</text></view>
-    <view class="title">
-      <view class="row1"><text>达芬奇</text></view>
-      <view class="row2"><text>密码</text></view>
+  <scroll-view class="scroll-area" scroll-y type="list" enhanced show-scrollbar="{{false}}">
+    <view class="hero">
+      <view class="eyebrow"><text>· EST · MMXXVI · TOKYO ·</text></view>
+      <view class="title">
+        <view class="row1"><text>达芬奇</text></view>
+        <view class="row2"><text>密码</text></view>
+      </view>
+      <text class="subtitle">// DA VINCI'S CIPHER</text>
     </view>
-    <text class="subtitle">// DA VINCI'S CIPHER</text>
-  </view>
 
-  <view class="content">
-    <block wx:if="{{mode === 'menu'}}">
-      <view class="hook">
-        <view class="hook-mark"><text>※</text></view>
-        <text class="copy"><text class="em">TAKE THEIR CIPHER.</text> 二十四块刻着数字的木牌——藏匿与显露之间，用你的演绎与直觉，<text class="em">破译</text>每一块尚未现身的密码。</text>
-      </view>
-
-      <view class="actions">
-        <view class="btn primary" hover-class="btn-primary-press" hover-stay-time="80" bind:tap="goCreate">
-          <view class="btn-label">
-            <view class="text-row">
-              <text class="zh">创建棋局</text>
-              <text class="en light">CREATE NEW</text>
-            </view>
-          </view>
-          <text class="arrow">▶</text>
+    <view class="content">
+      <block wx:if="{{mode === 'menu'}}">
+        <view class="hook">
+          <view class="hook-mark"><text>※</text></view>
+          <text class="copy"><text class="em">TAKE THEIR CIPHER.</text> 二十四块刻着数字的木牌——藏匿与显露之间，用你的演绎与直觉，<text class="em">破译</text>每一块尚未现身的密码。</text>
         </view>
 
-        <view class="btn secondary" hover-class="btn-secondary-press" hover-stay-time="80" bind:tap="goJoin">
-          <view class="btn-label">
-            <view class="text-row">
-              <text class="zh">持密码入局</text>
-              <text class="en dark">ENTER WITH CODE</text>
-            </view>
-          </view>
-          <text class="arrow">▶</text>
-        </view>
-      </view>
-
-      <view class="howto" bind:tap="toggleHowto">
-        <text class="howto-summary">· How to Play / 玩法简述 {{showHowto ? '▴' : '▾'}} ·</text>
-      </view>
-
-      <view wx:if="{{showHowto}}" class="howto-box">
-        <view class="howto-line"><text class="dot">◆</text><text>抽取数张数字牌（黑白共 0–11 各一份），按数字升序排列，同数时黑前白后。</text></view>
-        <view class="howto-line"><text class="dot">◆</text><text>每回合：抽一张新牌做「暂置」，任选对手一张未亮明的牌，宣告一个数字。</text></view>
-        <view class="howto-line"><text class="dot">◆</text><text>命中──对手翻明该牌，你可继续，亦可收手（暂置牌仍藏匿）。</text></view>
-        <view class="howto-line"><text class="dot">◆</text><text>失手──你必须把暂置那张牌翻明示众，回合结束。</text></view>
-        <view class="howto-line"><text class="dot">◆</text><text>当只剩你一人尚有藏匿之牌──<text class="em-strong">YOU WIN</text>。</text></view>
-      </view>
-    </block>
-
-    <block wx:if="{{mode === 'create'}}">
-      <view class="form">
-        <view class="form-title"><text>创建棋局</text></view>
-
-        <view class="field">
-          <text class="field-label">› Codename · 你的代号</text>
-          <input
-            class="field-input"
-            value="{{myName}}"
-            placeholder="JOKER"
-            placeholder-style="color: rgba(10,10,10,0.4); font-style: italic;"
-            maxlength="16"
-            bindinput="onNameInput"
-          />
-          <view class="shuffle-btn" hover-class="shuffle-btn-press" hover-stay-time="80" bind:tap="onShuffle">
-            <text class="spark">✦</text>
-            <text>随机代号 / SHUFFLE</text>
-            <text class="spark">✦</text>
-          </view>
-        </view>
-
-        <view wx:if="{{error}}" class="error"><text>⚠ {{error}}</text></view>
-
-        <view class="form-actions">
-          <view class="btn-text" hover-class="btn-text-press" hover-stay-time="80" bind:tap="goBack"><text>‹ BACK</text></view>
-          <view class="btn primary submit" hover-class="btn-submit-press" hover-stay-time="80" bind:tap="submitCreate">
+        <view class="actions">
+          <view class="btn primary" hover-class="btn-primary-press" hover-stay-time="80" bind:tap="goCreate">
             <view class="btn-label">
-              <text class="zh">开局 ▶</text>
+              <view class="text-row">
+                <text class="zh">创建棋局</text>
+                <text class="en light">CREATE NEW</text>
+              </view>
             </view>
+            <text class="arrow">▶</text>
           </view>
-        </view>
-      </view>
-    </block>
 
-    <block wx:if="{{mode === 'join'}}">
-      <view class="form">
-        <view class="form-title"><text>持密码入局</text></view>
-
-        <view class="field">
-          <text class="field-label">› Codename · 你的代号</text>
-          <input
-            class="field-input"
-            value="{{myName}}"
-            placeholder="JOKER"
-            placeholder-style="color: rgba(10,10,10,0.4); font-style: italic;"
-            maxlength="16"
-            bindinput="onNameInput"
-          />
-          <view class="shuffle-btn" hover-class="shuffle-btn-press" hover-stay-time="80" bind:tap="onShuffle">
-            <text class="spark">✦</text>
-            <text>随机代号 / SHUFFLE</text>
-            <text class="spark">✦</text>
-          </view>
-        </view>
-
-        <view class="field">
-          <text class="field-label">› Cipher Key · 房间密码</text>
-          <input
-            class="field-input mono"
-            value="{{code}}"
-            placeholder="XXXX"
-            placeholder-style="color: rgba(10,10,10,0.4); font-style: italic; letter-spacing: 0.4em;"
-            maxlength="4"
-            bindinput="onCodeInput"
-          />
-        </view>
-
-        <view wx:if="{{error}}" class="error"><text>⚠ {{error}}</text></view>
-
-        <view class="form-actions">
-          <view class="btn-text" hover-class="btn-text-press" hover-stay-time="80" bind:tap="goBack"><text>‹ BACK</text></view>
-          <view class="btn primary submit" hover-class="btn-submit-press" hover-stay-time="80" bind:tap="submitJoin">
+          <view class="btn secondary" hover-class="btn-secondary-press" hover-stay-time="80" bind:tap="goJoin">
             <view class="btn-label">
-              <text class="zh">进入 ▶</text>
+              <view class="text-row">
+                <text class="zh">持密码入局</text>
+                <text class="en dark">ENTER WITH CODE</text>
+              </view>
+            </view>
+            <text class="arrow">▶</text>
+          </view>
+        </view>
+
+        <view class="howto" bind:tap="toggleHowto">
+          <text class="howto-summary">· How to Play / 玩法简述 {{showHowto ? '▴' : '▾'}} ·</text>
+        </view>
+
+        <view wx:if="{{showHowto}}" class="howto-box">
+          <view class="howto-line"><text class="dot">◆</text><text>抽取数张数字牌（黑白共 0–11 各一份），按数字升序排列，同数时黑前白后。</text></view>
+          <view class="howto-line"><text class="dot">◆</text><text>每回合：抽一张新牌做「暂置」，任选对手一张未亮明的牌，宣告一个数字。</text></view>
+          <view class="howto-line"><text class="dot">◆</text><text>命中──对手翻明该牌，你可继续，亦可收手（暂置牌仍藏匿）。</text></view>
+          <view class="howto-line"><text class="dot">◆</text><text>失手──你必须把暂置那张牌翻明示众，回合结束。</text></view>
+          <view class="howto-line"><text class="dot">◆</text><text>当只剩你一人尚有藏匿之牌──<text class="em-strong">YOU WIN</text>。</text></view>
+        </view>
+      </block>
+
+      <block wx:if="{{mode === 'create'}}">
+        <view class="form">
+          <view class="form-title"><text>创建棋局</text></view>
+
+          <view class="field">
+            <text class="field-label">› Codename · 你的代号</text>
+            <input
+              class="field-input"
+              value="{{myName}}"
+              placeholder="JOKER"
+              placeholder-style="color: rgba(10,10,10,0.4); font-style: italic;"
+              maxlength="16"
+              bindinput="onNameInput"
+            />
+            <view class="shuffle-btn" hover-class="shuffle-btn-press" hover-stay-time="80" bind:tap="onShuffle">
+              <text class="spark">✦</text>
+              <text>随机代号 / SHUFFLE</text>
+              <text class="spark">✦</text>
+            </view>
+          </view>
+
+          <view wx:if="{{error}}" class="error"><text>⚠ {{error}}</text></view>
+
+          <view class="form-actions">
+            <view class="btn-text" hover-class="btn-text-press" hover-stay-time="80" bind:tap="goBack"><text>‹ BACK</text></view>
+            <view class="btn primary submit" hover-class="btn-submit-press" hover-stay-time="80" bind:tap="submitCreate">
+              <view class="btn-label">
+                <text class="zh">开局 ▶</text>
+              </view>
             </view>
           </view>
         </view>
-      </view>
-    </block>
-  </view>
+      </block>
 
-  <view
-    class="stats-link"
-    hover-class="stats-link-press"
-    hover-stay-time="80"
-    bind:tap="goStats"
-    style="top: {{layout.capsuleTop}}px; right: {{layout.capsuleSafeRight}}px; height: {{layout.capsuleHeight}}px"
-  >
-    <text>★ 排行榜</text>
-  </view>
+      <block wx:if="{{mode === 'join'}}">
+        <view class="form">
+          <view class="form-title"><text>持密码入局</text></view>
+
+          <view class="field">
+            <text class="field-label">› Codename · 你的代号</text>
+            <input
+              class="field-input"
+              value="{{myName}}"
+              placeholder="JOKER"
+              placeholder-style="color: rgba(10,10,10,0.4); font-style: italic;"
+              maxlength="16"
+              bindinput="onNameInput"
+            />
+            <view class="shuffle-btn" hover-class="shuffle-btn-press" hover-stay-time="80" bind:tap="onShuffle">
+              <text class="spark">✦</text>
+              <text>随机代号 / SHUFFLE</text>
+              <text class="spark">✦</text>
+            </view>
+          </view>
+
+          <view class="field">
+            <text class="field-label">› Cipher Key · 房间密码</text>
+            <input
+              class="field-input mono"
+              value="{{code}}"
+              placeholder="XXXX"
+              placeholder-style="color: rgba(10,10,10,0.4); font-style: italic; letter-spacing: 0.4em;"
+              maxlength="4"
+              bindinput="onCodeInput"
+            />
+          </view>
+
+          <view wx:if="{{error}}" class="error"><text>⚠ {{error}}</text></view>
+
+          <view class="form-actions">
+            <view class="btn-text" hover-class="btn-text-press" hover-stay-time="80" bind:tap="goBack"><text>‹ BACK</text></view>
+            <view class="btn primary submit" hover-class="btn-submit-press" hover-stay-time="80" bind:tap="submitJoin">
+              <view class="btn-label">
+                <text class="zh">进入 ▶</text>
+              </view>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+  </scroll-view>
 
   <view class="footer">
     <view class="tagline">
@@ -162,7 +159,15 @@
     </view>
   </view>
 
-  <view style="height: 60rpx" />
-</scroll-view>
+  <view
+    class="stats-link"
+    hover-class="stats-link-press"
+    hover-stay-time="80"
+    bind:tap="goStats"
+    style="top: {{layout.capsuleTop}}px; right: {{layout.capsuleSafeRight}}px; height: {{layout.capsuleHeight}}px"
+  >
+    <text>★ 排行榜</text>
+  </view>
+</view>
 
 <notifications items="{{notifications}}" top-offset="{{layout.navBarHeight + 12}}" />

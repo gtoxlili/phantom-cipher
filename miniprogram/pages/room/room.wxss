@@ -10,8 +10,14 @@
 
 .scroll {
   flex: 1;
-  height: 100%;
   width: 100%;
+  min-height: 0;
+}
+
+.my-area {
+  flex-shrink: 0;
+  width: 100%;
+  /* padding-bottom 由 inline style 注入 = layout.safeBottom + 8 */
 }
 
 /* ========== Waiting hint when alone ========== */

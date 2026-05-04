@@ -8,13 +8,6 @@
 >
   <sketch />
 
-  <view class="hd" style="padding-right: {{layout.capsuleSafeRight}}px">
-    <view class="back" hover-class="back-press" hover-stay-time="80" bind:tap="goBack">
-      <text class="arrow">‹</text>
-      <text class="lbl">BACK</text>
-    </view>
-  </view>
-
   <view class="title-block">
     <view class="eyebrow"><text>★ STAT BOARD ★</text></view>
     <view class="t1"><text>排行榜</text></view>
@@ -100,3 +93,16 @@
 
   <view style="height: 80rpx" />
 </scroll-view>
+
+<!-- Back 按钮固定在屏幕顶端，跟胶囊在视觉同一行（同 top / 同 height）。
+     fixed 定位浮在 scroll-view 之上，不随内容滚动。 -->
+<view
+  class="back"
+  hover-class="back-press"
+  hover-stay-time="80"
+  bind:tap="goBack"
+  style="top: {{layout.capsuleTop}}px; height: {{layout.capsuleHeight}}px"
+>
+  <text class="arrow">‹</text>
+  <text class="lbl">BACK</text>
+</view>
