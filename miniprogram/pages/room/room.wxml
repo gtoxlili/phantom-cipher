@@ -25,111 +25,107 @@
     mood="{{phaseMood}}"
   />
 
-  <!-- 中段：对手 + ActionZone，flex:1 撑开剩余空间，需要时滚动 -->
-  <scroll-view class="scroll" scroll-y type="list" enhanced show-scrollbar="{{false}}">
-    <!-- ========== Opponents ========== -->
-    <view class="opponents-area">
-      <block wx:if="{{opponentsCount === 0 && phase === 'waiting'}}">
-        <view class="waiting-hint">
-          <view class="hint-title"><text>STAND BY</text></view>
-          <view class="hint-body">
-            <view class="hint-line">
-              <text>把房间密码 </text>
-              <text class="strong">{{code}}</text>
-              <text> 告诉朋友</text>
-            </view>
-            <view class="hint-line"><text>或点击上方密码复制邀请词</text></view>
-            <view class="hint-line muted"><text>· 2–4 PLAYERS · 房主可在 ≥2 人时开局 ·</text></view>
+  <!-- 对手区：flex:1 撑开剩余空间。
+       4 人局时三个对手行可能超过自己空间，所以包一层 scroll-view 兜底。 -->
+  <scroll-view class="opponents-area" scroll-y type="list" enhanced show-scrollbar="{{false}}">
+    <block wx:if="{{opponentsCount === 0 && phase === 'waiting'}}">
+      <view class="waiting-hint">
+        <view class="hint-title"><text>STAND BY</text></view>
+        <view class="hint-body">
+          <view class="hint-line">
+            <text>把房间密码 </text>
+            <text class="strong">{{code}}</text>
+            <text> 告诉朋友</text>
           </view>
+          <view class="hint-line"><text>或点击上方密码复制邀请词</text></view>
+          <view class="hint-line muted"><text>· 2–4 PLAYERS · 房主可在 ≥2 人时开局 ·</text></view>
         </view>
-      </block>
-      <block wx:else>
-        <player-row
-          wx:for="{{opCellsList}}"
-          wx:key="player.id"
-          wx:for-item="op"
-          player="{{op.player}}"
-          is-me="{{false}}"
-          tiles="{{op.tiles}}"
-          current="{{op.isCurrent}}"
-          host="{{op.isHost}}"
-          can-target="{{canGuess && !pickerVisible && op.player.alive}}"
-          selected-tile-id="{{op.selectedTileId}}"
-          reveal-tile-id="{{revealTileId}}"
-          reveal-correct="{{revealCorrect}}"
-          now-ms="{{nowMs}}"
-          data-pid="{{op.player.id}}"
-          bind:tileTap="onOpTileTap"
-        />
-      </block>
-    </view>
-
-    <!-- ========== Action Zone ========== -->
-    <view wx:if="{{actionZone !== 'hidden'}}" class="action-zone">
-      <block wx:if="{{actionZone === 'waiting'}}">
-        <view class="waiting-msg"><text>WAITING FOR HOST</text></view>
-      </block>
-
-      <block wx:if="{{actionZone === 'start'}}">
-        <view
-          class="start-btn {{playerCount < 2 ? 'disabled' : ''}}"
-          hover-class="{{playerCount < 2 ? '' : 'start-btn-press'}}"
-          hover-stay-time="80"
-          bind:tap="onStart"
-        >
-          <view class="lab">
-            <text wx:if="{{playerCount < 2}}">等待玩家 · {{playerCount}}/2 · MIN 2</text>
-            <text wx:else>开局 START · {{playerCount}} 玩家 ▶</text>
-          </view>
-        </view>
-      </block>
-
-      <block wx:if="{{actionZone === 'gameplay'}}">
-        <view class="deck-row">
-          <view class="deck-hint">
-            <text wx:if="{{canDraw}}">· 选一堆抽 · CHOOSE A PILE ·</text>
-            <text wx:else>· 牌堆 · DRAW PILES ·</text>
-          </view>
-          <view class="deck-pair">
-            <deck color="black" count="{{deckBlackCount}}" can-draw="{{canDraw}}" bind:draw="onDraw" />
-            <deck color="white" count="{{deckWhiteCount}}" can-draw="{{canDraw}}" bind:draw="onDraw" />
-          </view>
-        </view>
-
-        <view wx:if="{{phase === 'continuing' && isMyTurn}}" class="continue-group">
-          <view class="btn-primary" hover-class="btn-primary-press" hover-stay-time="80" bind:tap="onContinue">
-            <text>继续 PRESS ON</text>
-          </view>
-          <view class="btn-secondary" hover-class="btn-secondary-press" hover-stay-time="80" bind:tap="onStopHand">
-            <text>收手 STOP</text>
-          </view>
-        </view>
-      </block>
-
-      <block wx:if="{{actionZone === 'ended'}}">
-        <view class="end-panel">
-          <view class="end-crown">
-            <text>{{youWin ? '★ ★ ★' : '· · ·'}}</text>
-          </view>
-          <view class="end-text">
-            <text wx:if="{{youWin}}">YOU WIN</text>
-            <text wx:elif="{{winnerName}}">{{winnerName}} WINS</text>
-            <text wx:else>GAME OVER</text>
-          </view>
-          <block wx:if="{{isHost}}">
-            <view class="btn-primary reset" hover-class="btn-primary-press" hover-stay-time="80" bind:tap="onReset">
-              <text>再来一局 ▶</text>
-            </view>
-          </block>
-          <block wx:else>
-            <view class="end-hint"><text>WAIT FOR HOST</text></view>
-          </block>
-        </view>
-      </block>
-    </view>
-
-    <view style="height: 40rpx" />
+      </view>
+    </block>
+    <block wx:else>
+      <player-row
+        wx:for="{{opCellsList}}"
+        wx:key="player.id"
+        wx:for-item="op"
+        player="{{op.player}}"
+        is-me="{{false}}"
+        tiles="{{op.tiles}}"
+        current="{{op.isCurrent}}"
+        host="{{op.isHost}}"
+        can-target="{{canGuess && !pickerVisible && op.player.alive}}"
+        selected-tile-id="{{op.selectedTileId}}"
+        reveal-tile-id="{{revealTileId}}"
+        reveal-correct="{{revealCorrect}}"
+        now-ms="{{nowMs}}"
+        data-pid="{{op.player.id}}"
+        bind:tileTap="onOpTileTap"
+      />
+    </block>
   </scroll-view>
+
+  <!-- ActionZone 介于对手区与自己手牌之间，flex:0 自适应高度 -->
+  <view wx:if="{{actionZone !== 'hidden'}}" class="action-zone">
+    <block wx:if="{{actionZone === 'waiting'}}">
+      <view class="waiting-msg"><text>WAITING FOR HOST</text></view>
+    </block>
+
+    <block wx:if="{{actionZone === 'start'}}">
+      <view
+        class="start-btn {{playerCount < 2 ? 'disabled' : ''}}"
+        hover-class="{{playerCount < 2 ? '' : 'start-btn-press'}}"
+        hover-stay-time="80"
+        bind:tap="onStart"
+      >
+        <view class="lab">
+          <text wx:if="{{playerCount < 2}}">等待玩家 · {{playerCount}}/2 · MIN 2</text>
+          <text wx:else>开局 START · {{playerCount}} 玩家 ▶</text>
+        </view>
+      </view>
+    </block>
+
+    <block wx:if="{{actionZone === 'gameplay'}}">
+      <view class="deck-row">
+        <view class="deck-hint">
+          <text wx:if="{{canDraw}}">· 选一堆抽 · CHOOSE A PILE ·</text>
+          <text wx:else>· 牌堆 · DRAW PILES ·</text>
+        </view>
+        <view class="deck-pair">
+          <deck color="black" count="{{deckBlackCount}}" can-draw="{{canDraw}}" bind:draw="onDraw" />
+          <deck color="white" count="{{deckWhiteCount}}" can-draw="{{canDraw}}" bind:draw="onDraw" />
+        </view>
+      </view>
+
+      <view wx:if="{{phase === 'continuing' && isMyTurn}}" class="continue-group">
+        <view class="btn-primary" hover-class="btn-primary-press" hover-stay-time="80" bind:tap="onContinue">
+          <text>继续 PRESS ON</text>
+        </view>
+        <view class="btn-secondary" hover-class="btn-secondary-press" hover-stay-time="80" bind:tap="onStopHand">
+          <text>收手 STOP</text>
+        </view>
+      </view>
+    </block>
+
+    <block wx:if="{{actionZone === 'ended'}}">
+      <view class="end-panel">
+        <view class="end-crown">
+          <text>{{youWin ? '★ ★ ★' : '· · ·'}}</text>
+        </view>
+        <view class="end-text">
+          <text wx:if="{{youWin}}">YOU WIN</text>
+          <text wx:elif="{{winnerName}}">{{winnerName}} WINS</text>
+          <text wx:else>GAME OVER</text>
+        </view>
+        <block wx:if="{{isHost}}">
+          <view class="btn-primary reset" hover-class="btn-primary-press" hover-stay-time="80" bind:tap="onReset">
+            <text>再来一局 ▶</text>
+          </view>
+        </block>
+        <block wx:else>
+          <view class="end-hint"><text>WAIT FOR HOST</text></view>
+        </block>
+      </view>
+    </block>
+  </view>
 
   <!-- 自己的手牌区固定在底部，留出 home indicator 安全区。
        不放进 scroll-view 是为了"自己的手牌永远可见"——跟 frontend 的

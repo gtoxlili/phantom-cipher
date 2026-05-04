@@ -8,10 +8,16 @@
   z-index: 1;
 }
 
-.scroll {
+/* 对手区：撑满中段剩余空间。多于 1 个对手或屏幕短时滚动起来 */
+.opponents-area {
   flex: 1;
   width: 100%;
   min-height: 0;
+}
+
+/* ActionZone 自适应高度，紧贴对手区下方 + 自己手牌上方 */
+.action-zone {
+  flex-shrink: 0;
 }
 
 .my-area {
