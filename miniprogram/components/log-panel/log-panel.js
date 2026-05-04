@@ -2,6 +2,8 @@ Component({
   properties: {
     visible: { type: Boolean, value: false },
     entries: { type: Array, value: [] },     // [{id, text, ts}, ...]
+    safeTop: { type: Number, value: 44 },
+    safeBottom: { type: Number, value: 0 },
   },
   data: { reversed: [] },
   observers: {

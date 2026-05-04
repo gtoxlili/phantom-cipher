@@ -17,9 +17,11 @@
   animation-fill-mode: backwards;
 }
 
-.tile.size-sm { width: 72rpx; }
-.tile.size-md { width: 100rpx; }
-.tile.size-lg { width: 128rpx; }
+/* Skyline 1.4.7 的 aspect-ratio 在 inline-block 容器上不可靠，
+   宽高都显式给出来——比例严格保持 80:112 (5:7) */
+.tile.size-sm { width: 72rpx; height: 100rpx; }
+.tile.size-md { width: 100rpx; height: 140rpx; }
+.tile.size-lg { width: 128rpx; height: 180rpx; }
 
 .shadow {
   position: absolute;
@@ -36,7 +38,7 @@
 .card {
   position: relative;
   width: 100%;
-  aspect-ratio: 80 / 112;
+  height: 100%;
   background: #ece5cf;
   border: 4rpx solid #0a0a0a;
   border-radius: 6rpx;

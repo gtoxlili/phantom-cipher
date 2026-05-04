@@ -185,6 +185,8 @@
   <log-panel
     visible="{{showLog}}"
     entries="{{logEntries}}"
+    safe-top="{{layout.navBarHeight + 12}}"
+    safe-bottom="{{layout.safeBottom + 16}}"
     bind:close="onCloseLog"
   />
 

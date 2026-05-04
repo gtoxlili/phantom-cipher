@@ -1,8 +1,8 @@
 <view wx:if="{{visible}}" class="backdrop" bind:tap="onClose">
-  <view class="panel" catch:tap="onPanelTap">
+  <view class="panel" catch:tap="onPanelTap" style="padding-top: {{safeTop}}px; padding-bottom: {{safeBottom}}px">
     <view class="hd">
       <text class="title">对局记事 LOG</text>
-      <view class="close-btn" bind:tap="onClose">
+      <view class="close-btn" hover-class="close-btn-press" hover-stay-time="80" bind:tap="onClose">
         <text>×</text>
       </view>
     </view>
