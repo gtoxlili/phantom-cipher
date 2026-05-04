@@ -6,9 +6,9 @@
   /* top 由 inline style 注入 = layout.navBarHeight + 12 px */
   display: flex;
   flex-direction: column;
+  gap: 14rpx;
   pointer-events: none;
 }
-.stack > * { margin-bottom: 14rpx; }
 
 .toast {
   pointer-events: auto;

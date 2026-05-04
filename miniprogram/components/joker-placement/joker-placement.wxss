@@ -78,8 +78,8 @@
   align-items: flex-end;
   justify-content: center;
   flex-wrap: wrap;
+  gap: 8rpx;
 }
-.hand-row > * { margin: 0 4rpx; }
 
 .slot {
   width: 54rpx;

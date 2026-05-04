@@ -15,12 +15,7 @@
   border: 4rpx solid #fafaf3;
   box-shadow: 12rpx 12rpx 0 #e60022;
   padding: 36rpx 32rpx 40rpx;
-  transform: skewX(-2deg);
   animation: p5-gentle-in 0.36s cubic-bezier(0.16, 1, 0.3, 1) backwards;
-}
-
-.card > * {
-  transform: skewX(2deg);
 }
 
 .eyebrow {
