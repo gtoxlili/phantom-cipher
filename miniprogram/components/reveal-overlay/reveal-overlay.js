@@ -1,9 +1,11 @@
 /**
- * Reveal overlay —— 翻牌结果的浮层。
+ * Reveal overlay —— 翻牌结果浮层（HIT! / MISS!）。
  *
- * 全 worklet 驱动：两条红/金对角线从屏幕外横扫进来，中间的红字 ribbon
- * 弹簧式爆出。CSS keyframes 不够"砍人"——worklet 在 UI 线程跑，能在
- * 100ms 内打到位，配 spring 的反弹收尾才像 P5 attack screen 那种感觉。
+ * 全 worklet 驱动：两条对角线扫入 → 红字 ribbon spring 爆出 → 黑底闪一下
+ * → bars 滑出 → 等 visible 变 false 时 ribbon 淡出。
+ *
+ * 重要：永远 mount，不用 wx:if，否则 attached 跑 applyAnimatedStyle
+ * 时元素不在 DOM 里。视觉初始态由 worklet 共享变量初值决定。
  */
 
 const { shared, timing, spring, Easing } = wx.worklet;
@@ -15,24 +17,19 @@ Component({
     correct: { type: Boolean, value: false },
     text: { type: String, value: '' },
   },
-  data: {
-    /** mirror visible into data so wxml wx:if reflects it */
-    show: false,
-  },
 
   observers: {
     'visible': function (vis) {
-      this.setData({ show: !!vis });
       if (vis) {
-        // 下一帧再启动动画，确保 applyAnimatedStyle 已经挂上节点
-        wx.nextTick(() => this._playEnter());
+        this._playEnter();
+      } else {
+        this._playExit();
       }
     },
   },
 
   lifetimes: {
     attached() {
-      // 共享变量初始化在屏幕外
       this._barTopX = shared(-110);
       this._barBottomX = shared(110);
       this._ribbonScale = shared(0.4);
@@ -41,15 +38,11 @@ Component({
 
       this.applyAnimatedStyle('#reveal-bar-top', () => {
         'worklet';
-        return {
-          transform: `translateX(${this._barTopX.value}%) skewX(-22deg)`,
-        };
+        return { transform: `translateX(${this._barTopX.value}%) skewX(-22deg)` };
       });
       this.applyAnimatedStyle('#reveal-bar-bottom', () => {
         'worklet';
-        return {
-          transform: `translateX(${this._barBottomX.value}%) skewX(-22deg)`,
-        };
+        return { transform: `translateX(${this._barBottomX.value}%) skewX(-22deg)` };
       });
       this.applyAnimatedStyle('#reveal-ribbon', () => {
         'worklet';
@@ -60,9 +53,7 @@ Component({
       });
       this.applyAnimatedStyle('#reveal-bg', () => {
         'worklet';
-        return {
-          opacity: this._bgOpacity.value,
-        };
+        return { opacity: this._bgOpacity.value };
       });
     },
   },
@@ -70,20 +61,17 @@ Component({
   methods: {
     _playEnter() {
       const fastEase = Easing.cubicBezier(0.18, 1.0, 0.04, 1.0);
-      // 重置初值：快速回到屏幕外（取消上一轮可能未结束的动画）
       this._barTopX.value = -110;
       this._barBottomX.value = 110;
       this._ribbonScale.value = 0.4;
       this._ribbonOpacity.value = 0;
       this._bgOpacity.value = 0;
 
-      // 背景闪一下黑：120ms 升到 0.55 -> 480ms 降回 0
       this._bgOpacity.value = timing(0.55, { duration: 120, easing: fastEase }, () => {
         'worklet';
         this._bgOpacity.value = timing(0, { duration: 480, easing: Easing.in(Easing.quad) });
       });
 
-      // 两条对角红/金条：280ms 同步扫到屏幕中心，再 480ms 滑出
       this._barTopX.value = timing(0, { duration: 240, easing: fastEase }, () => {
         'worklet';
         this._barTopX.value = timing(110, { duration: 520, easing: Easing.in(Easing.cubic) });
@@ -93,13 +81,17 @@ Component({
         this._barBottomX.value = timing(-110, { duration: 520, easing: Easing.in(Easing.cubic) });
       });
 
-      // ribbon：晚一点(120ms)爆出，spring overshoot 后稳定
       this._ribbonOpacity.value = timing(1, { duration: 80, easing: fastEase });
       this._ribbonScale.value = spring(1, {
-        damping: 8,
-        stiffness: 220,
-        mass: 0.7,
+        damping: 8, stiffness: 220, mass: 0.7,
       });
+    },
+
+    _playExit() {
+      // 父组件 1.5s 后 set visible=false 触发：把还显形的 ribbon 淡掉，
+      // 顺便把所有共享值归位到屏幕外，下一次进入再重置
+      this._ribbonOpacity.value = timing(0, { duration: 220, easing: Easing.in(Easing.quad) });
+      this._bgOpacity.value = timing(0, { duration: 200 });
     },
   },
 });

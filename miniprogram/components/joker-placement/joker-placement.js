@@ -1,4 +1,4 @@
-const { shared, timing, spring, runOnJS, Easing } = wx.worklet;
+const { shared, timing, spring, Easing } = wx.worklet;
 const { GestureState } = require('../../lib/curves');
 
 Component({
@@ -11,7 +11,6 @@ Component({
   },
   data: {
     slots: [],
-    show: false,
   },
   observers: {
     'others': function (others) {
@@ -19,12 +18,8 @@ Component({
       this.setData({ slots: Array.from({ length: len }, (_, i) => i) });
     },
     'visible': function (vis) {
-      if (vis) {
-        this.setData({ show: true });
-        wx.nextTick(() => this._enter());
-      } else {
-        this.setData({ show: false });
-      }
+      if (vis) this._enter();
+      else this._exit();
     },
   },
   lifetimes: {
@@ -49,6 +44,11 @@ Component({
       this._backOpacity.value = timing(1, { duration: 200, easing: ease });
       this._sheetY.value = spring(0, { damping: 22, stiffness: 240, mass: 0.8 });
     },
+    _exit() {
+      const ease = Easing.in(Easing.cubic);
+      this._backOpacity.value = timing(0, { duration: 180, easing: ease });
+      this._sheetY.value = timing(900, { duration: 200, easing: ease });
+    },
 
     onSlot(e) {
       const pos = e.currentTarget.dataset.pos;
@@ -62,9 +62,7 @@ Component({
         const next = this._sheetY.value + evt.deltaY;
         this._sheetY.value = next < 0 ? 0 : next;
       } else if (evt.state === GestureState.END || evt.state === GestureState.CANCELLED) {
-        // joker placement 只有在 placing 阶段强制要求选位置——服务端
-        // 不会让用户取消。下拉只做"弹回"，不允许真关闭，避免用户卡死
-        // 流程
+        // joker placement 强制要求选位置——不允许真关闭，下拉只回弹
         this._sheetY.value = spring(0, {
           damping: 22, stiffness: 260, mass: 0.7,
           velocity: evt.velocityY,

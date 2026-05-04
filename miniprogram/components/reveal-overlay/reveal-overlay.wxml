@@ -1,4 +1,4 @@
-<view wx:if="{{show}}" class="overlay {{correct ? 'correct' : 'wrong'}}">
+<view class="overlay {{correct ? 'correct' : 'wrong'}}">
   <view id="reveal-bg" class="bg" />
   <view id="reveal-bar-top" class="line top" />
   <view id="reveal-bar-bottom" class="line bottom" />

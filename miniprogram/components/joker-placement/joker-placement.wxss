@@ -9,6 +9,8 @@
   align-items: flex-end;
   justify-content: center;
 }
+.backdrop.is-hidden { pointer-events: none; }
+.backdrop.is-shown { pointer-events: auto; }
 
 .back-fill {
   position: absolute;

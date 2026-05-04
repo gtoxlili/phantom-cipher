@@ -1,4 +1,4 @@
-<view wx:if="{{show}}" class="backdrop">
+<view class="backdrop {{visible ? 'is-shown' : 'is-hidden'}}">
   <view id="joker-back" class="back-fill" />
   <vertical-drag-gesture-handler worklet:onGestureEvent="handleVerticalDrag">
     <view id="joker-sheet" class="sheet" catch:tap="onSheetTap" style="padding-bottom: {{safeBottom + 28}}px">

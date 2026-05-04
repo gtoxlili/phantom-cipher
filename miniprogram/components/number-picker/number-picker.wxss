@@ -8,7 +8,10 @@
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  /* 永远 mount，靠 pointer-events 控制可点性；视觉由 worklet 驱动 */
 }
+.backdrop.is-hidden { pointer-events: none; }
+.backdrop.is-shown { pointer-events: auto; }
 
 /* 半透黑底 —— opacity 由 worklet 驱动 */
 .back-fill {
