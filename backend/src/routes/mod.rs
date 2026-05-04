@@ -71,5 +71,7 @@ pub fn router(state: SharedState) -> Router {
         .route("/api/wx/updatable-msg-send", post(wx::updatable_msg_send))
         .route("/api/wx/shortlink", post(wx::shortlink))
         .route("/api/wx/urllink", post(wx::urllink))
+        .route("/api/wx/quota-get", post(wx::quota_get))
+        .route("/api/wx/quota-clear", post(wx::quota_clear))
         .with_state(state)
 }
