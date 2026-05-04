@@ -67,5 +67,9 @@ pub fn router(state: SharedState) -> Router {
         .route("/api/wx/sec-check", post(wx::sec_check))
         .route("/api/wx/subscribe-send", post(wx::subscribe_send))
         .route("/api/wx/qrcode", get(wx::qrcode))
+        .route("/api/wx/activity-create", post(wx::activity_create))
+        .route("/api/wx/updatable-msg-send", post(wx::updatable_msg_send))
+        .route("/api/wx/shortlink", post(wx::shortlink))
+        .route("/api/wx/urllink", post(wx::urllink))
         .with_state(state)
 }
