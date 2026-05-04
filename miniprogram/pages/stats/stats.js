@@ -1,14 +1,16 @@
 const { fetchStats } = require('../../lib/api');
 const { relativeTime, formatDuration } = require('../../lib/util');
+const { ensureLayout } = require('../../lib/layout');
 
 Page({
   data: {
     loading: true,
     error: '',
     totals: { matches: 0, players: 0, in_flight: 0 },
-    leaderboard: [],     // 加上 _rank 字段
+    leaderboard: [],
     recent: [],
     nowMs: Date.now(),
+    layout: ensureLayout(),
   },
 
   onLoad() {

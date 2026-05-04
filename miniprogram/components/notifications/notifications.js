@@ -3,6 +3,7 @@ const store = require('../../lib/store');
 Component({
   properties: {
     items: { type: Array, value: [] },
+    topOffset: { type: Number, value: 50 },
   },
   methods: {
     onTap(e) {

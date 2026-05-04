@@ -2,12 +2,14 @@ const store = require('../../lib/store');
 const { ensureIdentity } = require('../../lib/identity');
 const { actions } = require('../../lib/api');
 const { GameStream } = require('../../lib/ws');
+const { ensureLayout } = require('../../lib/layout');
 
 Page({
   data: {
     code: '',
     needName: true,
     connected: false,
+    layout: ensureLayout(),
 
     // 派生 view
     publicState: null,

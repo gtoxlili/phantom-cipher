@@ -3,7 +3,8 @@ Component({
   properties: {
     visible: { type: Boolean, value: false },
     pendingColor: { type: String, value: 'black' },
-    others: { type: Array, value: [] },     // 其余手牌
+    others: { type: Array, value: [] },
+    safeBottom: { type: Number, value: 0 },
   },
   data: { slots: [] },
   observers: {

@@ -3,7 +3,7 @@
   z-index: 1;
   height: 100vh;
   width: 100%;
-  padding: 60rpx 0 60rpx;
+  /* padding-top / padding-bottom 由 inline style 注入 */
 }
 
 .hd {

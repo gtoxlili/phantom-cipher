@@ -1,5 +1,5 @@
 <view wx:if="{{visible}}" class="backdrop" bind:tap="onClose">
-  <view class="sheet" catch:tap="onSheetTap">
+  <view class="sheet" catch:tap="onSheetTap" style="padding-bottom: {{safeBottom + 28}}px">
     <view class="title">
       <text class="strong">{{targetName}}</text>
       <text class="hint">第 {{position + 1}} 张</text>

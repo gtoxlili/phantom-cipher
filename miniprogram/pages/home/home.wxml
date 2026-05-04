@@ -1,4 +1,11 @@
-<scroll-view class="page" scroll-y type="list" enhanced show-scrollbar="{{false}}">
+<scroll-view
+  class="page"
+  scroll-y
+  type="list"
+  enhanced
+  show-scrollbar="{{false}}"
+  style="padding-top: {{layout.navBarHeight + 12}}px; padding-bottom: {{layout.safeBottom + 40}}px"
+>
   <sketch />
 
   <view class="hero">
@@ -133,8 +140,14 @@
     </block>
   </view>
 
-  <view class="stats-link" hover-class="stats-link-press" hover-stay-time="80" bind:tap="goStats">
-    <text>★ 排行榜 // STATS</text>
+  <view
+    class="stats-link"
+    hover-class="stats-link-press"
+    hover-stay-time="80"
+    bind:tap="goStats"
+    style="top: {{layout.capsuleTop}}px; right: {{layout.capsuleSafeRight}}px; height: {{layout.capsuleHeight}}px"
+  >
+    <text>★ 排行榜</text>
   </view>
 
   <view class="footer">
@@ -152,4 +165,4 @@
   <view style="height: 60rpx" />
 </scroll-view>
 
-<notifications items="{{notifications}}" />
+<notifications items="{{notifications}}" top-offset="{{layout.navBarHeight + 12}}" />

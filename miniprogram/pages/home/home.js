@@ -1,6 +1,7 @@
 const store = require('../../lib/store');
 const { ensureIdentity } = require('../../lib/identity');
 const { pickRandomCodename, genRoomCode } = require('../../lib/codenames');
+const { ensureLayout } = require('../../lib/layout');
 
 Page({
   data: {
@@ -11,6 +12,7 @@ Page({
     notifications: [],
     showHowto: false,
     lastShuffleIdx: -1,
+    layout: ensureLayout(),
   },
 
   onLoad() {

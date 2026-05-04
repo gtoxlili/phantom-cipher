@@ -3,8 +3,10 @@
   z-index: 1;
   height: 100vh;
   width: 100%;
-  padding: 60rpx 0 60rpx;
   background: transparent;
+  /* padding-top + padding-bottom 由 inline style 灌进来：
+     padding-top  = navBarHeight + 12
+     padding-bottom = safeBottom + 40 */
 }
 
 /* ========== HERO ========== */
@@ -389,15 +391,16 @@
 
 .stats-link {
   position: fixed;
-  top: 90rpx;
-  right: 28rpx;
   z-index: 10;
   background: #fafaf3;
   color: #0a0a0a;
-  padding: 10rpx 20rpx;
+  padding: 0 16rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transform: skewX(-8deg);
   border: 3rpx solid #0a0a0a;
-  box-shadow: 5rpx 5rpx 0 #e60022;
+  box-shadow: 4rpx 4rpx 0 #e60022;
 }
 .stats-link-press {
   background: #e60022;

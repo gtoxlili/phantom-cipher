@@ -7,12 +7,14 @@
 </block>
 <block wx:else>
 
-<view class="room">
+<view class="room" style="padding-top: {{layout.statusBarHeight}}px">
   <sketch intensity="subdued" />
 
   <header-bar
     code="{{code}}"
     connected="{{connected}}"
+    capsule-safe-right="{{layout.capsuleSafeRight}}"
+    nav-min-height="{{layout.navBarHeight - layout.statusBarHeight}}"
     bind:back="onBack"
     bind:toggleLog="onToggleLog"
   />
@@ -149,7 +151,7 @@
       </block>
     </view>
 
-    <view style="height: 60rpx" />
+    <view style="height: {{layout.safeBottom + 40}}px" />
   </scroll-view>
 
   <!-- ========== Modals & Overlays ========== -->
@@ -158,6 +160,7 @@
     target-name="{{pickerTargetName}}"
     position="{{pickerPosition}}"
     color="{{pickerColor}}"
+    safe-bottom="{{layout.safeBottom}}"
     bind:close="onPickerClose"
     bind:pick="onPick"
   />
@@ -166,6 +169,7 @@
     visible="{{jokerVisible}}"
     pending-color="{{jokerColor}}"
     others="{{jokerOthers}}"
+    safe-bottom="{{layout.safeBottom}}"
     bind:place="onPlaceJoker"
   />
 
@@ -181,7 +185,7 @@
     bind:close="onCloseLog"
   />
 
-  <notifications items="{{notifications}}" />
+  <notifications items="{{notifications}}" top-offset="{{layout.navBarHeight + 12}}" />
 </view>
 
 </block>

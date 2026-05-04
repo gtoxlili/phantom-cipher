@@ -16,7 +16,10 @@
   width: 100%;
   background: #131313;
   border-top: 5rpx solid #ffd200;
-  padding: 28rpx 24rpx 56rpx;
+  padding-top: 28rpx;
+  padding-left: 24rpx;
+  padding-right: 24rpx;
+  /* padding-bottom 由 inline style 注入 = safeBottom + 28 px */
   animation: joker-sheet-up 0.34s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 

@@ -1,7 +1,14 @@
-<scroll-view class="page" scroll-y type="list" enhanced show-scrollbar="{{false}}">
+<scroll-view
+  class="page"
+  scroll-y
+  type="list"
+  enhanced
+  show-scrollbar="{{false}}"
+  style="padding-top: {{layout.navBarHeight + 12}}px; padding-bottom: {{layout.safeBottom + 40}}px"
+>
   <sketch />
 
-  <view class="hd">
+  <view class="hd" style="padding-right: {{layout.capsuleSafeRight}}px">
     <view class="back" hover-class="back-press" hover-stay-time="80" bind:tap="goBack">
       <text class="arrow">‹</text>
       <text class="lbl">BACK</text>

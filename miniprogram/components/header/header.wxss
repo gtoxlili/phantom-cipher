@@ -5,9 +5,9 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 0 24rpx;
-  height: 96rpx;
-  margin-top: 12rpx;
+  padding-left: 24rpx;
+  /* padding-right + min-height 由 inline style 注入 */
+  margin-top: 8rpx;
 }
 
 .icon-btn {

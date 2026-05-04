@@ -1,4 +1,7 @@
-<view class="hd">
+<view
+  class="hd"
+  style="padding-right: {{capsuleSafeRight}}px; min-height: {{navMinHeight}}px"
+>
   <view class="icon-btn" hover-class="icon-btn-press" hover-stay-time="80" bind:tap="onBack">
     <text class="icon-arrow">‹</text>
   </view>
