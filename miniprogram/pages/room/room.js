@@ -58,6 +58,12 @@ Page({
     revealVisible: false,
     revealCorrect: false,
     revealText: '',
+    revealTileId: '',
+
+    // 派生计数
+    playerCount: 0,
+    opponentsCount: 0,
+    logEntries: [],
 
     // ended
     winnerName: '',
@@ -191,9 +197,11 @@ Page({
     let revealVisible = false;
     let revealCorrect = false;
     let revealText = '';
+    let revealTileId = '';
     if (s.revealEvent) {
       revealVisible = true;
       revealCorrect = !!s.revealEvent.correct;
+      revealTileId = s.revealEvent.tileId || '';
       const isMine = myId && s.revealEvent.guesserId === myId;
       if (revealCorrect) {
         revealText = isMine ? '命中 // HIT!' : '被命中 // CRACKED';
@@ -210,6 +218,14 @@ Page({
       if (w) winnerName = (w.name || '').toUpperCase();
       youWin = !!myId && view.state.winnerId === myId;
     }
+
+    // 派生计数 / log —— 全部预先算好交给 WXML，避免 WXML 里
+    // 出现 publicState.players.length / publicState.log 这种
+    // "publicState 可能为 null" 的链式属性访问，在 Skyline 下
+    // 会抛 TypeError: cannot read property 'length' of undefined
+    const playerCount = view.state ? view.state.players.length : 0;
+    const opponentsCount = view.opponents.length;
+    const logEntries = view.state && view.state.log ? view.state.log : [];
 
     this.setData({
       needName: !s.myName,
@@ -254,6 +270,11 @@ Page({
       revealVisible,
       revealCorrect,
       revealText,
+      revealTileId,
+
+      playerCount,
+      opponentsCount,
+      logEntries,
 
       winnerName,
       youWin,

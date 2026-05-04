@@ -14,15 +14,15 @@
       confirm-type="done"
       bindconfirm="onSubmit"
     />
-    <view class="shuffle" bind:tap="onShuffle">
+    <view class="shuffle" hover-class="shuffle-press" hover-stay-time="80" bind:tap="onShuffle">
       <text class="spark">✦</text>
       <text>随机代号 / SHUFFLE</text>
       <text class="spark">✦</text>
     </view>
-    <view class="submit {{!draft || !draft.trim() ? 'disabled' : ''}}" bind:tap="onSubmit">
+    <view class="submit {{!draft || !draft.trim() ? 'disabled' : ''}}" hover-class="submit-press" hover-stay-time="80" bind:tap="onSubmit">
       <text>入局 ▶</text>
     </view>
-    <view class="link" bind:tap="onCancel">
+    <view class="link" hover-class="link-press" hover-stay-time="80" bind:tap="onCancel">
       <text>‹ BACK TO LOBBY</text>
     </view>
   </view>

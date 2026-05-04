@@ -169,7 +169,7 @@
   color: #fafaf3;
   box-shadow: 10rpx 10rpx 0 #0a0a0a;
 }
-.btn.primary:active {
+.btn-primary-press {
   transform: skewX(-8deg) translate(5rpx, 5rpx);
   box-shadow: 4rpx 4rpx 0 #0a0a0a;
 }
@@ -179,7 +179,7 @@
   color: #0a0a0a;
   box-shadow: 10rpx 10rpx 0 #e60022;
 }
-.btn.secondary:active {
+.btn-secondary-press {
   transform: skewX(-8deg) translate(5rpx, 5rpx);
   box-shadow: 4rpx 4rpx 0 #e60022;
 }
@@ -330,7 +330,7 @@
   letter-spacing: 0.28em;
   font-weight: 700;
 }
-.shuffle-btn:active {
+.shuffle-btn-press {
   background: #e60022;
   border-color: #e60022;
 }
@@ -339,7 +339,7 @@
   transform: skewX(6deg);
 }
 .shuffle-btn .spark { color: #e60022; font-style: italic; font-size: 24rpx; }
-.shuffle-btn:active .spark { color: #fafaf3; }
+.shuffle-btn-press .spark { color: #fafaf3; }
 
 .error {
   color: #e60022;
@@ -367,7 +367,7 @@
   letter-spacing: 0.18em;
   font-weight: 700;
 }
-.btn-text:active text { color: #e60022; }
+.btn-text-press text { color: #e60022; }
 
 .btn.submit {
   flex: 1;
@@ -380,7 +380,7 @@
   color: #fafaf3;
   box-shadow: 8rpx 8rpx 0 #0a0a0a;
 }
-.btn.submit:active {
+.btn-submit-press {
   transform: skewX(-8deg) translate(4rpx, 4rpx);
   box-shadow: 2rpx 2rpx 0 #0a0a0a;
 }
@@ -399,7 +399,7 @@
   border: 3rpx solid #0a0a0a;
   box-shadow: 5rpx 5rpx 0 #e60022;
 }
-.stats-link:active {
+.stats-link-press {
   background: #e60022;
   color: #fafaf3;
   transform: skewX(-8deg) translate(2rpx, 2rpx);
@@ -412,7 +412,7 @@
   letter-spacing: 0.22em;
   font-weight: 700;
 }
-.stats-link:active text { color: #fafaf3; }
+.stats-link-press text { color: #fafaf3; }
 
 /* ========== FOOTER ========== */
 
@@ -435,7 +435,6 @@
   font-size: 22rpx;
   letter-spacing: 0.32em;
   font-style: italic;
-  text-transform: uppercase;
 }
 .tagline .star { color: #e60022; opacity: 0.7; }
 .byline {

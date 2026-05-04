@@ -49,7 +49,7 @@
   word-break: break-all;
 }
 
-.toast:active {
+.toast-press {
   box-shadow: 2rpx 2rpx 0 #e60022;
   transform: translate(4rpx, 4rpx) skewX(-8deg);
 }

@@ -1,6 +1,9 @@
 .backdrop {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: rgba(10, 10, 10, 0.78);
   z-index: 95;
   display: flex;
@@ -60,8 +63,8 @@
   align-items: flex-end;
   justify-content: center;
   flex-wrap: wrap;
-  gap: 8rpx;
 }
+.hand-row > * { margin: 0 4rpx; }
 
 .slot {
   width: 54rpx;
@@ -73,7 +76,7 @@
   justify-content: center;
   transform: skewX(-6deg);
 }
-.slot:active {
+.slot-press {
   background: #e60022;
 }
 .slot text {
@@ -84,7 +87,7 @@
   transform: skewX(6deg);
   display: inline-block;
 }
-.slot:active text { color: #fafaf3; }
+.slot-press text { color: #fafaf3; }
 
 .tile-wrap {
   display: inline-block;

@@ -1,13 +1,9 @@
 /* ===================================================================== *
- * 牌：用嵌套 view + text 绘制；尺寸由 size 控制，外部宽度，aspect-ratio 锁
- * 比例 (5:7 = 80:112)。
- *
- * Skyline 不能直接 SVG，所以"刻字"的部分：
- *   - 数字：italic display 字体居中。
- *   - 红色三角切角：用 ::after 不行，Skyline 不全支持伪元素 transform；
- *     直接用 view 绝对定位 + clip-path（Skyline 支持 polygon）。
- *   - 半调点：8 个小圆 view。
- *   - 阴影：另一个绝对定位 view，clip 出多边形偏移。
+ * 牌：Skyline 不支持 clip-path: polygon —— 用嵌套 view 模拟 P5 切角效果。
+ * 思路：
+ *   1. 卡片本体是规则矩形（border-radius 给一点弧形，不是直角）
+ *   2. 右上角放一个红色小三角（border 三角技巧），是 P5 风格的标志
+ *   3. 阴影是另一块 view，斜偏一点
  * ===================================================================== */
 
 .tile {
@@ -15,7 +11,6 @@
   display: inline-block;
   flex-shrink: 0;
   transform: rotate(-2deg);
-  user-select: none;
   animation-name: p5-tile-in;
   animation-duration: 0.45s;
   animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
@@ -34,7 +29,8 @@
   height: 100%;
   background: #0a0a0a;
   z-index: 1;
-  clip-path: polygon(5% 4%, 80% 4%, 95% 14%, 95% 96%, 5% 96%);
+  border-radius: 6rpx;
+  opacity: 0.6;
 }
 
 .card {
@@ -43,27 +39,28 @@
   aspect-ratio: 80 / 112;
   background: #ece5cf;
   border: 4rpx solid #0a0a0a;
+  border-radius: 6rpx;
   z-index: 2;
-  /* P5 切角：右上 */
-  clip-path: polygon(0 0, 80% 0, 100% 15%, 100% 100%, 0 100%);
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
 }
 
 .tile.color-black .card {
   background: #0a0a0a;
 }
 
+/* 红色三角"切角"标志：用 border 三角技巧（不需要 clip-path）。
+ * 把它放在 card 内部的右上角，看起来就是这张牌"被切了一个角"的视觉。 */
 .corner {
   position: absolute;
   top: 0;
   right: 0;
-  width: 30%;
-  height: 18%;
-  background: #e60022;
-  /* 三角形：右上 */
-  clip-path: polygon(100% 0, 100% 100%, 0 0);
+  width: 0;
+  height: 0;
+  border-top: 30rpx solid #e60022;
+  border-left: 30rpx solid transparent;
   z-index: 3;
 }
 
@@ -87,7 +84,6 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 6rpx;
   z-index: 3;
 }
 .halftone-dot {
@@ -95,13 +91,13 @@
   height: 6rpx;
   border-radius: 50%;
   background: rgba(230,0,34,0.95);
+  margin-right: 6rpx;
 }
 
 .glyph {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%, -50%);
   font-style: italic;
   font-weight: 700;
   font-family: 'Impact', 'Bebas Neue', 'Oswald', sans-serif;
@@ -114,23 +110,32 @@
 .tile.size-md .glyph { font-size: 78rpx; }
 .tile.size-lg .glyph { font-size: 102rpx; }
 
-.glyph.number { color: #0a0a0a; }
+.glyph.number {
+  color: #0a0a0a;
+  transform: translate(-50%, -50%);
+}
 .tile.color-black .glyph.number { color: #fafaf3; }
 
-.glyph.qmark { color: #e60022; }
+.glyph.qmark {
+  color: #e60022;
+  transform: translate(-50%, -50%);
+}
 .glyph.qmark-shadow {
   color: rgba(10,10,10,0.18);
-  transform: translate(calc(-50% - 6rpx), calc(-50% - 4rpx));
+  transform: translate(-58%, -55%);
 }
 .tile.color-black .glyph.qmark-shadow {
   color: rgba(250,250,243,0.18);
 }
 
-.glyph.star { color: #0a0a0a; }
+.glyph.star {
+  color: #0a0a0a;
+  transform: translate(-50%, -50%);
+}
 .tile.color-black .glyph.star { color: #fafaf3; }
 .glyph.star-shadow {
   color: #e60022;
-  transform: translate(calc(-50% + 4rpx), calc(-50% + 6rpx));
+  transform: translate(-46%, -45%);
 }
 
 .corner-spark {
@@ -221,8 +226,8 @@
   z-index: 10;
 }
 
-.tile.is-tappable { cursor: pointer; }
-.tile.is-tappable:active {
+/* hover-class 取代 :active —— Skyline 不支持 :active 伪类 */
+.tile-tap-press {
   transform: rotate(-1deg) translateY(-12rpx) scale(0.97);
 }
 

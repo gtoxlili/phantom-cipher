@@ -1,4 +1,4 @@
-<view class="sketch" aria-hidden="true">
+<view class="sketch">
   <view class="halftone halftone-tl {{intensity === 'subdued' ? 'subdued' : ''}}" />
   <view class="halftone halftone-br {{intensity === 'subdued' ? 'subdued' : ''}}" />
 

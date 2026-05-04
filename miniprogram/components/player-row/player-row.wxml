@@ -3,7 +3,7 @@
 >
   <view class="player-header">
     <view class="player-name-row">
-      <text class="player-name">{{player.name}}</text>
+      <text class="player-name">{{playerNameUpper}}</text>
       <text wx:if="{{isMe}}" class="you-tag">· YOU</text>
       <text wx:if="{{host}}" class="host-tag">HOST</text>
     </view>

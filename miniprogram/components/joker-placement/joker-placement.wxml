@@ -9,7 +9,7 @@
 
     <view class="hand-row">
       <block wx:for="{{slots}}" wx:key="*this" wx:for-item="pos" wx:for-index="i">
-        <view class="slot" data-pos="{{pos}}" bind:tap="onSlot">
+        <view class="slot" hover-class="slot-press" hover-stay-time="80" data-pos="{{pos}}" bind:tap="onSlot">
           <text>+</text>
         </view>
         <view class="tile-wrap" wx:if="{{pos < others.length}}">

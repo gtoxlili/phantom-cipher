@@ -94,7 +94,7 @@
   box-shadow: 8rpx 8rpx 0 #fafaf3;
   transform: skewX(-8deg);
 }
-.start-btn:active {
+.start-btn-press {
   transform: skewX(-8deg) translate(4rpx, 4rpx);
   box-shadow: 2rpx 2rpx 0 #fafaf3;
 }
@@ -146,7 +146,7 @@
   color: #fafaf3;
   box-shadow: 6rpx 6rpx 0 #0a0a0a;
 }
-.btn-primary:active {
+.btn-primary-press {
   transform: skewX(-8deg) translate(3rpx, 3rpx);
   box-shadow: 2rpx 2rpx 0 #0a0a0a;
 }
@@ -155,7 +155,7 @@
   color: #0a0a0a;
   box-shadow: 6rpx 6rpx 0 #e60022;
 }
-.btn-secondary:active {
+.btn-secondary-press {
   transform: skewX(-8deg) translate(3rpx, 3rpx);
   box-shadow: 2rpx 2rpx 0 #e60022;
 }

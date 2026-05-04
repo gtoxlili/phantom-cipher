@@ -18,7 +18,7 @@
       </view>
 
       <view class="actions">
-        <view class="btn primary" bind:tap="goCreate">
+        <view class="btn primary" hover-class="btn-primary-press" hover-stay-time="80" bind:tap="goCreate">
           <view class="btn-label">
             <view class="text-row">
               <text class="zh">创建棋局</text>
@@ -28,7 +28,7 @@
           <text class="arrow">▶</text>
         </view>
 
-        <view class="btn secondary" bind:tap="goJoin">
+        <view class="btn secondary" hover-class="btn-secondary-press" hover-stay-time="80" bind:tap="goJoin">
           <view class="btn-label">
             <view class="text-row">
               <text class="zh">持密码入局</text>
@@ -66,7 +66,7 @@
             maxlength="16"
             bindinput="onNameInput"
           />
-          <view class="shuffle-btn" bind:tap="onShuffle">
+          <view class="shuffle-btn" hover-class="shuffle-btn-press" hover-stay-time="80" bind:tap="onShuffle">
             <text class="spark">✦</text>
             <text>随机代号 / SHUFFLE</text>
             <text class="spark">✦</text>
@@ -76,8 +76,8 @@
         <view wx:if="{{error}}" class="error"><text>⚠ {{error}}</text></view>
 
         <view class="form-actions">
-          <view class="btn-text" bind:tap="goBack"><text>‹ BACK</text></view>
-          <view class="btn primary submit" bind:tap="submitCreate">
+          <view class="btn-text" hover-class="btn-text-press" hover-stay-time="80" bind:tap="goBack"><text>‹ BACK</text></view>
+          <view class="btn primary submit" hover-class="btn-submit-press" hover-stay-time="80" bind:tap="submitCreate">
             <view class="btn-label">
               <text class="zh">开局 ▶</text>
             </view>
@@ -100,7 +100,7 @@
             maxlength="16"
             bindinput="onNameInput"
           />
-          <view class="shuffle-btn" bind:tap="onShuffle">
+          <view class="shuffle-btn" hover-class="shuffle-btn-press" hover-stay-time="80" bind:tap="onShuffle">
             <text class="spark">✦</text>
             <text>随机代号 / SHUFFLE</text>
             <text class="spark">✦</text>
@@ -122,8 +122,8 @@
         <view wx:if="{{error}}" class="error"><text>⚠ {{error}}</text></view>
 
         <view class="form-actions">
-          <view class="btn-text" bind:tap="goBack"><text>‹ BACK</text></view>
-          <view class="btn primary submit" bind:tap="submitJoin">
+          <view class="btn-text" hover-class="btn-text-press" hover-stay-time="80" bind:tap="goBack"><text>‹ BACK</text></view>
+          <view class="btn primary submit" hover-class="btn-submit-press" hover-stay-time="80" bind:tap="submitJoin">
             <view class="btn-label">
               <text class="zh">进入 ▶</text>
             </view>
@@ -133,7 +133,7 @@
     </block>
   </view>
 
-  <view class="stats-link" bind:tap="goStats">
+  <view class="stats-link" hover-class="stats-link-press" hover-stay-time="80" bind:tap="goStats">
     <text>★ 排行榜 // STATS</text>
   </view>
 

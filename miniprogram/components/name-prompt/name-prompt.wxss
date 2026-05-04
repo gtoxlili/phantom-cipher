@@ -85,7 +85,7 @@
   letter-spacing: 0.28em;
   font-weight: 700;
 }
-.shuffle:active {
+.shuffle-press {
   background: #e60022;
   border-color: #e60022;
 }
@@ -98,7 +98,7 @@
   font-style: italic;
   font-size: 24rpx;
 }
-.shuffle:active .spark { color: #fafaf3; }
+.shuffle-press .spark { color: #fafaf3; }
 
 .submit {
   margin-top: 32rpx;
@@ -112,7 +112,7 @@
   align-items: center;
   justify-content: center;
 }
-.submit:active {
+.submit-press {
   transform: skewX(-8deg) translate(4rpx, 4rpx);
   box-shadow: 2rpx 2rpx 0 #fafaf3;
 }
@@ -139,4 +139,4 @@
   letter-spacing: 0.22em;
   font-weight: 700;
 }
-.link:active text { color: #e60022; }
+.link-press text { color: #e60022; }

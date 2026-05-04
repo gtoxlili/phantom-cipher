@@ -39,7 +39,7 @@
   letter-spacing: 0.22em;
   font-weight: 700;
 }
-.back:active {
+.back-press {
   background: #e60022;
   transform: skewX(-8deg) translate(2rpx, 2rpx);
   box-shadow: 2rpx 2rpx 0 #fafaf3;

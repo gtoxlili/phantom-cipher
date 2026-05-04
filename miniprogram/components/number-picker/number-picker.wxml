@@ -16,6 +16,8 @@
         wx:for-item="n"
         wx:for-index="i"
         data-n="{{n}}"
+        hover-class="num-btn-press"
+        hover-stay-time="80"
         bind:tap="onPick"
         style="animation-delay: {{i * 30 + 80}}ms"
       >
@@ -23,7 +25,7 @@
       </view>
     </view>
 
-    <view class="joker-btn" bind:tap="onJoker">
+    <view class="joker-btn" hover-class="joker-btn-press" hover-stay-time="80" bind:tap="onJoker">
       <view class="joker-row">
         <text class="star">★</text>
         <text class="label">JOKER</text>
@@ -31,7 +33,7 @@
       </view>
     </view>
 
-    <view class="cancel" bind:tap="onClose">
+    <view class="cancel" hover-class="cancel-press" hover-stay-time="80" bind:tap="onClose">
       <text>CANCEL ✕</text>
     </view>
   </view>

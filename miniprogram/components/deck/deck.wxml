@@ -1,6 +1,8 @@
 <view class="deck-group">
   <view
     class="deck color-{{color}} {{canDraw && count > 0 ? 'active' : ''}} {{count <= 0 ? 'empty' : ''}}"
+    hover-class="{{canDraw && count > 0 ? 'deck-press' : ''}}"
+    hover-stay-time="80"
     bind:tap="onTap"
   >
     <view class="stack">

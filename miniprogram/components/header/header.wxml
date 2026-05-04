@@ -1,8 +1,8 @@
 <view class="hd">
-  <view class="icon-btn" bind:tap="onBack">
+  <view class="icon-btn" hover-class="icon-btn-press" hover-stay-time="80" bind:tap="onBack">
     <text class="icon-arrow">‹</text>
   </view>
-  <view class="code-wrap" bind:tap="onShare">
+  <view class="code-wrap" hover-class="code-wrap-press" hover-stay-time="80" bind:tap="onShare">
     <text class="label">· CIPHER KEY ·</text>
     <text class="code">{{code}}</text>
     <text class="copy-hint">{{copied ? 'COPIED ✓' : 'TAP TO COPY'}}</text>
@@ -11,7 +11,7 @@
     <view class="dot" />
     <text>RECONNECTING</text>
   </view>
-  <view class="icon-btn" bind:tap="onLog">
+  <view class="icon-btn" hover-class="icon-btn-press" hover-stay-time="80" bind:tap="onLog">
     <view class="bars">
       <view class="bar" />
       <view class="bar" />

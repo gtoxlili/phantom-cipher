@@ -2,7 +2,7 @@
   <sketch />
 
   <view class="hd">
-    <view class="back" bind:tap="goBack">
+    <view class="back" hover-class="back-press" hover-stay-time="80" bind:tap="goBack">
       <text class="arrow">‹</text>
       <text class="lbl">BACK</text>
     </view>

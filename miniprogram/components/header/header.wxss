@@ -22,7 +22,7 @@
   box-shadow: 4rpx 4rpx 0 #e60022;
 }
 
-.icon-btn:active {
+.icon-btn-press {
   transform: skewX(-6deg) translate(2rpx, 2rpx);
   box-shadow: 2rpx 2rpx 0 #e60022;
 }
@@ -62,7 +62,7 @@
   padding: 6rpx 14rpx;
   transform: skewX(-8deg);
 }
-.code-wrap:active {
+.code-wrap-press {
   box-shadow: 2rpx 2rpx 0 #e60022;
   transform: skewX(-8deg) translate(3rpx, 3rpx);
 }

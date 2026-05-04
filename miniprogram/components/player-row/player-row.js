@@ -16,14 +16,21 @@ Component({
   },
   data: {
     forfeitSec: 0,
+    playerNameUpper: '',
   },
   observers: {
     'player, nowMs': function (player, now) {
-      if (!player || !player.pendingForfeitAt) {
-        this.setData({ forfeitSec: 0 });
+      if (!player) {
+        this.setData({ forfeitSec: 0, playerNameUpper: '' });
         return;
       }
-      this.setData({ forfeitSec: forfeitSecondsLeft(player.pendingForfeitAt, now || Date.now()) });
+      const sec = player.pendingForfeitAt
+        ? forfeitSecondsLeft(player.pendingForfeitAt, now || Date.now())
+        : 0;
+      this.setData({
+        forfeitSec: sec,
+        playerNameUpper: (player.name || '').toUpperCase(),
+      });
     },
   },
   methods: {

@@ -11,9 +11,6 @@
     "skyline": {
       "defaultDisplayBlock": true,
       "defaultContentBox": true,
-      "tagNameStyleIsolation": "legacy",
-      "keyframeStyleIsolation": "legacy",
-      "enableScrollViewAutoSize": true,
       "disableABTest": true
     }
   },

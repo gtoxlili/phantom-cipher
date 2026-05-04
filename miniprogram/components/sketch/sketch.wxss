@@ -1,6 +1,9 @@
 .sketch {
   position: fixed;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 0;
   pointer-events: none;
   overflow: hidden;
@@ -13,7 +16,6 @@
   height: 480rpx;
   border-radius: 50%;
   background: rgba(230, 0, 34, 0.18);
-  filter: blur(18rpx);
 }
 .halftone-tl {
   top: -160rpx;
@@ -31,7 +33,10 @@
 
 .streak-wrap {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   overflow: hidden;
 }
 .streak {
@@ -40,12 +45,14 @@
   animation-name: p5-streak-run;
   animation-iteration-count: infinite;
   animation-timing-function: linear;
-  will-change: transform, opacity;
 }
 
 .stars-wrap {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 .star {
   position: absolute;

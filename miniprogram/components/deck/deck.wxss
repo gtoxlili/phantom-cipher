@@ -2,8 +2,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12rpx;
 }
+.deck-group > * { margin-bottom: 12rpx; }
 
 .deck {
   position: relative;
@@ -22,34 +22,58 @@
   animation: p5-deck-pulse 1.4s ease-in-out infinite;
 }
 
+.deck-press {
+  transform: rotate(-3deg) translate(4rpx, 4rpx) scale(0.97);
+}
+
 .stack {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .card-back {
   position: absolute;
-  inset: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   border: 4rpx solid #0a0a0a;
-  clip-path: polygon(0 0, 80% 0, 100% 15%, 100% 100%, 0 100%);
+  border-radius: 6rpx;
   overflow: hidden;
 }
 
 .deck.color-black .card-back .bg {
-  position: absolute; inset: 0; background: #0a0a0a;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #0a0a0a;
 }
 .deck.color-white .card-back .bg {
-  position: absolute; inset: 0; background: #ece5cf;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ece5cf;
 }
 
 .deck.color-black .card-back { border-color: #fafaf3; }
 
+/* 红色三角"切角"标志，跟 tile 同款 */
 .corner {
   position: absolute;
-  top: 0; right: 0;
-  width: 30%; height: 18%;
-  background: #e60022;
-  clip-path: polygon(100% 0, 100% 100%, 0 0);
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-top: 36rpx solid #e60022;
+  border-left: 36rpx solid transparent;
+  z-index: 4;
 }
 
 .diag-red {
@@ -92,11 +116,13 @@
   left: 12%;
   display: flex;
   flex-direction: row;
-  gap: 8rpx;
 }
 .halftones .dot {
-  width: 6rpx; height: 6rpx; border-radius: 50%;
+  width: 6rpx;
+  height: 6rpx;
+  border-radius: 50%;
   background: #e60022;
+  margin-right: 8rpx;
 }
 
 .count {

@@ -1,6 +1,8 @@
 <view
   class="tile size-{{size}} color-{{color}} {{pending ? 'is-pending' : ''}} {{selected ? 'is-selected' : ''}} {{selectable && !selected && !pending ? 'is-pulse' : ''}} {{ownedHidden ? 'is-owned-hidden' : ''}} {{ownedExposed ? 'is-owned-exposed' : ''}} {{highlight === 'correct' ? 'flash-correct' : ''}} {{highlight === 'wrong' ? 'flash-wrong' : ''}} {{clickable ? 'is-tappable' : ''}}"
   style="animation-delay: {{index * 35}}ms"
+  hover-class="{{clickable ? 'tile-tap-press' : ''}}"
+  hover-stay-time="80"
   bind:tap="onTap"
 >
   <!-- 阴影投影：纯黑斜偏块 -->

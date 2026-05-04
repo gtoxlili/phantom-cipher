@@ -52,7 +52,6 @@
   font-weight: 900;
   letter-spacing: 0.1em;
   font-style: italic;
-  text-transform: uppercase;
 }
 
 .you-tag {

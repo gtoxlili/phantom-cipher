@@ -26,7 +26,7 @@
   <scroll-view class="scroll" scroll-y type="list" enhanced show-scrollbar="{{false}}">
     <!-- ========== Opponents ========== -->
     <view class="opponents-area">
-      <block wx:if="{{opponents.length === 0 && phase === 'waiting'}}">
+      <block wx:if="{{opponentsCount === 0 && phase === 'waiting'}}">
         <view class="waiting-hint">
           <view class="hint-title"><text>STAND BY</text></view>
           <view class="hint-body">
@@ -52,8 +52,8 @@
           host="{{op.isHost}}"
           can-target="{{canGuess && !pickerVisible && op.player.alive}}"
           selected-tile-id="{{op.selectedTileId}}"
-          reveal-tile-id="{{revealEvent.tileId}}"
-          reveal-correct="{{revealEvent.correct}}"
+          reveal-tile-id="{{revealTileId}}"
+          reveal-correct="{{revealCorrect}}"
           now-ms="{{nowMs}}"
           data-pid="{{op.player.id}}"
           bind:tileTap="onOpTileTap"
@@ -62,16 +62,21 @@
     </view>
 
     <!-- ========== Action Zone ========== -->
-    <view class="action-zone">
+    <view wx:if="{{actionZone !== 'hidden'}}" class="action-zone">
       <block wx:if="{{actionZone === 'waiting'}}">
         <view class="waiting-msg"><text>WAITING FOR HOST</text></view>
       </block>
 
       <block wx:if="{{actionZone === 'start'}}">
-        <view class="start-btn {{publicState.players.length < 2 ? 'disabled' : ''}}" bind:tap="onStart">
+        <view
+          class="start-btn {{playerCount < 2 ? 'disabled' : ''}}"
+          hover-class="{{playerCount < 2 ? '' : 'start-btn-press'}}"
+          hover-stay-time="80"
+          bind:tap="onStart"
+        >
           <view class="lab">
-            <text wx:if="{{publicState.players.length < 2}}">等待玩家 · {{publicState.players.length}}/2 · MIN 2</text>
-            <text wx:else>开局 START · {{publicState.players.length}} 玩家 ▶</text>
+            <text wx:if="{{playerCount < 2}}">等待玩家 · {{playerCount}}/2 · MIN 2</text>
+            <text wx:else>开局 START · {{playerCount}} 玩家 ▶</text>
           </view>
         </view>
       </block>
@@ -89,10 +94,10 @@
         </view>
 
         <view wx:if="{{phase === 'continuing' && isMyTurn}}" class="continue-group">
-          <view class="btn-primary" bind:tap="onContinue">
+          <view class="btn-primary" hover-class="btn-primary-press" hover-stay-time="80" bind:tap="onContinue">
             <text>继续 PRESS ON</text>
           </view>
-          <view class="btn-secondary" bind:tap="onStopHand">
+          <view class="btn-secondary" hover-class="btn-secondary-press" hover-stay-time="80" bind:tap="onStopHand">
             <text>收手 STOP</text>
           </view>
         </view>
@@ -109,7 +114,7 @@
             <text wx:else>GAME OVER</text>
           </view>
           <block wx:if="{{isHost}}">
-            <view class="btn-primary reset" bind:tap="onReset">
+            <view class="btn-primary reset" hover-class="btn-primary-press" hover-stay-time="80" bind:tap="onReset">
               <text>再来一局 ▶</text>
             </view>
           </block>
@@ -131,8 +136,8 @@
           host="{{isHost}}"
           can-target="{{false}}"
           selected-tile-id=""
-          reveal-tile-id="{{revealEvent.tileId}}"
-          reveal-correct="{{revealEvent.correct}}"
+          reveal-tile-id="{{revealTileId}}"
+          reveal-correct="{{revealCorrect}}"
           now-ms="{{nowMs}}"
           bind:tileTap="onMyTileTap"
         />
@@ -172,7 +177,7 @@
 
   <log-panel
     visible="{{showLog}}"
-    entries="{{publicState.log}}"
+    entries="{{logEntries}}"
     bind:close="onCloseLog"
   />
 
