@@ -1,0 +1,21 @@
+<view class="hd">
+  <view class="icon-btn" bind:tap="onBack">
+    <text class="icon-arrow">‹</text>
+  </view>
+  <view class="code-wrap" bind:tap="onShare">
+    <text class="label">· CIPHER KEY ·</text>
+    <text class="code">{{code}}</text>
+    <text class="copy-hint">{{copied ? 'COPIED ✓' : 'TAP TO COPY'}}</text>
+  </view>
+  <view wx:if="{{!connected}}" class="disconnected">
+    <view class="dot" />
+    <text>RECONNECTING</text>
+  </view>
+  <view class="icon-btn" bind:tap="onLog">
+    <view class="bars">
+      <view class="bar" />
+      <view class="bar" />
+      <view class="bar short" />
+    </view>
+  </view>
+</view>

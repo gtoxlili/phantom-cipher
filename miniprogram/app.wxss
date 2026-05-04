@@ -1,0 +1,148 @@
+/* =====================================================================
+ * 怪盗密码 · Persona 5 panel-style global stylesheet for Skyline.
+ *
+ * Skyline doesn't support CSS variables in all selectors, so the colour
+ * tokens are repeated inline at each call site. Kept here are the global
+ * defaults: page background, font stack, common keyframes.
+ *
+ * Color palette mirrors panda.config.ts on the React side:
+ *   ink       #0a0a0a   主背景黑
+ *   inkSoft   #131313   面板黑
+ *   blood     #e60022   主红
+ *   bloodDeep #800014   暗红 / shadow
+ *   paper     #fafaf3   亮米白
+ *   bone      #ece5cf   米色
+ *   gold      #ffd200   命中金
+ * ===================================================================== */
+
+page {
+  background-color: #0a0a0a;
+  color: #fafaf3;
+  font-family: 'PingFang SC', 'Microsoft YaHei', 'Source Han Sans CN', sans-serif;
+  font-weight: 700;
+  -webkit-font-smoothing: antialiased;
+}
+
+view, text, button, input, scroll-view {
+  box-sizing: border-box;
+}
+
+/* ===================================================================== *
+ * 通用按钮重置 —— 取消默认 button 边框、背景、内边距
+ * ===================================================================== */
+button {
+  background: transparent;
+  color: inherit;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  padding: 0;
+  margin: 0;
+  border: none;
+  line-height: 1.2;
+}
+
+button::after {
+  border: none;
+}
+
+/* ===================================================================== *
+ * 全局关键帧动画 —— P5 风格 streak / shake / blink / spin / tile-in 等
+ * ===================================================================== */
+
+@keyframes p5-streak-in {
+  from { transform: translateX(-110%) skewX(-22deg); opacity: 0; }
+  to { transform: translateX(0) skewX(-22deg); opacity: 1; }
+}
+
+@keyframes p5-streak-run {
+  0% { transform: translateX(0) skewX(-22deg); opacity: 0; }
+  20% { opacity: 0.8; }
+  100% { transform: translateX(220vw) skewX(-22deg); opacity: 0; }
+}
+
+@keyframes p5-blink {
+  0%, 50%, 100% { opacity: 1; }
+  25%, 75% { opacity: 0.45; }
+}
+
+@keyframes p5-shake {
+  0%, 100% { transform: translate(0, 0); }
+  20% { transform: translate(-6rpx, 2rpx) rotate(-0.6deg); }
+  40% { transform: translate(6rpx, -2rpx) rotate(0.6deg); }
+  60% { transform: translate(-4rpx, 4rpx) rotate(-0.4deg); }
+  80% { transform: translate(4rpx, -2rpx) rotate(0.4deg); }
+}
+
+@keyframes p5-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes p5-tile-in {
+  0%   { opacity: 0; transform: rotate(-12deg) translateY(40rpx) scale(0.85); }
+  60%  { opacity: 1; }
+  100% { opacity: 1; transform: rotate(-2deg) translateY(0) scale(1); }
+}
+
+@keyframes p5-pending-hover {
+  0%, 100% { transform: rotate(-1deg) translateY(-24rpx); }
+  50% { transform: rotate(1deg) translateY(-32rpx); }
+}
+
+@keyframes p5-deck-pulse {
+  0%, 100% { transform: rotate(-3deg) scale(1); }
+  50% { transform: rotate(2deg) scale(1.05); }
+}
+
+@keyframes p5-selectable-pulse {
+  0%, 100% { transform: rotate(-2deg) scale(1); }
+  50% { transform: rotate(1deg) scale(1.06); }
+}
+
+@keyframes p5-flash-correct {
+  0% { transform: rotate(-2deg) scale(1); }
+  20% { transform: rotate(0deg) scale(1.2); }
+  60% { transform: rotate(-3deg) scale(1.05); }
+  100% { transform: rotate(-2deg) scale(1); }
+}
+
+@keyframes p5-flash-wrong {
+  0%, 100% { transform: rotate(-2deg) translateX(0); }
+  15% { transform: rotate(2deg) translateX(-10rpx); }
+  30% { transform: rotate(-3deg) translateX(10rpx); }
+  45% { transform: rotate(2deg) translateX(-6rpx); }
+  60% { transform: rotate(-2deg) translateX(6rpx); }
+}
+
+@keyframes p5-burst {
+  0% { transform: scale(0.5) rotate(-10deg); opacity: 0; }
+  60% { transform: scale(1.15) rotate(2deg); opacity: 1; }
+  100% { transform: scale(1) rotate(-3deg); opacity: 1; }
+}
+
+@keyframes p5-gentle-in {
+  0% { opacity: 0; transform: translateY(16rpx); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes p5-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes p5-fade-out {
+  from { opacity: 1; }
+  to { opacity: 0; }
+}
+
+@keyframes p5-loader-shuffle {
+  0%, 100% { transform: translate(-44rpx, 16rpx) rotate(-14deg); }
+  33%      { transform: translate(0, -20rpx) rotate(2deg) scale(1.04); }
+  66%      { transform: translate(44rpx, 16rpx) rotate(14deg); }
+}
+
+@keyframes p5-loader-ribbon {
+  0% { opacity: 0; transform: translateX(-80rpx) skewX(-12deg); }
+  60% { opacity: 1; transform: translateX(12rpx) skewX(-9deg); }
+  100% { transform: translateX(0) skewX(-9deg); }
+}

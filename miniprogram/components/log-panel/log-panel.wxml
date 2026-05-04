@@ -1,0 +1,20 @@
+<view wx:if="{{visible}}" class="backdrop" bind:tap="onClose">
+  <view class="panel" catch:tap="onPanelTap">
+    <view class="hd">
+      <text class="title">对局记事 LOG</text>
+      <view class="close-btn" bind:tap="onClose">
+        <text>×</text>
+      </view>
+    </view>
+    <scroll-view class="list" scroll-y type="list" enhanced show-scrollbar="{{false}}">
+      <block wx:if="{{reversed.length === 0}}">
+        <view class="entry empty"><text>NO RECORDS</text></view>
+      </block>
+      <block wx:else>
+        <view class="entry" wx:for="{{reversed}}" wx:key="id" wx:for-item="e">
+          <text>{{e.text}}</text>
+        </view>
+      </block>
+    </scroll-view>
+  </view>
+</view>

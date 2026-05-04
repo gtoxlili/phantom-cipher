@@ -1,0 +1,32 @@
+<view class="deck-group">
+  <view
+    class="deck color-{{color}} {{canDraw && count > 0 ? 'active' : ''}} {{count <= 0 ? 'empty' : ''}}"
+    bind:tap="onTap"
+  >
+    <view class="stack">
+      <view
+        class="card-back"
+        wx:for="{{stackArr}}"
+        wx:key="*this"
+        wx:for-index="i"
+        style="transform: translate({{i*4}}rpx, {{-i*4}}rpx) rotate({{(i-1.5)*1.2}}deg)"
+      >
+        <view class="bg" />
+        <view class="corner" />
+        <view class="diag-red" />
+        <view class="diag-light" />
+        <text class="mono">DV</text>
+        <view class="halftones">
+          <view class="dot" wx:for="{{6}}" wx:key="*this" />
+        </view>
+      </view>
+    </view>
+    <view class="count">
+      <text>{{count}}</text>
+    </view>
+  </view>
+  <view class="deck-label color-{{color}}">
+    <text wx:if="{{color === 'black'}}">黑 BLACK</text>
+    <text wx:else>白 WHITE</text>
+  </view>
+</view>

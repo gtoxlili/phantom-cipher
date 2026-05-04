@@ -1,0 +1,20 @@
+{
+  "navigationStyle": "custom",
+  "disableScroll": true,
+  "renderer": "skyline",
+  "componentFramework": "glass-easel",
+  "usingComponents": {
+    "sketch": "../../components/sketch/sketch",
+    "header-bar": "../../components/header/header",
+    "phase-banner": "../../components/phase-banner/phase-banner",
+    "player-row": "../../components/player-row/player-row",
+    "deck": "../../components/deck/deck",
+    "tile": "../../components/tile/tile",
+    "number-picker": "../../components/number-picker/number-picker",
+    "joker-placement": "../../components/joker-placement/joker-placement",
+    "reveal-overlay": "../../components/reveal-overlay/reveal-overlay",
+    "log-panel": "../../components/log-panel/log-panel",
+    "notifications": "../../components/notifications/notifications",
+    "name-prompt": "../../components/name-prompt/name-prompt"
+  }
+}

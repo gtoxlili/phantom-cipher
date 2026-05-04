@@ -1,0 +1,30 @@
+{
+  "pages": [
+    "pages/home/home",
+    "pages/room/room",
+    "pages/stats/stats"
+  ],
+  "renderer": "skyline",
+  "lazyCodeLoading": "requiredComponents",
+  "componentFramework": "glass-easel",
+  "rendererOptions": {
+    "skyline": {
+      "defaultDisplayBlock": true,
+      "defaultContentBox": true,
+      "tagNameStyleIsolation": "legacy",
+      "keyframeStyleIsolation": "legacy",
+      "enableScrollViewAutoSize": true,
+      "disableABTest": true
+    }
+  },
+  "window": {
+    "backgroundColor": "#0a0a0a",
+    "backgroundTextStyle": "dark",
+    "navigationBarBackgroundColor": "#0a0a0a",
+    "navigationBarTitleText": "怪盗密码",
+    "navigationBarTextStyle": "white",
+    "navigationStyle": "custom"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

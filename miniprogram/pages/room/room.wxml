@@ -1,0 +1,182 @@
+<block wx:if="{{needName}}">
+  <name-prompt
+    code="{{code}}"
+    bind:submit="onNameSubmit"
+    bind:cancel="onNameCancel"
+  />
+</block>
+<block wx:else>
+
+<view class="room">
+  <sketch intensity="subdued" />
+
+  <header-bar
+    code="{{code}}"
+    connected="{{connected}}"
+    bind:back="onBack"
+    bind:toggleLog="onToggleLog"
+  />
+
+  <phase-banner
+    text="{{phaseText}}"
+    accent="{{phaseAccent}}"
+    mood="{{phaseMood}}"
+  />
+
+  <scroll-view class="scroll" scroll-y type="list" enhanced show-scrollbar="{{false}}">
+    <!-- ========== Opponents ========== -->
+    <view class="opponents-area">
+      <block wx:if="{{opponents.length === 0 && phase === 'waiting'}}">
+        <view class="waiting-hint">
+          <view class="hint-title"><text>STAND BY</text></view>
+          <view class="hint-body">
+            <view class="hint-line">
+              <text>把房间密码 </text>
+              <text class="strong">{{code}}</text>
+              <text> 告诉朋友</text>
+            </view>
+            <view class="hint-line"><text>或点击上方密码复制邀请词</text></view>
+            <view class="hint-line muted"><text>· 2–4 PLAYERS · 房主可在 ≥2 人时开局 ·</text></view>
+          </view>
+        </view>
+      </block>
+      <block wx:else>
+        <player-row
+          wx:for="{{opCellsList}}"
+          wx:key="player.id"
+          wx:for-item="op"
+          player="{{op.player}}"
+          is-me="{{false}}"
+          tiles="{{op.tiles}}"
+          current="{{op.isCurrent}}"
+          host="{{op.isHost}}"
+          can-target="{{canGuess && !pickerVisible && op.player.alive}}"
+          selected-tile-id="{{op.selectedTileId}}"
+          reveal-tile-id="{{revealEvent.tileId}}"
+          reveal-correct="{{revealEvent.correct}}"
+          now-ms="{{nowMs}}"
+          data-pid="{{op.player.id}}"
+          bind:tileTap="onOpTileTap"
+        />
+      </block>
+    </view>
+
+    <!-- ========== Action Zone ========== -->
+    <view class="action-zone">
+      <block wx:if="{{actionZone === 'waiting'}}">
+        <view class="waiting-msg"><text>WAITING FOR HOST</text></view>
+      </block>
+
+      <block wx:if="{{actionZone === 'start'}}">
+        <view class="start-btn {{publicState.players.length < 2 ? 'disabled' : ''}}" bind:tap="onStart">
+          <view class="lab">
+            <text wx:if="{{publicState.players.length < 2}}">等待玩家 · {{publicState.players.length}}/2 · MIN 2</text>
+            <text wx:else>开局 START · {{publicState.players.length}} 玩家 ▶</text>
+          </view>
+        </view>
+      </block>
+
+      <block wx:if="{{actionZone === 'gameplay'}}">
+        <view class="deck-row">
+          <view class="deck-hint">
+            <text wx:if="{{canDraw}}">· 选一堆抽 · CHOOSE A PILE ·</text>
+            <text wx:else>· 牌堆 · DRAW PILES ·</text>
+          </view>
+          <view class="deck-pair">
+            <deck color="black" count="{{deckBlackCount}}" can-draw="{{canDraw}}" bind:draw="onDraw" />
+            <deck color="white" count="{{deckWhiteCount}}" can-draw="{{canDraw}}" bind:draw="onDraw" />
+          </view>
+        </view>
+
+        <view wx:if="{{phase === 'continuing' && isMyTurn}}" class="continue-group">
+          <view class="btn-primary" bind:tap="onContinue">
+            <text>继续 PRESS ON</text>
+          </view>
+          <view class="btn-secondary" bind:tap="onStopHand">
+            <text>收手 STOP</text>
+          </view>
+        </view>
+      </block>
+
+      <block wx:if="{{actionZone === 'ended'}}">
+        <view class="end-panel">
+          <view class="end-crown">
+            <text>{{youWin ? '★ ★ ★' : '· · ·'}}</text>
+          </view>
+          <view class="end-text">
+            <text wx:if="{{youWin}}">YOU WIN</text>
+            <text wx:elif="{{winnerName}}">{{winnerName}} WINS</text>
+            <text wx:else>GAME OVER</text>
+          </view>
+          <block wx:if="{{isHost}}">
+            <view class="btn-primary reset" bind:tap="onReset">
+              <text>再来一局 ▶</text>
+            </view>
+          </block>
+          <block wx:else>
+            <view class="end-hint"><text>WAIT FOR HOST</text></view>
+          </block>
+        </view>
+      </block>
+    </view>
+
+    <!-- ========== My Row ========== -->
+    <view class="my-area">
+      <block wx:if="{{me}}">
+        <player-row
+          player="{{me}}"
+          is-me="{{true}}"
+          tiles="{{myCells}}"
+          current="{{isMyTurn}}"
+          host="{{isHost}}"
+          can-target="{{false}}"
+          selected-tile-id=""
+          reveal-tile-id="{{revealEvent.tileId}}"
+          reveal-correct="{{revealEvent.correct}}"
+          now-ms="{{nowMs}}"
+          bind:tileTap="onMyTileTap"
+        />
+      </block>
+      <block wx:else>
+        <view class="connecting-msg">
+          <text>· CONNECTING · {{phase}} ·</text>
+        </view>
+      </block>
+    </view>
+
+    <view style="height: 60rpx" />
+  </scroll-view>
+
+  <!-- ========== Modals & Overlays ========== -->
+  <number-picker
+    visible="{{pickerVisible}}"
+    target-name="{{pickerTargetName}}"
+    position="{{pickerPosition}}"
+    color="{{pickerColor}}"
+    bind:close="onPickerClose"
+    bind:pick="onPick"
+  />
+
+  <joker-placement
+    visible="{{jokerVisible}}"
+    pending-color="{{jokerColor}}"
+    others="{{jokerOthers}}"
+    bind:place="onPlaceJoker"
+  />
+
+  <reveal-overlay
+    visible="{{revealVisible}}"
+    correct="{{revealCorrect}}"
+    text="{{revealText}}"
+  />
+
+  <log-panel
+    visible="{{showLog}}"
+    entries="{{publicState.log}}"
+    bind:close="onCloseLog"
+  />
+
+  <notifications items="{{notifications}}" />
+</view>
+
+</block>

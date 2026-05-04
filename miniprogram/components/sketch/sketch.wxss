@@ -1,0 +1,89 @@
+.sketch {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+/* 半调网点角落 —— Skyline 不支持 radial-gradient 多色叠加，这里用纯色 + 大圆模拟 */
+.halftone {
+  position: absolute;
+  width: 480rpx;
+  height: 480rpx;
+  border-radius: 50%;
+  background: rgba(230, 0, 34, 0.18);
+  filter: blur(18rpx);
+}
+.halftone-tl {
+  top: -160rpx;
+  left: -180rpx;
+  background: rgba(230, 0, 34, 0.18);
+}
+.halftone-br {
+  bottom: -200rpx;
+  right: -200rpx;
+  background: rgba(250, 250, 243, 0.06);
+}
+.halftone.subdued {
+  opacity: 0.6;
+}
+
+.streak-wrap {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+.streak {
+  position: absolute;
+  transform: skewX(-22deg);
+  animation-name: p5-streak-run;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  will-change: transform, opacity;
+}
+
+.stars-wrap {
+  position: absolute;
+  inset: 0;
+}
+.star {
+  position: absolute;
+  color: #e60022;
+  font-style: italic;
+  text-shadow: 4rpx 4rpx 0 rgba(0,0,0,0.4);
+}
+
+/* 角落大问号 */
+.big-question {
+  position: absolute;
+  top: 30rpx;
+  right: 40rpx;
+  font-size: 360rpx;
+  color: #e60022;
+  font-style: italic;
+  font-weight: 900;
+  line-height: 0.85;
+  letter-spacing: -0.05em;
+}
+
+.monogram-tr {
+  position: absolute;
+  bottom: 28rpx;
+  left: 32rpx;
+  font-size: 260rpx;
+  color: rgba(250,250,243,0.04);
+  font-weight: 900;
+  line-height: 0.85;
+}
+
+.tape-strip {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  height: 6rpx;
+  background: rgba(230,0,34,0.35);
+  transform: rotate(-3deg);
+}
+.tape-strip.top { top: 4%; }
+.tape-strip.bottom { bottom: 4%; transform: rotate(3deg); }

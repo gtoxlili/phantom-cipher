@@ -1,0 +1,62 @@
+.banner-host {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 24rpx 0 12rpx;
+  pointer-events: none;
+}
+
+.banner {
+  display: inline-block;
+  padding: 12rpx 28rpx;
+  border: 3rpx solid #0a0a0a;
+  transform: skewX(-9deg);
+  animation: p5-streak-in 0.42s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  max-width: 92%;
+}
+
+.banner.mood-idle {
+  background: #131313;
+  color: #ece5cf;
+  border-color: rgba(250,250,243,0.4);
+  box-shadow: 4rpx 4rpx 0 rgba(230,0,34,0.4);
+}
+.banner.mood-turn {
+  background: #e60022;
+  color: #fafaf3;
+  box-shadow: 6rpx 6rpx 0 #0a0a0a;
+}
+.banner.mood-wait {
+  background: #0a0a0a;
+  color: #ece5cf;
+  border-color: #fafaf3;
+  box-shadow: 4rpx 4rpx 0 rgba(230,0,34,0.4);
+}
+.banner.mood-end {
+  background: #ffd200;
+  color: #0a0a0a;
+  border-color: #0a0a0a;
+  box-shadow: 6rpx 6rpx 0 #e60022;
+}
+
+.inner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 16rpx;
+  transform: skewX(9deg);
+}
+
+.text {
+  font-size: 32rpx;
+  letter-spacing: 0.18em;
+  font-weight: 900;
+  font-style: italic;
+}
+
+.accent {
+  font-size: 28rpx;
+  font-style: italic;
+  font-weight: 700;
+}

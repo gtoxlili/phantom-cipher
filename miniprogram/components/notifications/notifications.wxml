@@ -1,0 +1,12 @@
+<view class="stack">
+  <view
+    class="toast"
+    wx:for="{{items}}"
+    wx:key="id"
+    data-id="{{item.id}}"
+    bind:tap="onTap"
+  >
+    <view class="bar" />
+    <text>{{item.text}}</text>
+  </view>
+</view>

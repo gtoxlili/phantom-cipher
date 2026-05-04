@@ -1,0 +1,22 @@
+{
+  "appid": "wx66f2a554748f24ad",
+  "projectname": "phantom-cipher",
+  "miniprogramRoot": "./",
+  "compileType": "miniprogram",
+  "description": "怪盗密码 · Phantom Cipher · WeChat Mini Program",
+  "setting": {
+    "es6": true,
+    "es7": true,
+    "minified": true,
+    "skylineRenderEnable": true,
+    "useCompilerPlugins": false,
+    "ignoreUploadUnusedFiles": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
+  },
+  "libVersion": "3.11.3",
+  "condition": {}
+}

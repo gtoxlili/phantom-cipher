@@ -1,0 +1,28 @@
+<view class="sketch" aria-hidden="true">
+  <view class="halftone halftone-tl {{intensity === 'subdued' ? 'subdued' : ''}}" />
+  <view class="halftone halftone-br {{intensity === 'subdued' ? 'subdued' : ''}}" />
+
+  <view class="streak-wrap">
+    <view
+      class="streak"
+      wx:for="{{streaks}}"
+      wx:key="index"
+      style="top:{{item.top}};left:{{item.left || 'auto'}};right:{{item.right || 'auto'}};width:{{item.width}};height:{{item.height}};background:{{item.bg}};opacity:{{intensity==='subdued' ? item.op*0.6 : item.op}};animation-duration:{{item.dur}};animation-delay:{{item.delay}}"
+    />
+  </view>
+
+  <view class="stars-wrap">
+    <text
+      class="star"
+      wx:for="{{stars}}"
+      wx:key="index"
+      style="top:{{item.top}};left:{{item.left || 'auto'}};right:{{item.right || 'auto'}};font-size:{{item.size}};opacity:{{intensity==='subdued' ? item.op*0.6 : item.op}}"
+    >✦</text>
+  </view>
+
+  <text class="big-question" style="opacity:{{intensity==='subdued' ? 0.04 : 0.08}}">?</text>
+  <text class="monogram-tr">達</text>
+
+  <view class="tape-strip top" />
+  <view class="tape-strip bottom" />
+</view>

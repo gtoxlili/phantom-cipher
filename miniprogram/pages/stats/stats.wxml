@@ -1,0 +1,95 @@
+<scroll-view class="page" scroll-y type="list" enhanced show-scrollbar="{{false}}">
+  <sketch />
+
+  <view class="hd">
+    <view class="back" bind:tap="goBack">
+      <text class="arrow">‹</text>
+      <text class="lbl">BACK</text>
+    </view>
+  </view>
+
+  <view class="title-block">
+    <view class="eyebrow"><text>★ STAT BOARD ★</text></view>
+    <view class="t1"><text>排行榜</text></view>
+    <view class="t2"><text>// LEADERBOARD</text></view>
+  </view>
+
+  <block wx:if="{{loading}}">
+    <view class="state-box"><text>· LOADING · 加载中</text></view>
+  </block>
+  <block wx:elif="{{error}}">
+    <view class="state-box error-box"><text>· CONNECTION ERROR · {{error}} ·</text></view>
+  </block>
+  <block wx:else>
+
+    <view class="totals">
+      <view class="total-card">
+        <text class="lbl">累计对局</text>
+        <text class="val">{{totals.matches}}</text>
+        <text class="unit">MATCHES</text>
+      </view>
+      <view class="total-card">
+        <text class="lbl">累计玩家</text>
+        <text class="val">{{totals.players}}</text>
+        <text class="unit">PLAYERS</text>
+      </view>
+      <view class="total-card">
+        <text class="lbl">进行中</text>
+        <text class="val">{{totals.in_flight}}</text>
+        <text class="unit">LIVE NOW</text>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-head">
+        <text class="cn">名次</text>
+        <text class="en">· TOP {{leaderboard.length}} ·</text>
+      </view>
+      <block wx:if="{{leaderboard.length === 0}}">
+        <view class="state-box"><text>· NO MATCHES YET · 还没有完整对局数据 ·</text></view>
+      </block>
+      <block wx:else>
+        <view class="lb-list">
+          <view
+            class="lb-row {{item._row}}"
+            wx:for="{{leaderboard}}"
+            wx:key="id"
+          >
+            <text class="rank rank-{{item._rankColor}}">{{item._rank}}</text>
+            <text class="name">{{item.display_name}}</text>
+            <view class="stat">
+              <text class="val">{{item.matches_won}}</text>
+              <text class="lbl">胜 · WIN</text>
+            </view>
+            <view class="stat hide-mobile">
+              <text class="val">{{item._rate}}%</text>
+              <text class="lbl">率 · RATE</text>
+            </view>
+          </view>
+        </view>
+      </block>
+    </view>
+
+    <view class="section">
+      <view class="section-head">
+        <text class="cn">最近对局</text>
+        <text class="en">· RECENT ·</text>
+      </view>
+      <block wx:if="{{recent.length === 0}}">
+        <view class="state-box"><text>· 暂无近期对局 ·</text></view>
+      </block>
+      <block wx:else>
+        <view class="recent-list">
+          <view class="recent-row" wx:for="{{recent}}" wx:key="id">
+            <text class="code">{{item.code}}</text>
+            <text class="winner">{{item.winner_name || 'NO WINNER'}}</text>
+            <text class="meta">{{item.player_count}}P · {{item._rel}}</text>
+          </view>
+        </view>
+      </block>
+    </view>
+
+  </block>
+
+  <view style="height: 80rpx" />
+</scroll-view>

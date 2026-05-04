@@ -1,0 +1,163 @@
+.row {
+  position: relative;
+  padding: 16rpx 20rpx 28rpx;
+  margin: 12rpx 16rpx;
+  border: 3rpx solid rgba(250, 250, 243, 0.18);
+  background: rgba(10, 10, 10, 0.48);
+  transform: skewX(-3deg);
+}
+
+.row.me {
+  background: linear-gradient(180deg, rgba(230,0,34,0.16) 0%, rgba(10,10,10,0.6) 100%);
+  border-color: rgba(230, 0, 34, 0.46);
+  margin-top: 24rpx;
+}
+
+.row.current {
+  border-color: #e60022;
+  box-shadow: 6rpx 6rpx 0 rgba(230,0,34,0.6);
+}
+.row.me-current {
+  box-shadow: 8rpx 8rpx 0 #e60022;
+}
+
+.row.dead {
+  opacity: 0.4;
+}
+
+.row.offline {
+  border-style: dashed;
+}
+
+.player-header {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14rpx;
+  transform: skewX(3deg);
+}
+
+.player-name-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12rpx;
+  flex-wrap: wrap;
+}
+
+.player-name {
+  color: #fafaf3;
+  font-size: 30rpx;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  font-style: italic;
+  text-transform: uppercase;
+}
+
+.you-tag {
+  color: #ffd200;
+  font-size: 22rpx;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+}
+
+.host-tag {
+  background: #ffd200;
+  color: #0a0a0a;
+  padding: 2rpx 10rpx;
+  font-size: 18rpx;
+  letter-spacing: 0.16em;
+  font-weight: 800;
+  transform: skewX(-8deg);
+}
+
+.player-status {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12rpx;
+  flex-shrink: 0;
+}
+
+.turn-tag {
+  background: #e60022;
+  color: #fafaf3;
+  padding: 4rpx 14rpx;
+  font-size: 20rpx;
+  letter-spacing: 0.2em;
+  font-weight: 800;
+  transform: skewX(-8deg);
+  animation: p5-blink 1.2s ease-in-out infinite;
+}
+
+.dead-tag {
+  background: #555;
+  color: #fafaf3;
+  padding: 2rpx 10rpx;
+  font-size: 20rpx;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+}
+
+.offline-tag {
+  border: 2rpx dashed #888;
+  color: #888;
+  padding: 2rpx 10rpx;
+  font-size: 20rpx;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+}
+
+.forfeit-tag {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8rpx;
+  background: #131313;
+  color: #e60022;
+  border: 2rpx solid #e60022;
+  padding: 2rpx 10rpx;
+  transform: skewX(-8deg);
+}
+.forfeit-tag text {
+  color: #e60022;
+  font-size: 18rpx;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  transform: skewX(8deg);
+}
+.forfeit-dot {
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: #e60022;
+  animation: p5-blink 0.8s ease-in-out infinite;
+}
+
+.hand {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 18rpx 12rpx;
+  align-items: flex-end;
+  padding-top: 14rpx;
+  transform: skewX(3deg);
+}
+
+.hand-me {
+  justify-content: flex-start;
+}
+
+.empty-hand {
+  color: rgba(250,250,243,0.4);
+  font-size: 28rpx;
+  font-style: italic;
+  letter-spacing: 0.4em;
+  padding: 16rpx 0;
+}
+
+.tile-cell {
+  display: inline-block;
+  flex-shrink: 0;
+}

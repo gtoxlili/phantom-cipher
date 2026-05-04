@@ -1,0 +1,44 @@
+<view
+  class="tile size-{{size}} color-{{color}} {{pending ? 'is-pending' : ''}} {{selected ? 'is-selected' : ''}} {{selectable && !selected && !pending ? 'is-pulse' : ''}} {{ownedHidden ? 'is-owned-hidden' : ''}} {{ownedExposed ? 'is-owned-exposed' : ''}} {{highlight === 'correct' ? 'flash-correct' : ''}} {{highlight === 'wrong' ? 'flash-wrong' : ''}} {{clickable ? 'is-tappable' : ''}}"
+  style="animation-delay: {{index * 35}}ms"
+  bind:tap="onTap"
+>
+  <!-- 阴影投影：纯黑斜偏块 -->
+  <view class="shadow" />
+
+  <!-- 牌面主体 -->
+  <view class="card">
+    <!-- 切角 P5 红块 -->
+    <view class="corner" />
+    <!-- 上沿装饰线 -->
+    <view class="rule-line" />
+    <!-- 半调点 -->
+    <view class="halftone-row">
+      <view class="halftone-dot" wx:for="{{halftoneCircles}}" wx:key="*this" />
+    </view>
+
+    <!-- 数字 / Joker / 问号 -->
+    <block wx:if="{{!faceDown && !joker && number !== null}}">
+      <text class="glyph number">{{number}}</text>
+    </block>
+    <block wx:elif="{{!faceDown && joker}}">
+      <text class="glyph star-shadow">★</text>
+      <text class="glyph star">★</text>
+      <text class="corner-spark a">◆</text>
+      <text class="corner-spark b">◆</text>
+    </block>
+    <block wx:else>
+      <text class="glyph qmark-shadow">?</text>
+      <text class="glyph qmark">?</text>
+    </block>
+
+    <!-- 已亮明斜杠 -->
+    <view wx:if="{{ownedExposed}}" class="exposed-slash" />
+    <!-- ownedHidden 蓝点（这里复用红色血点） -->
+    <view wx:if="{{ownedHidden}}" class="hidden-dot" />
+  </view>
+
+  <!-- 暂置 / 已亮 标签 -->
+  <view wx:if="{{pending}}" class="tag pending-tag"><text>暂 / NEW</text></view>
+  <view wx:if="{{ownedExposed && !pending}}" class="tag exposed-tag"><text>亮 / OPEN</text></view>
+</view>

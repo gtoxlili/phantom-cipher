@@ -1,0 +1,129 @@
+.hd {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24rpx;
+  height: 96rpx;
+  margin-top: 12rpx;
+}
+
+.icon-btn {
+  width: 72rpx;
+  height: 72rpx;
+  border: 3rpx solid #fafaf3;
+  background: #131313;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: skewX(-6deg);
+  box-shadow: 4rpx 4rpx 0 #e60022;
+}
+
+.icon-btn:active {
+  transform: skewX(-6deg) translate(2rpx, 2rpx);
+  box-shadow: 2rpx 2rpx 0 #e60022;
+}
+
+.icon-arrow {
+  color: #fafaf3;
+  font-size: 56rpx;
+  font-weight: 900;
+  line-height: 1;
+  font-style: italic;
+  transform: skewX(6deg);
+}
+
+.bars {
+  display: flex;
+  flex-direction: column;
+  gap: 6rpx;
+  transform: skewX(6deg);
+}
+.bar {
+  width: 32rpx;
+  height: 4rpx;
+  background: #fafaf3;
+}
+.bar.short { width: 20rpx; }
+
+.code-wrap {
+  flex: 1;
+  margin: 0 16rpx;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: #fafaf3;
+  border: 3rpx solid #0a0a0a;
+  box-shadow: 5rpx 5rpx 0 #e60022;
+  padding: 6rpx 14rpx;
+  transform: skewX(-8deg);
+}
+.code-wrap:active {
+  box-shadow: 2rpx 2rpx 0 #e60022;
+  transform: skewX(-8deg) translate(3rpx, 3rpx);
+}
+
+.label {
+  display: inline-block;
+  transform: skewX(8deg);
+  color: #e60022;
+  font-size: 18rpx;
+  letter-spacing: 0.32em;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.code {
+  display: inline-block;
+  transform: skewX(8deg);
+  color: #0a0a0a;
+  font-size: 44rpx;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.18em;
+  line-height: 1;
+  margin: 2rpx 0;
+}
+
+.copy-hint {
+  display: inline-block;
+  transform: skewX(8deg);
+  color: rgba(10,10,10,0.6);
+  font-size: 16rpx;
+  letter-spacing: 0.22em;
+  font-weight: 700;
+  margin-top: 2rpx;
+}
+
+.disconnected {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%) skewX(-6deg);
+  margin-top: 12rpx;
+  background: #e60022;
+  color: #fafaf3;
+  border: 3rpx solid #0a0a0a;
+  padding: 6rpx 14rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8rpx;
+  z-index: 10;
+}
+.disconnected text {
+  color: #fafaf3;
+  font-size: 18rpx;
+  letter-spacing: 0.22em;
+  font-weight: 700;
+  transform: skewX(6deg);
+}
+.disconnected .dot {
+  width: 12rpx; height: 12rpx; border-radius: 50%;
+  background: #fafaf3;
+  animation: p5-blink 1s ease-in-out infinite;
+}

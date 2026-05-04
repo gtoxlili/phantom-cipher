@@ -1,0 +1,139 @@
+.deck-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.deck {
+  position: relative;
+  width: 144rpx;
+  height: 200rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deck.empty {
+  opacity: 0.45;
+}
+
+.deck.active {
+  animation: p5-deck-pulse 1.4s ease-in-out infinite;
+}
+
+.stack {
+  position: absolute;
+  inset: 0;
+}
+
+.card-back {
+  position: absolute;
+  inset: 0;
+  border: 4rpx solid #0a0a0a;
+  clip-path: polygon(0 0, 80% 0, 100% 15%, 100% 100%, 0 100%);
+  overflow: hidden;
+}
+
+.deck.color-black .card-back .bg {
+  position: absolute; inset: 0; background: #0a0a0a;
+}
+.deck.color-white .card-back .bg {
+  position: absolute; inset: 0; background: #ece5cf;
+}
+
+.deck.color-black .card-back { border-color: #fafaf3; }
+
+.corner {
+  position: absolute;
+  top: 0; right: 0;
+  width: 30%; height: 18%;
+  background: #e60022;
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+}
+
+.diag-red {
+  position: absolute;
+  top: 50%;
+  left: -10%;
+  right: -10%;
+  height: 28rpx;
+  background: #e60022;
+  transform: translateY(-50%) rotate(-18deg);
+}
+.diag-light {
+  position: absolute;
+  top: 64%;
+  left: -10%;
+  right: -10%;
+  height: 4rpx;
+  transform: translateY(-50%) rotate(-18deg);
+}
+.deck.color-white .diag-light { background: #0a0a0a; }
+.deck.color-black .diag-light { background: #fafaf3; }
+
+.mono {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) skewX(-6deg);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 44rpx;
+  letter-spacing: -0.04em;
+  z-index: 2;
+}
+.deck.color-white .mono { color: #0a0a0a; }
+.deck.color-black .mono { color: #fafaf3; }
+
+.halftones {
+  position: absolute;
+  bottom: 14%;
+  left: 12%;
+  display: flex;
+  flex-direction: row;
+  gap: 8rpx;
+}
+.halftones .dot {
+  width: 6rpx; height: 6rpx; border-radius: 50%;
+  background: #e60022;
+}
+
+.count {
+  position: absolute;
+  bottom: -8rpx;
+  right: -16rpx;
+  background: #fafaf3;
+  border: 3rpx solid #0a0a0a;
+  box-shadow: 4rpx 4rpx 0 #e60022;
+  padding: 4rpx 12rpx;
+  transform: skewX(-8deg);
+  z-index: 5;
+}
+.count text {
+  display: inline-block;
+  transform: skewX(8deg);
+  color: #0a0a0a;
+  font-weight: 900;
+  font-size: 28rpx;
+  font-style: italic;
+}
+
+.deck-label {
+  font-size: 20rpx;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  padding: 4rpx 12rpx;
+  transform: skewX(-8deg);
+}
+.deck-label.color-black {
+  background: #0a0a0a;
+  color: #fafaf3;
+  border: 2rpx solid #fafaf3;
+}
+.deck-label.color-white {
+  background: #fafaf3;
+  color: #0a0a0a;
+  border: 2rpx solid #0a0a0a;
+}
+.deck-label text { display: inline-block; transform: skewX(8deg); }

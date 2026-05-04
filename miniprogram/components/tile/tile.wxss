@@ -1,0 +1,234 @@
+/* ===================================================================== *
+ * 牌：用嵌套 view + text 绘制；尺寸由 size 控制，外部宽度，aspect-ratio 锁
+ * 比例 (5:7 = 80:112)。
+ *
+ * Skyline 不能直接 SVG，所以"刻字"的部分：
+ *   - 数字：italic display 字体居中。
+ *   - 红色三角切角：用 ::after 不行，Skyline 不全支持伪元素 transform；
+ *     直接用 view 绝对定位 + clip-path（Skyline 支持 polygon）。
+ *   - 半调点：8 个小圆 view。
+ *   - 阴影：另一个绝对定位 view，clip 出多边形偏移。
+ * ===================================================================== */
+
+.tile {
+  position: relative;
+  display: inline-block;
+  flex-shrink: 0;
+  transform: rotate(-2deg);
+  user-select: none;
+  animation-name: p5-tile-in;
+  animation-duration: 0.45s;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-fill-mode: backwards;
+}
+
+.tile.size-sm { width: 72rpx; }
+.tile.size-md { width: 100rpx; }
+.tile.size-lg { width: 128rpx; }
+
+.shadow {
+  position: absolute;
+  top: 8rpx;
+  left: 8rpx;
+  width: 100%;
+  height: 100%;
+  background: #0a0a0a;
+  z-index: 1;
+  clip-path: polygon(5% 4%, 80% 4%, 95% 14%, 95% 96%, 5% 96%);
+}
+
+.card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 80 / 112;
+  background: #ece5cf;
+  border: 4rpx solid #0a0a0a;
+  z-index: 2;
+  /* P5 切角：右上 */
+  clip-path: polygon(0 0, 80% 0, 100% 15%, 100% 100%, 0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tile.color-black .card {
+  background: #0a0a0a;
+}
+
+.corner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30%;
+  height: 18%;
+  background: #e60022;
+  /* 三角形：右上 */
+  clip-path: polygon(100% 0, 100% 100%, 0 0);
+  z-index: 3;
+}
+
+.rule-line {
+  position: absolute;
+  top: 18%;
+  left: 12%;
+  right: 18%;
+  height: 2rpx;
+  background: rgba(10,10,10,0.18);
+  z-index: 3;
+}
+.tile.color-black .rule-line {
+  background: rgba(250,250,243,0.16);
+}
+
+.halftone-row {
+  position: absolute;
+  bottom: 8%;
+  left: 10%;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6rpx;
+  z-index: 3;
+}
+.halftone-dot {
+  width: 6rpx;
+  height: 6rpx;
+  border-radius: 50%;
+  background: rgba(230,0,34,0.95);
+}
+
+.glyph {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-style: italic;
+  font-weight: 700;
+  font-family: 'Impact', 'Bebas Neue', 'Oswald', sans-serif;
+  letter-spacing: -0.02em;
+  z-index: 4;
+  line-height: 1;
+}
+
+.tile.size-sm .glyph { font-size: 56rpx; }
+.tile.size-md .glyph { font-size: 78rpx; }
+.tile.size-lg .glyph { font-size: 102rpx; }
+
+.glyph.number { color: #0a0a0a; }
+.tile.color-black .glyph.number { color: #fafaf3; }
+
+.glyph.qmark { color: #e60022; }
+.glyph.qmark-shadow {
+  color: rgba(10,10,10,0.18);
+  transform: translate(calc(-50% - 6rpx), calc(-50% - 4rpx));
+}
+.tile.color-black .glyph.qmark-shadow {
+  color: rgba(250,250,243,0.18);
+}
+
+.glyph.star { color: #0a0a0a; }
+.tile.color-black .glyph.star { color: #fafaf3; }
+.glyph.star-shadow {
+  color: #e60022;
+  transform: translate(calc(-50% + 4rpx), calc(-50% + 6rpx));
+}
+
+.corner-spark {
+  position: absolute;
+  font-size: 18rpx;
+  color: #e60022;
+  z-index: 5;
+}
+.corner-spark.a { top: 28%; left: 12%; }
+.corner-spark.b { bottom: 18%; right: 12%; }
+
+/* 暂置牌悬浮 */
+.tile.is-pending {
+  animation:
+    p5-tile-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) backwards,
+    p5-pending-hover 1.6s ease-in-out 0.5s infinite;
+}
+.tag.pending-tag {
+  position: absolute;
+  top: -28rpx;
+  left: 50%;
+  transform: translateX(-50%) skewX(-10deg);
+  background: #e60022;
+  padding: 4rpx 14rpx;
+  border: 3rpx solid #0a0a0a;
+  z-index: 6;
+}
+.tag.pending-tag text {
+  color: #fafaf3;
+  font-size: 18rpx;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+}
+
+.tag.exposed-tag {
+  position: absolute;
+  top: -28rpx;
+  left: 50%;
+  transform: translateX(-50%) skewX(-10deg);
+  background: #fafaf3;
+  padding: 4rpx 14rpx;
+  border: 3rpx solid #0a0a0a;
+  box-shadow: 4rpx 4rpx 0 #e60022;
+  z-index: 6;
+}
+.tag.exposed-tag text {
+  color: #0a0a0a;
+  font-size: 18rpx;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+}
+
+.exposed-slash {
+  position: absolute;
+  top: 50%;
+  left: -6%;
+  right: -6%;
+  height: 4rpx;
+  background: #e60022;
+  transform: translateY(-50%) rotate(-12deg);
+  z-index: 5;
+  opacity: 0.55;
+}
+
+.hidden-dot {
+  position: absolute;
+  top: 12rpx;
+  left: 16rpx;
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: #e60022;
+  z-index: 5;
+  animation: p5-blink 1.5s ease-in-out infinite;
+}
+
+.tile.is-owned-hidden { opacity: 0.92; }
+.tile.is-owned-exposed { opacity: 0.6; }
+
+.tile.is-pulse {
+  animation:
+    p5-tile-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) backwards,
+    p5-selectable-pulse 0.9s ease-in-out infinite;
+}
+
+.tile.is-selected {
+  transform: rotate(-1deg) translateY(-28rpx) scale(1.06);
+  z-index: 10;
+}
+
+.tile.is-tappable { cursor: pointer; }
+.tile.is-tappable:active {
+  transform: rotate(-1deg) translateY(-12rpx) scale(0.97);
+}
+
+.tile.flash-correct {
+  animation: p5-flash-correct 1s ease-out;
+}
+.tile.flash-wrong {
+  animation: p5-flash-wrong 0.7s ease-out;
+}

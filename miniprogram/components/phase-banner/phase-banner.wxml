@@ -1,0 +1,9 @@
+<view class="banner-host">
+  <view class="banner mood-{{mood}}" key="{{animKey}}">
+    <view class="inner">
+      <text wx:if="{{accent}}" class="accent">{{accent}}</text>
+      <text class="text">{{text}}</text>
+      <text wx:if="{{accent}}" class="accent">{{accent}}</text>
+    </view>
+  </view>
+</view>

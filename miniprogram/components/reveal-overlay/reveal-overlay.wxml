@@ -1,0 +1,7 @@
+<view wx:if="{{visible}}" class="overlay {{correct ? 'correct' : 'wrong'}}">
+  <view class="line top" />
+  <view class="line bottom" />
+  <view class="ribbon">
+    <text>{{text}}</text>
+  </view>
+</view>

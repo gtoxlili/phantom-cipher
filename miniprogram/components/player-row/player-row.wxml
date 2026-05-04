@@ -1,0 +1,47 @@
+<view
+  class="row {{isMe ? 'me' : 'op'}} {{current ? 'current' : ''}} {{current && isMe ? 'me-current' : ''}} {{!player.alive ? 'dead' : ''}} {{!player.connected && !isMe ? 'offline' : ''}}"
+>
+  <view class="player-header">
+    <view class="player-name-row">
+      <text class="player-name">{{player.name}}</text>
+      <text wx:if="{{isMe}}" class="you-tag">· YOU</text>
+      <text wx:if="{{host}}" class="host-tag">HOST</text>
+    </view>
+    <view class="player-status">
+      <text wx:if="{{current}}" class="turn-tag">NOW</text>
+      <text wx:if="{{!player.alive}}" class="dead-tag">OUT</text>
+      <text wx:if="{{!player.connected && !isMe}}" class="offline-tag">OFF</text>
+      <view wx:if="{{forfeitSec > 0}}" class="forfeit-tag">
+        <view class="forfeit-dot" />
+        <text>{{forfeitSec}}s</text>
+      </view>
+    </view>
+  </view>
+
+  <view class="hand {{isMe ? 'hand-me' : 'hand-op'}}">
+    <block wx:if="{{tiles.length === 0}}">
+      <text class="empty-hand">· · ·</text>
+    </block>
+    <block wx:else>
+      <view class="tile-cell" wx:for="{{tiles}}" wx:key="id" wx:for-item="t" wx:for-index="i">
+        <tile
+          number="{{isMe ? t.number : (t.revealed ? t.number : null)}}"
+          color="{{t.color}}"
+          joker="{{isMe ? t.joker : (t.revealed && t.joker)}}"
+          face-down="{{!isMe && !t.revealed}}"
+          owned-hidden="{{isMe && !t.revealed && !t.pending}}"
+          owned-exposed="{{isMe && t.revealed}}"
+          pending="{{t.pending}}"
+          selected="{{selectedTileId === t.id}}"
+          selectable="{{canTarget && !t.revealed && player.alive}}"
+          highlight="{{revealTileId === t.id ? (revealCorrect ? 'correct' : 'wrong') : ''}}"
+          size="{{isMe ? 'lg' : 'md'}}"
+          index="{{i}}"
+          clickable="{{canTarget && !t.revealed && player.alive}}"
+          data-id="{{t.id}}"
+          bind:tap="onTileTap"
+        />
+      </view>
+    </block>
+  </view>
+</view>

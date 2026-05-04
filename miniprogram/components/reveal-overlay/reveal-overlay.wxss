@@ -1,0 +1,57 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(10,10,10,0.55);
+  animation: reveal-overlay-fade 1.4s ease-out forwards;
+}
+
+@keyframes reveal-overlay-fade {
+  0%   { background: rgba(10,10,10,0); }
+  20%  { background: rgba(10,10,10,0.6); }
+  100% { background: rgba(10,10,10,0); }
+}
+
+.line {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  height: 60rpx;
+  background: #e60022;
+  transform: skewX(-22deg);
+  animation: p5-streak-in 0.32s ease-out backwards;
+}
+.line.top { top: 30%; }
+.line.bottom { bottom: 30%; animation-delay: 0.06s; }
+
+.overlay.correct .line { background: #ffd200; }
+
+.ribbon {
+  position: relative;
+  z-index: 2;
+  background: #fafaf3;
+  border: 5rpx solid #0a0a0a;
+  padding: 16rpx 36rpx;
+  transform: skewX(-9deg);
+  box-shadow: 8rpx 8rpx 0 #e60022;
+  animation: p5-burst 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.overlay.correct .ribbon {
+  background: #ffd200;
+  box-shadow: 8rpx 8rpx 0 #0a0a0a;
+}
+
+.ribbon text {
+  display: inline-block;
+  transform: skewX(9deg);
+  color: #0a0a0a;
+  font-size: 56rpx;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.12em;
+}
