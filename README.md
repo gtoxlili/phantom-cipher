@@ -72,6 +72,8 @@ docker run -d --name phantom-cipher \
 | `DB_PATH` | `/app/data/phantom.db` | SQLite 文件路径 |
 | `FRONTEND_DIST` | `/app/public` | 静态前端 dist |
 | `RUST_LOG` | `info,phantom_cipher=info` | tracing 过滤 |
+| `WX_APPID` | *(空)* | 微信小程序 AppID。空则 `/api/wx/login` 503，小程序端自动 fallback 到本地 UUID |
+| `WX_SECRET` | *(空)* | 微信小程序 AppSecret，跟 `WX_APPID` 一起配齐才启用 openid 认证 |
 
 ### 资源占用参考
 

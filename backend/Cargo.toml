@@ -28,6 +28,7 @@ parking_lot = "0.12.5"
 r2d2 = "0.8.10"
 r2d2_sqlite = "0.33.0"
 rand = "0.10.1"
+reqwest = { version = "0.12.27", default-features = false, features = ["json", "rustls-tls"] }
 rmp-serde = "1.3.1"
 rusqlite = { version = "0.39.0", features = ["bundled"] }
 serde = { version = "1.0.228", features = ["derive"] }

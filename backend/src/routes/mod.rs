@@ -17,10 +17,19 @@ pub mod actions;
 pub mod players;
 pub mod stats;
 pub mod ws;
+pub mod wx;
+
+#[derive(Clone)]
+pub struct WxAuth {
+    pub appid: String,
+    pub secret: String,
+    pub http: reqwest::Client,
+}
 
 pub struct AppState {
     pub store: Arc<Store>,
     pub disconnect: Arc<DisconnectTimers>,
+    pub wx: WxAuth,
 }
 
 pub type SharedState = Arc<AppState>;
@@ -59,5 +68,6 @@ pub fn router(state: SharedState) -> Router {
         .route("/api/room/{code}/ws", get(ws::ws_handler))
         .route("/api/stats", get(stats::stats))
         .route("/api/players/{pid}", get(players::get_player))
+        .route("/api/wx/login", post(wx::login))
         .with_state(state)
 }
