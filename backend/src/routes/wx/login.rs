@@ -1,21 +1,12 @@
-//! 微信小程序登录端点。
+//! `wx.login()` code → openid 交换。
 //!
 //! 流程：
 //!   1. 小程序调 `wx.login()` 拿到 5 分钟有效 code
-//!   2. 小程序把 code POST 到 `/api/wx/login`
-//!   3. 这边拿 appid + secret + code 调 jscode2session
-//!      <https://api.weixin.qq.com/sns/jscode2session>
-//!   4. 拿到 `{ openid, session_key, unionid? }` 后只回 openid 给小程序
-//!      session_key 不外传——后续如果有需要做 watermark / encryptedData
-//!      解密再用，本项目暂时不需要
-//!
-//! `openid` 直接当 `player_id` 用：在小程序内是稳定的、跨打开次数不变、
-//! 跨设备共享（同一微信号）。比 UUID 强在跨设备识别。
-//!
-//! 未配置 `WX_APPID` / `WX_SECRET` 时直接 503 拒绝，让客户端 fallback
-//! 到本地 UUID 模式（小程序里 identity.js 走兜底分支）。
+//!   2. POST 到 `/api/wx/login`
+//!   3. 这边调 jscode2session 接口换 openid + unionid
+//!   4. session_key 不外传——本项目暂无 watermark / 解密需求
 
-use super::{ActionResponse, SharedState};
+use crate::routes::{ActionResponse, SharedState};
 use axum::extract::{Json, State};
 use axum::http::StatusCode;
 use axum::response::IntoResponse;
@@ -39,22 +30,6 @@ pub enum WxLoginResponse {
         ok: bool,
         error: String,
     },
-}
-
-impl WxLoginResponse {
-    fn ok(openid: String, unionid: Option<String>) -> Self {
-        Self::Ok {
-            ok: true,
-            openid,
-            unionid,
-        }
-    }
-    fn err(msg: impl Into<String>) -> Self {
-        Self::Err {
-            ok: false,
-            error: msg.into(),
-        }
-    }
 }
 
 #[derive(Deserialize)]
@@ -82,9 +57,7 @@ pub async fn login(
             .into_response();
     }
 
-    let appid = state.wx.appid.trim();
-    let secret = state.wx.secret.trim();
-    if appid.is_empty() || secret.is_empty() {
+    if !state.wx.enabled() {
         return (
             StatusCode::SERVICE_UNAVAILABLE,
             Json(ActionResponse::err("WX_APPID / WX_SECRET 未配置")),
@@ -92,15 +65,13 @@ pub async fn login(
             .into_response();
     }
 
-    // GET https://api.weixin.qq.com/sns/jscode2session?appid=&secret=&js_code=&grant_type=authorization_code
-    let url = "https://api.weixin.qq.com/sns/jscode2session";
     let resp = match state
         .wx
         .http
-        .get(url)
+        .get("https://api.weixin.qq.com/sns/jscode2session")
         .query(&[
-            ("appid", appid),
-            ("secret", secret),
+            ("appid", state.wx.appid.as_str()),
+            ("secret", state.wx.secret.as_str()),
             ("js_code", code),
             ("grant_type", "authorization_code"),
         ])
@@ -131,15 +102,26 @@ pub async fn login(
     };
 
     if let Some(openid) = parsed.openid.filter(|s| !s.is_empty()) {
-        let body = WxLoginResponse::ok(openid, parsed.unionid);
-        return (StatusCode::OK, Json(body)).into_response();
+        return (
+            StatusCode::OK,
+            Json(WxLoginResponse::Ok {
+                ok: true,
+                openid,
+                unionid: parsed.unionid,
+            }),
+        )
+            .into_response();
     }
 
-    let errmsg = parsed
-        .errmsg
-        .unwrap_or_else(|| "微信登录失败".to_string());
+    let errmsg = parsed.errmsg.unwrap_or_else(|| "微信登录失败".to_string());
     let errcode = parsed.errcode.unwrap_or(-1);
     tracing::info!(errcode, errmsg = %errmsg, "wx code2session 业务错");
-    let body = WxLoginResponse::err(format!("微信登录失败 ({errcode}): {errmsg}"));
-    (StatusCode::OK, Json(body)).into_response()
+    (
+        StatusCode::OK,
+        Json(WxLoginResponse::Err {
+            ok: false,
+            error: format!("微信登录失败 ({errcode}): {errmsg}"),
+        }),
+    )
+        .into_response()
 }

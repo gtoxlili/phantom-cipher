@@ -2,6 +2,7 @@ const store = require('../../lib/store');
 const { ensureIdentity } = require('../../lib/identity');
 const { pickRandomCodename, genRoomCode } = require('../../lib/codenames');
 const { ensureLayout } = require('../../lib/layout');
+const wxapi = require('../../lib/wx');
 
 Page({
   data: {
@@ -58,15 +59,16 @@ Page({
   },
 
   // ---- 进入房间 ----
-  submitCreate() {
+  async submitCreate() {
     const trimmed = (this.data.myName || '').trim();
     if (!trimmed) { this.setData({ error: '需要一个代号 NAME REQUIRED' }); return; }
+    if (!(await this._validateName(trimmed))) return;
     store.setMyName(trimmed);
     store.setIntentHost(true);
     const newCode = genRoomCode();
     wx.navigateTo({ url: '/pages/room/room?code=' + newCode, routeType: 'p5-slash' });
   },
-  submitJoin() {
+  async submitJoin() {
     const trimmed = (this.data.myName || '').trim();
     if (!trimmed) { this.setData({ error: '需要一个代号 NAME REQUIRED' }); return; }
     const code = (this.data.code || '').trim().toUpperCase();
@@ -74,12 +76,42 @@ Page({
       this.setData({ error: '密码应为 4 位字母数字' });
       return;
     }
+    if (!(await this._validateName(trimmed))) return;
     store.setMyName(trimmed);
     store.setIntentHost(false);
     wx.navigateTo({ url: '/pages/room/room?code=' + code, routeType: 'p5-slash' });
   },
 
+  // 昵称合规检测：命中 risky 时拦下；网络错或未配置时静默放行
+  async _validateName(name) {
+    try {
+      const r = await wxapi.secCheck(name, 1);
+      if (r && r.pass === false) {
+        this.setData({ error: '该代号含违规内容，换一个吧 / NAME RISKY' });
+        return false;
+      }
+    } catch (e) { /* fallback to pass */ }
+    return true;
+  },
+
   goStats() {
     wx.navigateTo({ url: '/pages/stats/stats', routeType: 'p5-slash' });
+  },
+
+  // 转发到好友 / 群：分享出去的卡片就是首页，引导对方下载/打开本小程序
+  onShareAppMessage() {
+    return {
+      title: '怪盗密码 · TAKE THEIR CIPHER',
+      path: '/pages/home/home',
+      imageUrl: '',
+    };
+  },
+
+  // 分享到朋友圈
+  onShareTimeline() {
+    return {
+      title: '怪盗密码 · 二十四块木牌的演绎对决',
+      query: '',
+    };
   },
 });

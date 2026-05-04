@@ -135,3 +135,13 @@
   font-weight: 700;
 }
 .link-press text { color: #e60022; }
+
+.error {
+  color: #e60022;
+  font-size: 22rpx;
+  letter-spacing: 0.06em;
+  font-weight: 800;
+  animation: p5-shake 0.4s ease-out;
+  margin-top: 6rpx;
+}
+.error text { color: #e60022; }

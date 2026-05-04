@@ -19,6 +19,7 @@
       <text>随机代号 / SHUFFLE</text>
       <text class="spark">✦</text>
     </view>
+    <view wx:if="{{error}}" class="error"><text>⚠ {{error}}</text></view>
     <view class="submit {{!draft || !draft.trim() ? 'disabled' : ''}}" hover-class="submit-press" hover-stay-time="80" bind:tap="onSubmit">
       <text>入局 ▶</text>
     </view>

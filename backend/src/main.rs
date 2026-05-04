@@ -37,17 +37,13 @@ async fn main() -> Result<()> {
     let disconnect = Arc::new(disconnect::DisconnectTimers::new());
     sweeper::spawn(store.clone());
 
-    // 微信小程序 jscode2session：用 appid + secret 把 wx.login() 的 code
-    // 换成 openid。两个值从环境变量注进来（没配置就走 disabled 分支让
-    // /api/wx/login 直接返错，不影响其它玩法）
-    let wx_auth = routes::WxAuth {
-        appid: std::env::var("WX_APPID").unwrap_or_default(),
-        secret: std::env::var("WX_SECRET").unwrap_or_default(),
-        http: reqwest::Client::builder()
-            .timeout(std::time::Duration::from_secs(5))
-            .build()
-            .expect("reqwest client"),
-    };
+    // 微信小程序后端代理：appid + secret 从环境变量注入，没配齐时
+    // /api/wx/* 各端点直接 503，让客户端 fallback。WxAuth 内部带
+    // access_token 缓存，所有依赖 token 的接口共用一个刷新闭环
+    let wx_auth = routes::WxAuth::new(
+        std::env::var("WX_APPID").unwrap_or_default(),
+        std::env::var("WX_SECRET").unwrap_or_default(),
+    );
 
     let state = Arc::new(routes::AppState {
         store: store.clone(),

@@ -80,7 +80,10 @@ Page({
   _tickTimer: 0,
 
   onLoad(query) {
-    const code = (query.code || '').toUpperCase().slice(0, 6);
+    // code 来自普通转发卡片（path?code=XXX）；scene 来自小程序码扫码进入。
+    // 两条路都接，省得分情况判
+    const raw = query.code || query.scene || '';
+    const code = ('' + raw).toUpperCase().slice(0, 6);
     if (!code) {
       wx.redirectTo({ url: '/pages/home/home' });
       return;
@@ -305,6 +308,18 @@ Page({
     if (!s.currentRoomCode || !s.playerId) return;
     this._stream = new GameStream();
     this._stream.start(s.currentRoomCode, s.playerId);
+  },
+
+  // 转发卡片 —— 受邀人点开直接进入这个房间。
+  // 微信仅在用户主动点 ··· 菜单里的"转发" / 长按页面 / 点带 open-type=share 的
+  // button 时才回调，这里只声明返回值，逻辑层不主动触发。
+  onShareAppMessage() {
+    const code = this.data.code || '';
+    return {
+      title: '加入棋局 · CIPHER ' + code,
+      path: '/pages/room/room?code=' + encodeURIComponent(code),
+      imageUrl: '',
+    };
   },
 
   // ---- 用户事件 ----

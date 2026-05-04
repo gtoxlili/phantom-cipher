@@ -19,12 +19,7 @@ pub mod stats;
 pub mod ws;
 pub mod wx;
 
-#[derive(Clone)]
-pub struct WxAuth {
-    pub appid: String,
-    pub secret: String,
-    pub http: reqwest::Client,
-}
+pub use wx::WxAuth;
 
 pub struct AppState {
     pub store: Arc<Store>,
@@ -69,5 +64,8 @@ pub fn router(state: SharedState) -> Router {
         .route("/api/stats", get(stats::stats))
         .route("/api/players/{pid}", get(players::get_player))
         .route("/api/wx/login", post(wx::login))
+        .route("/api/wx/sec-check", post(wx::sec_check))
+        .route("/api/wx/subscribe-send", post(wx::subscribe_send))
+        .route("/api/wx/qrcode", get(wx::qrcode))
         .with_state(state)
 }
