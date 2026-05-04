@@ -1,7 +1,8 @@
-<view wx:if="{{visible}}" class="overlay {{correct ? 'correct' : 'wrong'}}">
-  <view class="line top" />
-  <view class="line bottom" />
-  <view class="ribbon">
+<view wx:if="{{show}}" class="overlay {{correct ? 'correct' : 'wrong'}}">
+  <view id="reveal-bg" class="bg" />
+  <view id="reveal-bar-top" class="line top" />
+  <view id="reveal-bar-bottom" class="line bottom" />
+  <view id="reveal-ribbon" class="ribbon">
     <text>{{text}}</text>
   </view>
 </view>

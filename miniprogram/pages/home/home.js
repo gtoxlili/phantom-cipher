@@ -64,7 +64,7 @@ Page({
     store.setMyName(trimmed);
     store.setIntentHost(true);
     const newCode = genRoomCode();
-    wx.navigateTo({ url: '/pages/room/room?code=' + newCode });
+    wx.navigateTo({ url: '/pages/room/room?code=' + newCode, routeType: 'p5-slash' });
   },
   submitJoin() {
     const trimmed = (this.data.myName || '').trim();
@@ -76,10 +76,10 @@ Page({
     }
     store.setMyName(trimmed);
     store.setIntentHost(false);
-    wx.navigateTo({ url: '/pages/room/room?code=' + code });
+    wx.navigateTo({ url: '/pages/room/room?code=' + code, routeType: 'p5-slash' });
   },
 
   goStats() {
-    wx.navigateTo({ url: '/pages/stats/stats' });
+    wx.navigateTo({ url: '/pages/stats/stats', routeType: 'p5-slash' });
   },
 });

@@ -1,40 +1,44 @@
-<view wx:if="{{visible}}" class="backdrop" bind:tap="onClose">
-  <view class="sheet" catch:tap="onSheetTap" style="padding-bottom: {{safeBottom + 28}}px">
-    <view class="title">
-      <text class="strong">{{targetName}}</text>
-      <text class="hint">第 {{position + 1}} 张</text>
-      <view class="color-tag color-{{color}}">
-        <text>{{color === 'black' ? '黑' : '白'}}</text>
+<view wx:if="{{show}}" class="backdrop" bind:tap="onClose">
+  <view id="picker-back" class="back-fill" />
+  <vertical-drag-gesture-handler worklet:onGestureEvent="handleVerticalDrag">
+    <view id="picker-sheet" class="sheet" catch:tap="onSheetTap" style="padding-bottom: {{safeBottom + 28}}px">
+      <view class="grab" />
+      <view class="title">
+        <text class="strong">{{targetName}}</text>
+        <text class="hint">第 {{position + 1}} 张</text>
+        <view class="color-tag color-{{color}}">
+          <text>{{color === 'black' ? '黑' : '白'}}</text>
+        </view>
+      </view>
+
+      <view class="num-grid">
+        <view
+          class="num-btn"
+          wx:for="{{nums}}"
+          wx:key="*this"
+          wx:for-item="n"
+          wx:for-index="i"
+          data-n="{{n}}"
+          hover-class="num-btn-press"
+          hover-stay-time="80"
+          bind:tap="onPick"
+          style="animation-delay: {{i * 30 + 80}}ms"
+        >
+          <text>{{n}}</text>
+        </view>
+      </view>
+
+      <view class="joker-btn" hover-class="joker-btn-press" hover-stay-time="80" bind:tap="onJoker">
+        <view class="joker-row">
+          <text class="star">★</text>
+          <text class="label">JOKER</text>
+          <text class="zh">赖子</text>
+        </view>
+      </view>
+
+      <view class="cancel" hover-class="cancel-press" hover-stay-time="80" bind:tap="onClose">
+        <text>CANCEL ✕</text>
       </view>
     </view>
-
-    <view class="num-grid">
-      <view
-        class="num-btn"
-        wx:for="{{nums}}"
-        wx:key="*this"
-        wx:for-item="n"
-        wx:for-index="i"
-        data-n="{{n}}"
-        hover-class="num-btn-press"
-        hover-stay-time="80"
-        bind:tap="onPick"
-        style="animation-delay: {{i * 30 + 80}}ms"
-      >
-        <text>{{n}}</text>
-      </view>
-    </view>
-
-    <view class="joker-btn" hover-class="joker-btn-press" hover-stay-time="80" bind:tap="onJoker">
-      <view class="joker-row">
-        <text class="star">★</text>
-        <text class="label">JOKER</text>
-        <text class="zh">赖子</text>
-      </view>
-    </view>
-
-    <view class="cancel" hover-class="cancel-press" hover-stay-time="80" bind:tap="onClose">
-      <text>CANCEL ✕</text>
-    </view>
-  </view>
+  </vertical-drag-gesture-handler>
 </view>

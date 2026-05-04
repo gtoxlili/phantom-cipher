@@ -1,31 +1,35 @@
-<view wx:if="{{visible}}" class="backdrop">
-  <view class="sheet" catch:tap="onSheetTap" style="padding-bottom: {{safeBottom + 28}}px">
-    <text class="subtitle">▶ JOKER · 赖子待放置 ◀</text>
-    <text class="title">选个位置 — <text class="strong">把赖子塞进去</text></text>
+<view wx:if="{{show}}" class="backdrop">
+  <view id="joker-back" class="back-fill" />
+  <vertical-drag-gesture-handler worklet:onGestureEvent="handleVerticalDrag">
+    <view id="joker-sheet" class="sheet" catch:tap="onSheetTap" style="padding-bottom: {{safeBottom + 28}}px">
+      <view class="grab" />
+      <text class="subtitle">▶ JOKER · 赖子待放置 ◀</text>
+      <text class="title">选个位置 — <text class="strong">把赖子塞进去</text></text>
 
-    <view class="preview">
-      <tile color="{{pendingColor}}" joker="{{true}}" size="lg" />
+      <view class="preview">
+        <tile color="{{pendingColor}}" joker="{{true}}" size="lg" />
+      </view>
+
+      <view class="hand-row">
+        <block wx:for="{{slots}}" wx:key="*this" wx:for-item="pos" wx:for-index="i">
+          <view class="slot" hover-class="slot-press" hover-stay-time="80" data-pos="{{pos}}" bind:tap="onSlot">
+            <text>+</text>
+          </view>
+          <view class="tile-wrap" wx:if="{{pos < others.length}}">
+            <tile
+              color="{{others[pos].color}}"
+              number="{{others[pos].number}}"
+              joker="{{others[pos].joker}}"
+              owned-hidden="{{!others[pos].revealed}}"
+              owned-exposed="{{others[pos].revealed}}"
+              size="md"
+              index="{{pos}}"
+            />
+          </view>
+        </block>
+      </view>
+
+      <text class="hint">tap a slot · 点击空位放置</text>
     </view>
-
-    <view class="hand-row">
-      <block wx:for="{{slots}}" wx:key="*this" wx:for-item="pos" wx:for-index="i">
-        <view class="slot" hover-class="slot-press" hover-stay-time="80" data-pos="{{pos}}" bind:tap="onSlot">
-          <text>+</text>
-        </view>
-        <view class="tile-wrap" wx:if="{{pos < others.length}}">
-          <tile
-            color="{{others[pos].color}}"
-            number="{{others[pos].number}}"
-            joker="{{others[pos].joker}}"
-            owned-hidden="{{!others[pos].revealed}}"
-            owned-exposed="{{others[pos].revealed}}"
-            size="md"
-            index="{{pos}}"
-          />
-        </view>
-      </block>
-    </view>
-
-    <text class="hint">tap a slot · 点击空位放置</text>
-  </view>
+  </vertical-drag-gesture-handler>
 </view>

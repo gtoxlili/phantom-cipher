@@ -9,14 +9,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(10,10,10,0.55);
-  animation: reveal-overlay-fade 1.4s ease-out forwards;
 }
 
-@keyframes reveal-overlay-fade {
-  0%   { background: rgba(10,10,10,0); }
-  20%  { background: rgba(10,10,10,0.6); }
-  100% { background: rgba(10,10,10,0); }
+.bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #0a0a0a;
+  opacity: 0;
 }
 
 .line {
@@ -25,11 +27,11 @@
   right: -10%;
   height: 60rpx;
   background: #e60022;
-  transform: skewX(-22deg);
-  animation: p5-streak-in 0.32s ease-out backwards;
+  /* 初始位置 + skew 由 worklet 驱动 */
+  transform: translateX(-110%) skewX(-22deg);
 }
 .line.top { top: 30%; }
-.line.bottom { bottom: 30%; animation-delay: 0.06s; }
+.line.bottom { bottom: 30%; }
 
 .overlay.correct .line { background: #ffd200; }
 
@@ -39,9 +41,10 @@
   background: #fafaf3;
   border: 5rpx solid #0a0a0a;
   padding: 16rpx 36rpx;
-  transform: skewX(-9deg);
+  /* 初始 transform/opacity 由 worklet 驱动 */
+  opacity: 0;
+  transform: skewX(-9deg) scale(0.4);
   box-shadow: 8rpx 8rpx 0 #e60022;
-  animation: p5-burst 0.4s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 
 .overlay.correct .ribbon {

@@ -4,28 +4,43 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(10, 10, 10, 0.78);
   z-index: 90;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  animation: p5-fade-in 0.2s ease-out;
+}
+
+/* 半透黑底 —— opacity 由 worklet 驱动 */
+.back-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 10, 10, 0.78);
+  opacity: 0;
 }
 
 .sheet {
+  position: relative;
   width: 100%;
   background: #131313;
   border-top: 5rpx solid #e60022;
-  padding-top: 28rpx;
+  padding-top: 18rpx;
   padding-left: 24rpx;
   padding-right: 24rpx;
   /* padding-bottom 由 inline style 注入 = safeBottom + 28 px */
-  animation: number-sheet-up 0.34s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  /* transform 由 worklet 驱动 */
+  transform: translateY(800px);
 }
 
-@keyframes number-sheet-up {
-  from { transform: translateY(110%); }
-  to { transform: translateY(0); }
+/* 抓手：暗示可下拉关闭 */
+.grab {
+  width: 80rpx;
+  height: 8rpx;
+  background: rgba(250,250,243,0.32);
+  border-radius: 4rpx;
+  margin: 0 auto 18rpx;
 }
 
 .title {
