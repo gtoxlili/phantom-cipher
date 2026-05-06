@@ -18,6 +18,8 @@ Page({
     revealEvent: null,
     showLog: false,
     notifications: [],
+    /* 二维码邀请 fallback：当微信侧把转发功能禁用时点开它 */
+    qrVisible: false,
 
     // 计算项
     me: null,
@@ -337,6 +339,8 @@ Page({
   onCloseLog() {
     store.setShowLog(false);
   },
+  onShowQr() { this.setData({ qrVisible: true }); },
+  onHideQr() { this.setData({ qrVisible: false }); },
 
 
   onStart() { actions.start(); },

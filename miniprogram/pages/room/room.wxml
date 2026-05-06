@@ -89,6 +89,18 @@
           <text>邀请好友 · 转发卡片</text>
         </button>
 
+        <!-- Fallback：当微信侧把转发功能禁用（"由于小程序违规，分享功能
+             暂不可用" 这种 toast）时，让用户能拿到二维码扫码进房间 -->
+        <view
+          class="invite-fallback"
+          hover-class="invite-fallback-press"
+          hover-stay-time="80"
+          bind:tap="onShowQr"
+        >
+          <icon name="qr" size="22" color="rgba(250,250,243,0.6)" />
+          <text>分享不可用？点这里扫码邀请</text>
+        </view>
+
         <!-- 把剩余空间撑开，让 footnote 钉在卡片底部 -->
         <view class="poster-spacer" />
 
@@ -276,6 +288,14 @@
   />
 
   <notifications items="{{notifications}}" top-offset="{{layout.navBarHeight + 12}}" />
+
+  <!-- 二维码邀请 fallback：分享被禁时手动打开 -->
+  <qrcode-overlay
+    visible="{{qrVisible}}"
+    code="{{code}}"
+    env-version="trial"
+    bind:close="onHideQr"
+  />
 </view>
 
 </block>

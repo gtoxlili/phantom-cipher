@@ -276,6 +276,30 @@
   line-height: 1;
 }
 .primary-cta::after { border: none; }
+
+/* 转发不可用时的 fallback 入口：低调一点，纯文字 + 小图标 */
+.invite-fallback {
+  align-self: center;
+  margin: 14rpx 0 4rpx;
+  padding: 10rpx 18rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  border: 2rpx dashed rgba(250,250,243,0.3);
+}
+.invite-fallback icon { margin-right: 10rpx; }
+.invite-fallback text {
+  color: rgba(250,250,243,0.6);
+  font-size: 22rpx;
+  letter-spacing: 0.16em;
+  font-weight: 700;
+  font-style: italic;
+  white-space: nowrap;
+}
+.invite-fallback-press {
+  border-color: #e60022;
+}
+.invite-fallback-press text { color: #e60022; }
 .primary-cta-press {
   transform: skewX(-8deg) translate(3rpx, 3rpx);
   box-shadow: 2rpx 2rpx 0 #fafaf3;
