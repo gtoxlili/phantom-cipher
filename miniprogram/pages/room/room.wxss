@@ -263,7 +263,9 @@
   background: #e60022;
   border: 4rpx solid #0a0a0a;
   box-shadow: 6rpx 6rpx 0 #fafaf3;
-  padding: 14rpx 28rpx;
+  /* skewX(-8deg) 把右端推得很贴底，加上 letter-spacing 后最后一字"片"
+     视觉上几乎抵到红框右边；右 padding 从 28 加到 44rpx 给点呼吸 */
+  padding: 14rpx 44rpx 14rpx 28rpx;
   transform: skewX(-8deg);
   margin: 0 0 8rpx;
   line-height: 1;
