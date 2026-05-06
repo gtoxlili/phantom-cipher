@@ -33,7 +33,9 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 24rpx 22rpx 14rpx;
+  /* 顶 8rpx 紧贴 panel 上沿（panel padding-top 已经把胶囊底让出来），
+     不再叠 24rpx 多余空间 */
+  padding: 8rpx 22rpx 14rpx;
   border-bottom: 3rpx solid rgba(230,0,34,0.4);
 }
 .title {
