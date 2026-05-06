@@ -101,14 +101,13 @@ pub async fn qrcode(
         body.insert("env_version".into(), serde_json::Value::String(ev));
     }
 
-    let url = format!(
-        "https://api.weixin.qq.com/wxa/getwxacodeunlimit?access_token={}",
-        token
-    );
+    // 用 .query() 而不是字符串拼接：access_token 万一有 URL 不安全字符
+    // 也能稳；同时 reqwest 自动处理 multi-value query
     let resp = match state
         .wx
         .http
-        .post(&url)
+        .post("https://api.weixin.qq.com/wxa/getwxacodeunlimit")
+        .query(&[("access_token", token.as_str())])
         .json(&serde_json::Value::Object(body))
         .send()
         .await
@@ -124,9 +123,19 @@ pub async fn qrcode(
         }
     };
 
+    // 收紧诊断：把上游 status / content-type 抓出来，body 拿不到就直接 log 出来
+    let status = resp.status();
+    let ctype = resp
+        .headers()
+        .get(header::CONTENT_TYPE)
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("")
+        .to_string();
+
     let bytes = match resp.bytes().await {
         Ok(b) => b,
         Err(e) => {
+            tracing::warn!(error = %e, %status, ctype = %ctype, "wxacode 读取响应体失败");
             return (
                 StatusCode::BAD_GATEWAY,
                 axum::Json(ActionResponse::err(format!("读取失败: {e}"))),
@@ -136,7 +145,7 @@ pub async fn qrcode(
     };
 
     // 微信成功返 image/png；失败返 JSON `{ errcode, errmsg }`
-    // 启发式判断：PNG 头是 89 50 4E 47
+    // PNG 头是 89 50 4E 47
     if bytes.len() >= 8 && &bytes[..4] == b"\x89PNG" {
         return (
             StatusCode::OK,
@@ -156,7 +165,7 @@ pub async fn qrcode(
             .get("errmsg")
             .and_then(|x| x.as_str())
             .unwrap_or("(no msg)");
-        tracing::info!(errcode, errmsg, "wxacode 业务错");
+        tracing::info!(errcode, errmsg, %status, "wxacode 业务错");
         return (
             StatusCode::OK,
             axum::Json(ActionResponse::err(format!(
@@ -166,9 +175,32 @@ pub async fn qrcode(
             .into_response();
     }
 
+    // 既不是 PNG 也不是 JSON：上游可能返了 HTML 错误页 / 空体 / 异常压缩
+    // 把前 200 字节预览写到日志，方便定位
+    let preview: String = bytes
+        .iter()
+        .take(200)
+        .map(|b| {
+            if b.is_ascii() && !b.is_ascii_control() {
+                *b as char
+            } else {
+                '·'
+            }
+        })
+        .collect();
+    tracing::warn!(
+        %status,
+        ctype = %ctype,
+        body_len = bytes.len(),
+        body_preview = %preview,
+        "wxacode 响应非 PNG 也非 JSON"
+    );
     (
         StatusCode::BAD_GATEWAY,
-        axum::Json(ActionResponse::err("微信接口返回未知格式")),
+        axum::Json(ActionResponse::err(format!(
+            "微信接口返回未知格式 (status={}, content-type={})",
+            status, ctype
+        ))),
     )
         .into_response()
 }
