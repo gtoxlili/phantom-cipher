@@ -93,24 +93,28 @@ button::after {
   50% { transform: rotate(2deg) scale(1.05); }
 }
 
+/* 可猜 / 可点提示：让对手未亮明的 ? 牌在猜牌阶段一直轻轻"喘"，
+   旋转 + 缩放 + 上抬，吸引玩家点它。强度在不打扰浏览的范围内。 */
 @keyframes p5-selectable-pulse {
-  0%, 100% { transform: rotate(-2deg) scale(1); }
-  50% { transform: rotate(1deg) scale(1.06); }
+  0%, 100% { transform: rotate(-2deg) translateY(0) scale(1); }
+  50%      { transform: rotate(2deg) translateY(-6rpx) scale(1.08); }
 }
 
+/* 命中：干脆的 pop —— 一拳放大再回落，不旋。
+   cubic-bezier 给 ease-out 弹性，节奏比纯 linear 自然。 */
 @keyframes p5-flash-correct {
-  0% { transform: rotate(-2deg) scale(1); }
-  20% { transform: rotate(0deg) scale(1.2); }
-  60% { transform: rotate(-3deg) scale(1.05); }
+  0%   { transform: rotate(-2deg) scale(1); }
+  35%  { transform: rotate(0deg)  scale(1.22); }
   100% { transform: rotate(-2deg) scale(1); }
 }
 
+/* 失手：纯左右抖 —— 参照 web 端的 shake，旋转角保持 -2deg 不变，
+   只在 X 方向上震荡，看起来才是"摇头说不"。之前同时改 rotate
+   就成了"扭来扭去"，节奏全乱。 */
 @keyframes p5-flash-wrong {
-  0%, 100% { transform: rotate(-2deg) translateX(0); }
-  15% { transform: rotate(2deg) translateX(-10rpx); }
-  30% { transform: rotate(-3deg) translateX(10rpx); }
-  45% { transform: rotate(2deg) translateX(-6rpx); }
-  60% { transform: rotate(-2deg) translateX(6rpx); }
+  0%, 100%             { transform: rotate(-2deg) translateX(0); }
+  10%, 30%, 50%, 70%   { transform: rotate(-2deg) translateX(-12rpx); }
+  20%, 40%, 60%, 80%   { transform: rotate(-2deg) translateX(12rpx); }
 }
 
 @keyframes p5-burst {

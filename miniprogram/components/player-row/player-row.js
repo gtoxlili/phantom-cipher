@@ -87,6 +87,14 @@ Component({
     onTileTap(e) {
       const id = e.currentTarget.dataset.id;
       if (!id) return;
+      // 即便 tile 自身关掉了 clickable，原生 tap 还会沿组件根冒泡到这里，
+      // 所以再做一次门禁：已亮明 / 不可猜 / 已死亡 都不上抛事件，
+      // 避免触发服务端「该牌已亮明」错误。
+      if (!this.data.canTarget) return;
+      const player = this.data.player;
+      if (!player || player.alive === false) return;
+      const tile = (this.data.tiles || []).find((t) => t && t.id === id);
+      if (!tile || tile.revealed) return;
       this.triggerEvent('tileTap', { tileId: id });
     },
   },

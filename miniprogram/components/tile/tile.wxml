@@ -5,11 +5,6 @@
   hover-stay-time="80"
   bind:tap="onTap"
 >
-  <!-- 命中/失手 halo —— Skyline 1.4.7 box-shadow 不能在 keyframe 里
-       动画（已知 bug，1.4.15 才修），所以光晕用独立 view + border-color
-       + scale + opacity 来做，效果一样不踩坑 -->
-  <view class="flash-halo" />
-
   <!-- 阴影投影：纯黑斜偏块 -->
   <view class="shadow" />
 
