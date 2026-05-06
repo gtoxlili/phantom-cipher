@@ -22,6 +22,10 @@
   justify-content: center;
   transform: skewX(-6deg);
   box-shadow: 4rpx 4rpx 0 #e60022;
+  /* back 按钮和右侧 CIPHER KEY 卡之间的间距：放在 icon-btn 上而不是
+     code-wrap 上 —— 微信 <button>（code-wrap 是 button open-type=share）
+     在 Skyline 下不接 margin，写在 button 上完全没效果。 */
+  margin-right: 24rpx;
 }
 .icon-btn-press {
   transform: skewX(-6deg) translate(2rpx, 2rpx);
@@ -40,8 +44,7 @@
    <view> 视觉一致。 */
 .code-wrap {
   flex: 1;
-  /* 左 margin 给 back 按钮和 CIPHER KEY 卡之间留呼吸空间 */
-  margin: 0 0 0 24rpx;
+  margin: 0;
   padding: 0;
   display: flex;
   flex-direction: row;
