@@ -15,10 +15,18 @@
  *   gold      #ffd200   命中金
  * ===================================================================== */
 
+/* 字体规范，对齐 web frontend：
+ *   display   → 'Bebas Neue'   大标题 / P5 招牌 logo / 牌面数字
+ *   condensed → 'Oswald'       按钮 / 紧排英文 / 招贴 chip
+ *   body      → 'Inter'        正文 / 中性英文
+ *   cn        → 系统中文        中文走 PingFang / 微软雅黑等系统字体
+ * 三套拉丁字体由 lib/fonts.js + wx.loadFontFace 异步注册，
+ * scope:'global' 跨页面生效；失败时 fallback 链兜底。 */
+
 page {
   background-color: #0a0a0a;
   color: #fafaf3;
-  font-family: 'PingFang SC', 'Microsoft YaHei', 'Source Han Sans CN', sans-serif;
+  font-family: 'Inter', 'PingFang SC', 'Microsoft YaHei', 'Source Han Sans CN', sans-serif;
   font-weight: 700;
 }
 
