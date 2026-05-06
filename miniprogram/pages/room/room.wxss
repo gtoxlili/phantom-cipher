@@ -192,6 +192,7 @@
   letter-spacing: 0.28em;
   font-weight: 700;
   font-style: italic;
+  font-family: 'Oswald', 'Bebas Neue', sans-serif;
   white-space: nowrap;
 }
 
@@ -227,6 +228,7 @@
   font-size: 96rpx;
   font-weight: 900;
   font-style: italic;
+  font-family: 'Bebas Neue', 'Oswald', Impact, sans-serif;
   letter-spacing: 0.22em;
   line-height: 1.05;
   white-space: nowrap;
