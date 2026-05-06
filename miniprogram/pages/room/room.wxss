@@ -264,23 +264,21 @@
   border: 4rpx solid #0a0a0a;
   box-shadow: 6rpx 6rpx 0 #fafaf3;
   padding: 14rpx 36rpx;
+  /* 整张按钮一起 skew，子元素 icon / text 不再反向 skewX；
+     之前反斜成直会让"片"顶出斜框外，要么被裁要么溢出。
+     P5 风格本来就是整体倾斜的胶带感，统一斜更对调性 */
   transform: skewX(-8deg);
   margin: 0 0 8rpx;
   line-height: 1;
-  /* 微信 <button> 在 Skyline 里默认 overflow:hidden，加上外层 skewX(-8deg)
-     和子元素 text skewX(8deg) 反斜成直，直的 text 顶到容器斜框外侧就被裁掉
-     ——"片"字因此消失。强制 overflow:visible 才让 text 完整显示。 */
-  overflow: visible;
 }
 .primary-cta::after { border: none; }
 .primary-cta-press {
   transform: skewX(-8deg) translate(3rpx, 3rpx);
   box-shadow: 2rpx 2rpx 0 #fafaf3;
 }
-.primary-cta icon { margin-right: 14rpx; transform: skewX(8deg); }
+.primary-cta icon { margin-right: 14rpx; }
 .primary-cta text {
   display: inline-block;
-  transform: skewX(8deg);
   color: #fafaf3;
   font-size: 28rpx;
   font-weight: 900;
