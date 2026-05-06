@@ -1,0 +1,119 @@
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 110;
+  background: rgba(10,10,10,0.86);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: p5-fade-in 0.2s ease-out;
+}
+
+.sheet {
+  width: 86%;
+  max-width: 580rpx;
+  background: #131313;
+  border: 5rpx solid #fafaf3;
+  box-shadow: 12rpx 12rpx 0 #e60022;
+  padding: 36rpx 32rpx 28rpx;
+  transform: skewX(-3deg);
+  animation: p5-burst 0.36s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+.sheet > * { transform: skewX(3deg); }
+
+.eyebrow {
+  text-align: center;
+  margin-bottom: 22rpx;
+}
+.eyebrow text {
+  display: inline-block;
+  background: #e60022;
+  color: #fafaf3;
+  padding: 6rpx 18rpx;
+  font-size: 20rpx;
+  font-weight: 800;
+  font-style: italic;
+  letter-spacing: 0.32em;
+  border: 2rpx solid #fafaf3;
+  transform: skewX(-8deg);
+}
+
+.frame {
+  width: 100%;
+  background: #fafaf3;
+  border: 4rpx solid #0a0a0a;
+  box-shadow: 6rpx 6rpx 0 #e60022;
+  padding: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 22rpx;
+  aspect-ratio: 1 / 1;
+}
+.qr {
+  width: 100%;
+  height: 100%;
+}
+
+.fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  padding: 24rpx;
+}
+.fallback .big {
+  color: #e60022;
+  font-size: 64rpx;
+  font-weight: 900;
+  line-height: 1;
+}
+.fallback .line {
+  color: #0a0a0a;
+  font-size: 24rpx;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  font-style: italic;
+}
+.fallback .hint {
+  color: rgba(10,10,10,0.55);
+  font-size: 18rpx;
+  letter-spacing: 0.18em;
+}
+
+.caption {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 22rpx;
+}
+.caption .kana {
+  color: #ffd200;
+  font-size: 22rpx;
+  letter-spacing: 0.42em;
+  font-weight: 800;
+  font-style: italic;
+}
+.caption .cn {
+  color: #ece5cf;
+  font-size: 22rpx;
+  letter-spacing: 0.18em;
+  margin-top: 6rpx;
+  font-weight: 700;
+}
+
+.dismiss {
+  text-align: center;
+  padding: 12rpx 0;
+}
+.dismiss text {
+  color: #fafaf3;
+  font-size: 22rpx;
+  letter-spacing: 0.32em;
+  font-weight: 700;
+}
+.dismiss-press text { color: #e60022; }

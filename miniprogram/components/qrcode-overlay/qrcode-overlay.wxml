@@ -1,0 +1,29 @@
+<view wx:if="{{visible}}" class="backdrop" bind:tap="onClose">
+  <view class="sheet" catch:tap="onSheetTap">
+    <view class="eyebrow"><text>· INVITE · 邀请二维码 ·</text></view>
+    <view class="frame">
+      <block wx:if="{{!failed}}">
+        <image
+          class="qr"
+          src="{{src}}"
+          mode="aspectFit"
+          binderror="onError"
+        />
+      </block>
+      <block wx:else>
+        <view class="fallback">
+          <text class="big">⚠</text>
+          <text class="line">二维码暂不可用</text>
+          <text class="hint">直接转发卡片或复制密码邀请</text>
+        </view>
+      </block>
+    </view>
+    <view class="caption">
+      <text class="kana">SCAN ME</text>
+      <text class="cn">扫一扫直接进房间 · {{code}}</text>
+    </view>
+    <view class="dismiss" hover-class="dismiss-press" hover-stay-time="80" bind:tap="onClose">
+      <text>关闭 ✕</text>
+    </view>
+  </view>
+</view>

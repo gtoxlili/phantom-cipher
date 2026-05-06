@@ -75,6 +75,41 @@
   letter-spacing: 0.18em;
 }
 
+.hint-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 22rpx;
+}
+.hint-btn {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12rpx;
+  background: #e60022;
+  color: #fafaf3;
+  padding: 12rpx 24rpx;
+  border: 3rpx solid #fafaf3;
+  box-shadow: 5rpx 5rpx 0 #0a0a0a;
+  transform: skewX(-8deg);
+}
+.hint-btn-press {
+  transform: skewX(-8deg) translate(2rpx, 2rpx);
+  box-shadow: 2rpx 2rpx 0 #0a0a0a;
+}
+.hint-btn text {
+  display: inline-block;
+  transform: skewX(8deg);
+  font-size: 24rpx;
+  letter-spacing: 0.16em;
+  font-weight: 800;
+  font-style: italic;
+}
+.hint-btn .ico {
+  font-size: 22rpx;
+  font-weight: 700;
+}
+
 /* ========== Action Zone ========== */
 .action-zone {
   margin: 16rpx 24rpx;

@@ -40,6 +40,12 @@
           <view class="hint-line"><text>或点击上方密码复制邀请词</text></view>
           <view class="hint-line muted"><text>· 2–4 PLAYERS · 房主可在 ≥2 人时开局 ·</text></view>
         </view>
+        <view class="hint-actions">
+          <view class="hint-btn" hover-class="hint-btn-press" hover-stay-time="80" bind:tap="onShowQr">
+            <text class="ico">▦</text>
+            <text>邀请二维码</text>
+          </view>
+        </view>
       </view>
     </block>
     <block wx:else>
@@ -184,6 +190,13 @@
     safe-top="{{layout.navBarHeight + 12}}"
     safe-bottom="{{layout.safeBottom + 16}}"
     bind:close="onCloseLog"
+  />
+
+  <qrcode-overlay
+    visible="{{qrVisible}}"
+    code="{{code}}"
+    env-version="trial"
+    bind:close="onHideQr"
   />
 
   <notifications items="{{notifications}}" top-offset="{{layout.navBarHeight + 12}}" />

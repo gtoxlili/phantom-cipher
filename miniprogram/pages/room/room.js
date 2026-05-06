@@ -70,6 +70,9 @@ Page({
     // ended
     winnerName: '',
     youWin: false,
+
+    // 邀请二维码 overlay
+    qrVisible: false,
   },
 
   _stream: null,
@@ -332,6 +335,9 @@ Page({
   onCloseLog() {
     store.setShowLog(false);
   },
+
+  onShowQr() { this.setData({ qrVisible: true }); },
+  onHideQr() { this.setData({ qrVisible: false }); },
 
   onStart() { actions.start(); },
 

@@ -1,4 +1,5 @@
 const store = require('../../lib/store');
+const { generateShortLink } = require('../../lib/wx');
 
 Component({
   options: { multipleSlots: false },
@@ -11,24 +12,38 @@ Component({
     /** Header 最小高度（px）—— 跟胶囊高度对齐 */
     navMinHeight: { type: Number, value: 44 },
   },
-  data: { copied: false },
+  data: { copied: false, copying: false },
 
   methods: {
     onBack() {
       this.triggerEvent('back', {});
     },
-    onShare() {
-      // 把房间码复制到剪贴板，再用一行文本提示
+    async onShare() {
+      // 优先尝试生成微信短链（wxaurl.cn）—— 复制出去到任何聊天框都是
+      // 可点的链接，比纯文本邀请强。短链生成失败（后端 503 / 微信侧
+      // env_version 校验等）退回原来的纯文本提示，体验不会因此卡死
       const code = this.data.code;
-      if (!code) return;
-      const text = '怪盗密码 · 加入房间 ' + code;
+      if (!code || this.data.copying) return;
+      this.setData({ copying: true });
+      let payload = '怪盗密码 · 加入房间 ' + code;
+      try {
+        const link = await generateShortLink({
+          path: '/pages/room/room',
+          query: 'code=' + code,
+          envVersion: 'trial',
+        });
+        if (link) {
+          payload = '怪盗密码 · ' + code + ' · ' + link;
+        }
+      } catch (e) { /* fallback 到纯文本 */ }
       wx.setClipboardData({
-        data: text,
+        data: payload,
         success: () => {
-          this.setData({ copied: true });
+          this.setData({ copied: true, copying: false });
           setTimeout(() => this.setData({ copied: false }), 1600);
         },
         fail: () => {
+          this.setData({ copying: false });
           store.pushNotification('复制失败');
         },
       });

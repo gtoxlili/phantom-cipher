@@ -120,8 +120,34 @@ function subscribeOnce(templateIds) {
   });
 }
 
+/**
+ * 生成微信短链（wxaurl.cn）。粘到微信外的聊天 / 邮件里也是可点
+ * 链接，比纯文本邀请强。
+ *
+ * 失败（后端 503 / 微信侧 errcode）返回 null，让调用方按"退到纯文本"
+ * 处理，UX 不会因此卡死。
+ *
+ * 注意 env_version：开发版 / 体验版要传 trial / develop，正式版不传
+ * 默认 release。短链的 env 跟扫码 / 转发卡片同套机制，发布前请用 trial。
+ */
+async function generateShortLink(opts) {
+  const o = opts || {};
+  if (!o.path) return null;
+  const res = await post('/api/wx/shortlink', {
+    path: o.path,
+    query: o.query || '',
+    env_version: o.envVersion || 'trial',
+    expire_type: typeof o.expireType === 'number' ? o.expireType : 0,
+    expire_interval: o.expireInterval,
+  });
+  const body = res.data || {};
+  if (!body || body.ok === false) return null;
+  return body.link || null;
+}
+
 module.exports = {
   secCheck,
   qrcodeUrl,
   subscribeOnce,
+  generateShortLink,
 };
