@@ -71,20 +71,24 @@ RUN cargo chef prepare --recipe-path recipe.json
 # 把 target 锁在 builder 本机，CI 冷启动每次都得重跑 cook。
 # registry/git 还是 cache mount，下载源码包能复用就复用
 FROM chef AS backend-builder
+ARG TARGETARCH
 # .cargo/config.toml 必须在 cook 之前就位——里面的 rustflags
 # (target-cpu=x86-64-v3) 会进入 rustc 调用指纹，cook 跟 build 必须用
 # 同一份 rustflags，否则 cargo 把 cook 编好的 deps 当作过期产物重编，
 # cargo-chef 的缓存就废了。.cargo 改动频率低于 Cargo.toml，放最前面
 COPY backend/.cargo ./.cargo
 COPY --from=planner /build/backend/recipe.json ./
-RUN --mount=type=cache,id=cargo-registry,target=/usr/local/cargo/registry \
-    --mount=type=cache,id=cargo-git,target=/usr/local/cargo/git \
+# cache id 按 $TARGETARCH 隔离——多架构并行 build 共享同一份 cargo
+# registry 会撞包解压 race（"File exists (os error 17)" / .cargo-ok
+# 已存在），libsqlite3-sys 这种较大的 sys-crate 尤其容易翻车
+RUN --mount=type=cache,id=cargo-registry-${TARGETARCH},target=/usr/local/cargo/registry \
+    --mount=type=cache,id=cargo-git-${TARGETARCH},target=/usr/local/cargo/git \
     cargo chef cook --release --recipe-path recipe.json
 
 COPY backend/Cargo.toml backend/Cargo.lock* ./
 COPY backend/src ./src
-RUN --mount=type=cache,id=cargo-registry,target=/usr/local/cargo/registry \
-    --mount=type=cache,id=cargo-git,target=/usr/local/cargo/git \
+RUN --mount=type=cache,id=cargo-registry-${TARGETARCH},target=/usr/local/cargo/registry \
+    --mount=type=cache,id=cargo-git-${TARGETARCH},target=/usr/local/cargo/git \
     cargo build --release \
     && cp target/release/phantom-cipher /tmp/phantom-cipher \
     && mkdir -p /tmp/runtime-data
