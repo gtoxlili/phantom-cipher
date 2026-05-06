@@ -442,7 +442,11 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14rpx;
+}
+/* gap 在 Skyline 1.4.7 flex 下不稳，改用子元素 margin。
+   deck-hint 跟下面 deck-pair 之间需要明显呼吸 */
+.deck-hint {
+  margin-bottom: 24rpx;
 }
 .deck-hint text {
   color: rgba(250,250,243,0.7);
