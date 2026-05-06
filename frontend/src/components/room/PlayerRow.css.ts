@@ -1,7 +1,12 @@
 import { css } from 'styled-system/css';
 
 export const row = css({
-  flex: '0 1 auto',
+  // flex-shrink 必须为 0：row 在 opponentsArea (flex column,
+  // overflow-y: auto) 里，shrink=1 时 flex 会先把 row 压缩到比内容
+  // 矮、再让 opponentsArea 滚动；row 边框 + boxShadow 跟着压缩到
+  // 内容下沿之上，下面的牌就直接漏到红框外了。锁成 0 后 row 永
+  // 远等于内容自然高度，超出由 opponentsArea 的滚动条整体滑动。
+  flex: '0 0 auto',
   position: 'relative',
   padding: '10px 14px 12px',
   background: 'rgba(30, 30, 30, 0.75)',
@@ -166,29 +171,11 @@ export const hand = {
     minHeight: '96px',
     padding: '18px 0 6px',
   }),
-  // 对手手牌强制单行 + 横向滚动：原本是 flex-wrap: wrap 跟着 me 共
-  // 享 handBase，但对手 row 是被 opponentsArea (overflow-y: auto) 包
-  // 着的，row 一旦因为 wrap 被撑高就会被纵向滚动剪掉上沿——视觉
-  // 上变成"牌跑出线框"。锁成 nowrap + overflow-x: auto，row 高度恒
-  // 定 ≈ 130px，红框始终完整可见。paddingTop:16 容纳 pendingTag
-  // (top:-14)、paddingBottom:6 容纳 tile 自带的阴影 div (bottom:-4)。
   op: css({
-    display: 'flex',
-    flexWrap: 'nowrap',
-    alignItems: 'flex-end',
+    ...handBase,
     gap: '6px',
     minHeight: '70px',
-    paddingTop: '16px',
-    paddingBottom: '6px',
-    overflowX: 'auto',
-    overflowY: 'hidden',
-    scrollbarWidth: 'thin',
-    scrollbarColor: 'rgba(230, 0, 34, 0.35) transparent',
-    '&::-webkit-scrollbar': { height: '4px' },
-    '&::-webkit-scrollbar-thumb': {
-      background: 'rgba(230, 0, 34, 0.45)',
-    },
-    '&::-webkit-scrollbar-track': { background: 'transparent' },
+    paddingTop: '14px',
   }),
 };
 
