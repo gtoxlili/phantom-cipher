@@ -144,13 +144,24 @@ pub async fn qrcode(
         }
     };
 
-    // 微信成功返 image/png；失败返 JSON `{ errcode, errmsg }`
-    // PNG 头是 89 50 4E 47
-    if bytes.len() >= 8 && &bytes[..4] == b"\x89PNG" {
+    // 微信成功返图片二进制；失败返 JSON `{ errcode, errmsg }`。
+    // 历史上是 image/png，但近期也观测到 image/jpeg。检测顺序：
+    //   1) Content-Type image/* → 信上游
+    //   2) 否则按 magic bytes（PNG 89504E47 / JPEG FFD8FF）兜底
+    let out_ctype: Option<String> = if ctype.starts_with("image/") {
+        Some(ctype.clone())
+    } else if bytes.len() >= 8 && &bytes[..4] == b"\x89PNG" {
+        Some("image/png".to_string())
+    } else if bytes.len() >= 3 && &bytes[..3] == b"\xFF\xD8\xFF" {
+        Some("image/jpeg".to_string())
+    } else {
+        None
+    };
+    if let Some(ct) = out_ctype {
         return (
             StatusCode::OK,
             [
-                (header::CONTENT_TYPE, "image/png"),
+                (header::CONTENT_TYPE, ct.as_str()),
                 (header::CACHE_CONTROL, "public, max-age=600"),
             ],
             bytes,

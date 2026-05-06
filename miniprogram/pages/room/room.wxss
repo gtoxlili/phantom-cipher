@@ -287,11 +287,13 @@
 /* invite-row 里的 primary-cta 不再自己 align-self —— 行容器统一摆放 */
 .invite-row .primary-cta { align-self: auto; margin: 0; }
 
-/* 扫码邀请 fallback：和转发按钮同款黑红轮廓胶带感小方块 */
+/* 扫码邀请 fallback：和转发按钮同款黑红轮廓胶带感小方块。
+   align-self: stretch 让它跟左侧 primary-cta 等高，避免视觉错位；
+   width 跟内部 icon size 留点 padding，整体接近正方形即可。 */
 .qr-btn {
+  align-self: stretch;
   margin-left: 14rpx;
-  width: 76rpx;
-  height: 76rpx;
+  padding: 0 14rpx;
   display: flex;
   align-items: center;
   justify-content: center;
