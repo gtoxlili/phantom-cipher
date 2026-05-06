@@ -87,6 +87,7 @@
 .shuffle text {
   display: inline-block;
   transform: skewX(6deg);
+  white-space: nowrap;
 }
 .shuffle .spark {
   color: #e60022;
@@ -123,6 +124,7 @@
   letter-spacing: 0.18em;
   transform: skewX(8deg);
   display: inline-block;
+  white-space: nowrap;
 }
 
 .link {
@@ -139,6 +141,7 @@
   font-size: 22rpx;
   letter-spacing: 0.22em;
   font-weight: 700;
+  white-space: nowrap;
 }
 .link-press text { color: #e60022; }
 

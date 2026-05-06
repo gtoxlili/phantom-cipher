@@ -119,5 +119,6 @@
   font-size: 22rpx;
   letter-spacing: 0.32em;
   font-weight: 700;
+  white-space: nowrap;
 }
 .dismiss-press text { color: #e60022; }

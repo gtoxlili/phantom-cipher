@@ -104,6 +104,7 @@
   letter-spacing: 0.16em;
   font-weight: 800;
   font-style: italic;
+  white-space: nowrap;
 }
 .hint-btn .ico {
   font-size: 22rpx;
@@ -158,6 +159,7 @@
   font-weight: 900;
   font-style: italic;
   letter-spacing: 0.16em;
+  white-space: nowrap;
 }
 
 .deck-row {
@@ -222,6 +224,7 @@
   font-weight: 900;
   font-style: italic;
   letter-spacing: 0.12em;
+  white-space: nowrap;
 }
 
 .btn-primary.reset {

@@ -157,11 +157,13 @@
   font-weight: 900;
   letter-spacing: 0.22em;
   font-style: italic;
+  white-space: nowrap;
 }
 .joker-btn .zh {
   color: #ece5cf;
   font-size: 22rpx;
   letter-spacing: 0.14em;
+  white-space: nowrap;
 }
 
 .cancel {
@@ -178,5 +180,6 @@
   font-size: 22rpx;
   letter-spacing: 0.32em;
   font-weight: 700;
+  white-space: nowrap;
 }
 .cancel-press text { color: #e60022; }

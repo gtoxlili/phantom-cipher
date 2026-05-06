@@ -75,6 +75,7 @@
   letter-spacing: 0.32em;
   font-weight: 700;
   font-style: italic;
+  white-space: nowrap;
 }
 
 .code {
@@ -87,6 +88,7 @@
   letter-spacing: 0.18em;
   line-height: 1;
   margin: 2rpx 0;
+  white-space: nowrap;
 }
 
 .copy-hint {
@@ -106,6 +108,7 @@
   font-size: 16rpx;
   letter-spacing: 0.22em;
   font-weight: 700;
+  white-space: nowrap;
 }
 
 .disconnected {

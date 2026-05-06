@@ -37,6 +37,7 @@
   font-size: 22rpx;
   letter-spacing: 0.22em;
   font-weight: 700;
+  white-space: nowrap;
 }
 .back-press {
   background: #e60022;
@@ -72,6 +73,7 @@
   font-weight: 800;
   letter-spacing: 0.36em;
   font-style: italic;
+  white-space: nowrap;
 }
 
 .t1 {

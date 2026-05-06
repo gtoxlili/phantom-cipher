@@ -60,6 +60,7 @@
   letter-spacing: 0.36em;
   font-weight: 800;
   font-style: italic;
+  white-space: nowrap;
 }
 
 .title {

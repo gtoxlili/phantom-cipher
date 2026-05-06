@@ -210,6 +210,7 @@
   flex-direction: row;
   align-items: center;
   gap: 10rpx;
+  white-space: nowrap;
 }
 .text-row .en {
   font-size: 22rpx;
@@ -250,6 +251,7 @@
   font-size: 22rpx;
   letter-spacing: 0.28em;
   font-style: italic;
+  white-space: nowrap;
 }
 .howto-box {
   background: #fafaf3;
@@ -367,6 +369,7 @@
 .shuffle-btn text {
   display: inline-block;
   transform: skewX(6deg);
+  white-space: nowrap;
 }
 .shuffle-btn .spark { color: #e60022; font-style: italic; font-size: 24rpx; }
 .shuffle-btn-press .spark { color: #fafaf3; }
@@ -393,6 +396,7 @@
   margin-top: 12rpx;
 }
 .btn-text {
+  flex-shrink: 0;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -404,6 +408,7 @@
   font-size: 24rpx;
   letter-spacing: 0.18em;
   font-weight: 700;
+  white-space: nowrap;
 }
 .btn-text-press text { color: #e60022; }
 
@@ -431,6 +436,8 @@
   background: #fafaf3;
   color: #0a0a0a;
   padding: 0 14rpx;
+  /* 显式宽度避免 fixed 定位 + flex 在 Skyline 下 shrink 到单字宽 */
+  width: 168rpx;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -439,6 +446,12 @@
   transform: skewX(-8deg);
   border: 3rpx solid #0a0a0a;
   box-shadow: 4rpx 4rpx 0 #e60022;
+}
+.stats-link text {
+  white-space: nowrap;
+  font-size: 20rpx;
+  letter-spacing: 0.22em;
+  font-weight: 700;
 }
 .stats-link-press {
   background: #e60022;
@@ -476,6 +489,7 @@
   font-size: 22rpx;
   letter-spacing: 0.32em;
   font-style: italic;
+  white-space: nowrap;
 }
 /* .tagline .star removed — replaced with <icon name="star" /> */
 .byline {
