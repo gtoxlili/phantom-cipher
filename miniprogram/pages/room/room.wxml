@@ -76,29 +76,27 @@
           <text class="key-sub">把这串密码丢给朋友 · 或扫码入局</text>
         </view>
 
-        <!-- 行动按钮：直接走微信原生分享卡片 → 私聊 / 群聊。
-             open-type="share" 由系统接管，触发 page 的 onShareAppMessage
-             返回 { title, path, imageUrl } 组装成可点的小程序卡片。 -->
-        <button
-          class="primary-cta"
-          open-type="share"
-          hover-class="primary-cta-press"
-          hover-stay-time="80"
-        >
-          <icon name="arrow-right" size="32" color="#fafaf3" />
-          <text>邀请好友 · 转发卡片</text>
-        </button>
-
-        <!-- Fallback：当微信侧把转发功能禁用（"由于小程序违规，分享功能
-             暂不可用" 这种 toast）时，让用户能拿到二维码扫码进房间 -->
-        <view
-          class="invite-fallback"
-          hover-class="invite-fallback-press"
-          hover-stay-time="80"
-          bind:tap="onShowQr"
-        >
-          <icon name="qr" size="22" color="rgba(250,250,243,0.6)" />
-          <text>分享不可用？点这里扫码邀请</text>
+        <!-- 行动按钮组：左转发卡片 + 右扫码邀请 fallback。
+             转发走 open-type="share" 由系统接管 onShareAppMessage；
+             小程序若被微信侧禁分享，扫码 icon button 是兜底入口。 -->
+        <view class="invite-row">
+          <button
+            class="primary-cta"
+            open-type="share"
+            hover-class="primary-cta-press"
+            hover-stay-time="80"
+          >
+            <icon name="arrow-right" size="32" color="#fafaf3" />
+            <text>邀请好友 · 转发卡片</text>
+          </button>
+          <view
+            class="qr-btn"
+            hover-class="qr-btn-press"
+            hover-stay-time="80"
+            bind:tap="onShowQr"
+          >
+            <icon name="qr-scan" size="36" color="#fafaf3" />
+          </view>
         </view>
 
         <!-- 把剩余空间撑开，让 footnote 钉在卡片底部 -->

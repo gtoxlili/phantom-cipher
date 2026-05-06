@@ -37,6 +37,20 @@ const ICONS = {
     '<rect x="11" y="18" width="2" height="2"/>' +
     '<rect x="18" y="18" width="2" height="2"/>' +
     '</g>',
+  // 扫码 / scan：相机取景框四角 + 中间 QR 像素点 + 中线扫描光带
+  // 比单纯的 qr 更"扫一扫"，专门给 invite fallback 那个 icon button 用。
+  'qr-scan':
+    '<g fill="currentColor">' +
+    '<path d="M2 2 L10 2 L10 4 L4 4 L4 10 L2 10 Z"/>' +
+    '<path d="M22 2 L22 10 L20 10 L20 4 L14 4 L14 2 Z"/>' +
+    '<path d="M2 22 L2 14 L4 14 L4 20 L10 20 L10 22 Z"/>' +
+    '<path d="M22 22 L14 22 L14 20 L20 20 L20 14 L22 14 Z"/>' +
+    '<rect x="7" y="7" width="3" height="3"/>' +
+    '<rect x="14" y="7" width="3" height="3"/>' +
+    '<rect x="7" y="14" width="3" height="3"/>' +
+    '<rect x="14" y="14" width="3" height="3"/>' +
+    '<rect x="11" y="11" width="2" height="2"/>' +
+    '</g>',
   // 实心菱形（howto 列表项前缀、用于"重要"标记）
   diamond:
     '<path d="M12 2 L22 12 L12 22 L2 12 Z" fill="currentColor"/>',
