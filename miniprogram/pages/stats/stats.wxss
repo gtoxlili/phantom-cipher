@@ -101,7 +101,6 @@
   border: 5rpx solid #0a0a0a;
   padding: 6rpx 22rpx 10rpx;
   margin-top: 12rpx;
-  margin-left: 40rpx;
   transform: skewX(-6deg);
   box-shadow: 8rpx 8rpx 0 #0a0a0a;
 }
@@ -178,7 +177,7 @@
 
 .section {
   padding: 0 36rpx;
-  margin-top: 32rpx;
+  margin-top: 56rpx;
 }
 
 .section-head {
