@@ -13,7 +13,7 @@
   /* padding-right + min-height 由 inline style 注入 = 胶囊高度 */
 }
 
-/* ====== 按钮 ====== */
+/* ====== back 按钮 ====== */
 .icon-btn {
   border: 3rpx solid #fafaf3;
   background: #131313;
@@ -28,66 +28,92 @@
   box-shadow: 2rpx 2rpx 0 #e60022;
 }
 
-/* ====== Cipher key card ======
- * 内部排版：上面 eyebrow 一行（左 label "CIPHER KEY //" + 右 hint
- * "TAP TO COPY"），下面主体大字号房间码。
- * eyebrow 横排把空间用足，code 拿走垂直主轴的视觉权重。 */
+/* ====== Cipher Key Card · evidence-tag 三段式 ======
+ * ┌─┬───────────────────┬─────────┐
+ * │█│ CIPHER KEY //     │ ↗ SHARE │
+ * │█│   K  B  J  Y      │         │
+ * └─┴───────────────────┴─────────┘
+ *  ↑ red spine
+ * ===================================================== */
 .code-wrap {
   flex: 1;
   margin-left: 14rpx;
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: row;
+  align-items: stretch;
   background: #fafaf3;
   border: 3rpx solid #0a0a0a;
   box-shadow: 5rpx 5rpx 0 #e60022;
-  padding: 0 14rpx;
   transform: skewX(-8deg);
+  overflow: hidden;
 }
 .code-wrap-press {
   box-shadow: 2rpx 2rpx 0 #e60022;
   transform: skewX(-8deg) translate(3rpx, 3rpx);
 }
 
-.code-eyebrow {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  transform: skewX(8deg);
-  line-height: 1;
-}
-.lab-l {
-  color: #e60022;
-  font-size: 14rpx;
-  letter-spacing: 0.22em;
-  font-weight: 800;
-  font-style: italic;
-  white-space: nowrap;
-}
-.lab-r {
-  display: inline-flex;
-  flex-direction: row;
-  align-items: center;
-}
-.lab-r icon { margin-left: 4rpx; }
-.lab-r text {
-  color: rgba(10,10,10,0.55);
-  font-size: 14rpx;
-  letter-spacing: 0.18em;
-  font-weight: 700;
-  white-space: nowrap;
+/* 左侧红色重音 spine —— 像证据袋封口的染料标 */
+.code-spine {
+  width: 8rpx;
+  background: #e60022;
+  flex-shrink: 0;
 }
 
+/* 中段 body：label + code 上下叠 */
+.code-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 14rpx 0 12rpx;
+  min-width: 0;
+}
+.code-label {
+  display: inline-block;
+  transform: skewX(8deg);
+  color: #e60022;
+  font-size: 13rpx;
+  letter-spacing: 0.32em;
+  font-weight: 800;
+  font-style: italic;
+  line-height: 1.2;
+  white-space: nowrap;
+}
 .code {
   display: inline-block;
   transform: skewX(8deg);
-  text-align: center;
   color: #0a0a0a;
-  font-size: 34rpx;
+  font-size: 32rpx;
   font-weight: 900;
   font-style: italic;
-  letter-spacing: 0.22em;
+  letter-spacing: 0.28em;
   line-height: 1.05;
   white-space: nowrap;
 }
+
+/* 右侧 action chip —— 视觉上是张邮票一样的小贴片 */
+.code-aux {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12rpx 0 10rpx;
+  border-left: 2rpx dashed rgba(10,10,10,0.3);
+  flex-shrink: 0;
+}
+.code-aux icon {
+  transform: skewX(8deg);
+  margin-bottom: 1rpx;
+}
+.code-aux text {
+  display: inline-block;
+  transform: skewX(8deg);
+  color: rgba(10,10,10,0.6);
+  font-size: 13rpx;
+  letter-spacing: 0.18em;
+  font-weight: 800;
+  font-style: italic;
+  white-space: nowrap;
+  line-height: 1;
+}
+.code-aux.is-copied text { color: #e60022; }

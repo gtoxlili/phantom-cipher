@@ -19,6 +19,7 @@
 .phase-slot {
   flex: 1;
   min-width: 0;
+  margin-right: 4rpx;
 }
 .disconnected-chip {
   margin-right: 12rpx;

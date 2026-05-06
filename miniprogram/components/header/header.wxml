@@ -14,6 +14,11 @@
   >
     <icon name="chevron-left" size="36" color="#fafaf3" />
   </view>
+
+  <!-- Cipher key 卡：evidence-tag 三段式
+       左：红 spine（视觉重音）
+       中：label "CIPHER KEY //" 上 + 大字号 code 下
+       右：action chip（COPIED ✓ / SHARE ↗） -->
   <view
     class="code-wrap"
     hover-class="code-wrap-press"
@@ -21,20 +26,15 @@
     bind:tap="onShare"
     style="min-height: {{capsuleHeight}}px"
   >
-    <!-- 顶部 eyebrow 一行：左 label // 右 tap hint，tiny 字号 -->
-    <view class="code-eyebrow">
-      <text class="lab-l">CIPHER KEY //</text>
-      <view class="lab-r">
-        <block wx:if="{{copied}}">
-          <text>COPIED</text>
-          <icon name="check" size="18" color="#e60022" />
-        </block>
-        <block wx:else>
-          <text>TAP TO COPY</text>
-        </block>
-      </view>
+    <view class="code-spine" />
+    <view class="code-body">
+      <text class="code-label">CIPHER KEY //</text>
+      <text class="code">{{code}}</text>
     </view>
-    <!-- 主体：大字号房间码 -->
-    <text class="code">{{code}}</text>
+    <view class="code-aux {{copied ? 'is-copied' : ''}}">
+      <icon wx:if="{{copied}}" name="check" size="18" color="#e60022" />
+      <icon wx:else name="qr" size="18" color="#0a0a0a" />
+      <text>{{copied ? 'COPIED' : 'SHARE'}}</text>
+    </view>
   </view>
 </view>
