@@ -103,7 +103,13 @@
   border: 4rpx solid #fafaf3;
   box-shadow: 10rpx 10rpx 0 #e60022;
   overflow: hidden;
+  /* 拉伸到 opponents-area 全部剩余空间 */
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100% - 32rpx);
 }
+/* 把卡片中段空间塞满，让 footnote 钉在底端 */
+.poster-spacer { flex: 1; min-height: 28rpx; }
 
 /* 顶部红色斜带，伪装案件档案的撕裂感 */
 .poster-streak {
@@ -245,22 +251,22 @@
   font-weight: 600;
 }
 
-/* 主 CTA */
-.poster-actions {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  margin-bottom: 24rpx;
-}
+/* 主 CTA：是 <button open-type="share">，原生触发分享菜单。
+   button 标签默认 text-align:center + 各种 padding，全部 reset 到
+   跟之前 view 一样的 P5 风格。 */
 .primary-cta {
+  align-self: center;
   display: inline-flex;
   flex-direction: row;
   align-items: center;
+  justify-content: center;
   background: #e60022;
   border: 4rpx solid #0a0a0a;
   box-shadow: 6rpx 6rpx 0 #fafaf3;
   padding: 14rpx 28rpx;
   transform: skewX(-8deg);
+  margin: 0 0 8rpx;
+  line-height: 1;
 }
 .primary-cta-press {
   transform: skewX(-8deg) translate(3rpx, 3rpx);
