@@ -166,11 +166,29 @@ export const hand = {
     minHeight: '96px',
     padding: '18px 0 6px',
   }),
+  // 对手手牌强制单行 + 横向滚动：原本是 flex-wrap: wrap 跟着 me 共
+  // 享 handBase，但对手 row 是被 opponentsArea (overflow-y: auto) 包
+  // 着的，row 一旦因为 wrap 被撑高就会被纵向滚动剪掉上沿——视觉
+  // 上变成"牌跑出线框"。锁成 nowrap + overflow-x: auto，row 高度恒
+  // 定 ≈ 130px，红框始终完整可见。paddingTop:16 容纳 pendingTag
+  // (top:-14)、paddingBottom:6 容纳 tile 自带的阴影 div (bottom:-4)。
   op: css({
-    ...handBase,
+    display: 'flex',
+    flexWrap: 'nowrap',
+    alignItems: 'flex-end',
     gap: '6px',
     minHeight: '70px',
-    paddingTop: '14px',
+    paddingTop: '16px',
+    paddingBottom: '6px',
+    overflowX: 'auto',
+    overflowY: 'hidden',
+    scrollbarWidth: 'thin',
+    scrollbarColor: 'rgba(230, 0, 34, 0.35) transparent',
+    '&::-webkit-scrollbar': { height: '4px' },
+    '&::-webkit-scrollbar-thumb': {
+      background: 'rgba(230, 0, 34, 0.45)',
+    },
+    '&::-webkit-scrollbar-track': { background: 'transparent' },
   }),
 };
 
