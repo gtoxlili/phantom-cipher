@@ -11,6 +11,7 @@
 
 const { shared, timing, spring, runOnJS, Easing } = wx.worklet;
 const { GestureState } = require('../../lib/curves');
+const haptics = require('../../lib/haptics');
 
 Component({
   options: { multipleSlots: false },
@@ -89,9 +90,11 @@ Component({
 
     onPick(e) {
       const n = e.currentTarget.dataset.n;
+      haptics.light();
       this.triggerEvent('pick', { number: n });
     },
     onJoker() {
+      haptics.light();
       this.triggerEvent('pick', { number: null });
     },
     onSheetTap(e) { e.stopPropagation && e.stopPropagation(); },

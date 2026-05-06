@@ -3,6 +3,7 @@ const { ensureIdentity } = require('../../lib/identity');
 const { actions } = require('../../lib/api');
 const { GameStream } = require('../../lib/ws');
 const { ensureLayout } = require('../../lib/layout');
+const haptics = require('../../lib/haptics');
 
 Page({
   data: {
@@ -165,6 +166,17 @@ Page({
       }
     }
 
+    // 轮到我抽 / 猜：phase 切到我的回合时给一记 medium 震动提醒，
+    // 即便玩家暂时低头看其它东西也能感知"该我了"。同 phase + me
+    // 不重复触发，靠 _lastTurnKey 去重。
+    if (view.state && view.isMyTurn && (view.phase === 'drawing' || view.phase === 'guessing')) {
+      const turnKey = view.state.phase + ':' + (myId || '') + ':' + (view.state.turn || 0);
+      if (turnKey !== this._lastTurnKey) {
+        this._lastTurnKey = turnKey;
+        haptics.medium();
+      }
+    }
+
     // PhaseBanner
     const banner = computePhaseInfo(view, s.connected);
 
@@ -218,6 +230,19 @@ Page({
       } else {
         revealText = isMine ? '失手 // MISS' : '失手 // MISSED';
       }
+      // 第一次见到这个 revealEvent 时给一记震动反馈：
+      //   我猜中了 → medium 鼓励一下
+      //   我猜错了 → heavy 提示失误
+      //   被别人猜中 → heavy 警告"你被破了"
+      //   旁观吃瓜    → light 提个醒就行
+      const evtKey = (s.revealEvent.tileId || '') + ':' + (s.revealEvent.guesserId || '');
+      if (evtKey && evtKey !== this._lastRevealKey) {
+        this._lastRevealKey = evtKey;
+        if (isMine && revealCorrect) haptics.medium();
+        else if (isMine && !revealCorrect) haptics.heavy();
+        else if (!isMine && revealCorrect) haptics.heavy();
+        else haptics.light();
+      }
     }
 
     // Ended 信息
@@ -227,6 +252,13 @@ Page({
       const w = view.state.players.find((p) => p.id === view.state.winnerId);
       if (w) winnerName = (w.name || '').toUpperCase();
       youWin = !!myId && view.state.winnerId === myId;
+      // 终局长震一次：胜者一记长震庆祝，败者短促一记 heavy 提醒
+      const winnerKey = view.state.winnerId || 'tie';
+      if (winnerKey !== this._lastWinnerKey) {
+        this._lastWinnerKey = winnerKey;
+        if (youWin) haptics.long();
+        else haptics.heavy();
+      }
     }
 
     // 派生计数 / log —— 全部预先算好交给 WXML，避免 WXML 里
@@ -343,7 +375,7 @@ Page({
   onHideQr() { this.setData({ qrVisible: false }); },
 
 
-  onStart() { actions.start(); },
+  onStart() { haptics.medium(); actions.start(); },
 
   onDraw(e) {
     const c = e.detail && e.detail.color;
@@ -351,8 +383,8 @@ Page({
     actions.draw(c);
   },
 
-  onContinue() { actions.decideContinue(true); },
-  onStopHand() { actions.decideContinue(false); },
+  onContinue() { haptics.light(); actions.decideContinue(true); },
+  onStopHand() { haptics.light(); actions.decideContinue(false); },
 
   onReset() { actions.reset(); },
 
