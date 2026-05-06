@@ -352,13 +352,14 @@
 .shuffle-btn {
   align-self: flex-start;
   margin-top: 6rpx;
-  padding: 10rpx 18rpx;
+  /* skewX(-6deg) 让视觉右边收窄，所以右内边距比左边再加一点 */
+  padding: 10rpx 24rpx 10rpx 18rpx;
   border: 3rpx dashed #fafaf3;
   color: #fafaf3;
   display: inline-flex;
   flex-direction: row;
   align-items: center;
-  gap: 12rpx;
+  gap: 14rpx;
   transform: skewX(-6deg);
   font-size: 22rpx;
   letter-spacing: 0.28em;
@@ -424,8 +425,8 @@
   background: #e60022;
   color: #fafaf3;
   box-shadow: 8rpx 8rpx 0 #0a0a0a;
-  /* submit 单行：text + arrow 横排 */
-  justify-content: center;
+  /* submit 单行：text + arrow 横排，左对齐保持菜单按钮的左铆视觉 */
+  justify-content: flex-start;
 }
 /* submit-label 自己 inline-flex row，不复用 .btn-label/.text-row 的列方向 */
 .submit-label {
