@@ -1,7 +1,12 @@
 /**
  * 注册和 web 端 frontend 一致的 P5 拉丁字体：
  *   Bebas Neue (display) / Oswald (condensed) / Inter (body)。
- * CDN 用 jsd.onmicrosoft.cn（jsdelivr 国内镜像），@fontsource 子集 TTF。
+ * CDN 用 jsd.onmicrosoft.cn（jsdelivr 国内镜像），@fontsource 子集 WOFF。
+ *
+ * 格式选择：@fontsource v5+ 包里只发 WOFF / WOFF2，不再发 TTF。
+ * WeChat wx.loadFontFace 支持 TTF / OTF / WOFF（不支持 WOFF2），所以
+ * 走 .woff。错路径会返回 HTML 404 文本（magic bytes 0x436F756C = "Coul"
+ * 即 "Couldn't find..."），日志报 "OTS parsing error: invalid sfntVersion"。
  *
  * 注意：
  *   - wx.loadFontFace 默认 scope='webview'，必须显式 'global' 才会跨页面生效
@@ -17,31 +22,31 @@
 const FONTS = [
   {
     family: 'Bebas Neue',
-    source: 'https://jsd.onmicrosoft.cn/npm/@fontsource/bebas-neue/files/bebas-neue-latin-400-normal.ttf',
+    source: 'https://jsd.onmicrosoft.cn/npm/@fontsource/bebas-neue/files/bebas-neue-latin-400-normal.woff',
     weight: '400',
     style: 'normal',
   },
   {
     family: 'Oswald',
-    source: 'https://jsd.onmicrosoft.cn/npm/@fontsource/oswald/files/oswald-latin-700-normal.ttf',
+    source: 'https://jsd.onmicrosoft.cn/npm/@fontsource/oswald/files/oswald-latin-700-normal.woff',
     weight: '700',
     style: 'normal',
   },
   {
     family: 'Oswald',
-    source: 'https://jsd.onmicrosoft.cn/npm/@fontsource/oswald/files/oswald-latin-700-italic.ttf',
+    source: 'https://jsd.onmicrosoft.cn/npm/@fontsource/oswald/files/oswald-latin-700-italic.woff',
     weight: '700',
     style: 'italic',
   },
   {
     family: 'Inter',
-    source: 'https://jsd.onmicrosoft.cn/npm/@fontsource/inter/files/inter-latin-700-normal.ttf',
+    source: 'https://jsd.onmicrosoft.cn/npm/@fontsource/inter/files/inter-latin-700-normal.woff',
     weight: '700',
     style: 'normal',
   },
   {
     family: 'Inter',
-    source: 'https://jsd.onmicrosoft.cn/npm/@fontsource/inter/files/inter-latin-900-normal.ttf',
+    source: 'https://jsd.onmicrosoft.cn/npm/@fontsource/inter/files/inter-latin-900-normal.woff',
     weight: '900',
     style: 'normal',
   },
