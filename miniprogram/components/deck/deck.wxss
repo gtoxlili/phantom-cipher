@@ -19,7 +19,7 @@
 }
 
 .deck.active {
-  animation: p5-deck-pulse 1s ease-in-out infinite;
+  animation: p5-deck-pulse 0.6s ease-in-out infinite;
 }
 
 .deck-press {
