@@ -19,7 +19,28 @@
 }
 
 .deck.active {
-  animation: p5-deck-pulse 1.4s ease-in-out infinite;
+  animation: p5-deck-pulse 1s ease-in-out infinite;
+}
+/* 牌堆周身的红色光晕同步 pulse —— box-shadow 在 1.4.7 keyframe
+   里不生效，改用专属 view 透明度 + 缩放假装 glow 效果 */
+.deck-glow {
+  position: absolute;
+  top: -10rpx;
+  left: -10rpx;
+  right: -10rpx;
+  bottom: -10rpx;
+  border: 4rpx solid #e60022;
+  border-radius: 6rpx;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.deck.active .deck-glow {
+  animation: p5-deck-glow 1s ease-in-out infinite;
+}
+@keyframes p5-deck-glow {
+  0%, 100% { opacity: 0;   transform: scale(0.96); }
+  50%      { opacity: 0.8; transform: scale(1.06); }
 }
 
 .deck-press {

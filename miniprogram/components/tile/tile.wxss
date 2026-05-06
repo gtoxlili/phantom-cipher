@@ -239,3 +239,38 @@
 .tile.flash-wrong {
   animation: p5-flash-wrong 0.7s ease-out;
 }
+
+/* halo 平时透明、不参与点击，命中/失手时一拳打出来。
+   用 border + opacity + scale —— 这些属性 Skyline 1.4.7 keyframe 里
+   都跑得动，不踩 box-shadow 的坑。 */
+.flash-halo {
+  position: absolute;
+  top: -14rpx;
+  left: -14rpx;
+  right: -14rpx;
+  bottom: -14rpx;
+  border: 6rpx solid transparent;
+  border-radius: 12rpx;
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+.tile.flash-correct .flash-halo {
+  animation: p5-halo-correct 1s ease-out;
+}
+.tile.flash-wrong .flash-halo {
+  animation: p5-halo-wrong 0.7s ease-out;
+}
+
+@keyframes p5-halo-correct {
+  0%   { opacity: 0; transform: scale(0.92); border-color: rgba(255,210,0,0); }
+  20%  { opacity: 1; transform: scale(1.18); border-color: #ffd200; }
+  60%  { opacity: 0.6; transform: scale(1.06); border-color: #ffd200; }
+  100% { opacity: 0; transform: scale(1); border-color: rgba(255,210,0,0); }
+}
+
+@keyframes p5-halo-wrong {
+  0%, 100% { opacity: 0; transform: scale(1); border-color: rgba(230,0,34,0); }
+  15%      { opacity: 1; transform: scale(1.1); border-color: #e60022; }
+  60%      { opacity: 0.5; transform: scale(1.02); border-color: #e60022; }
+}

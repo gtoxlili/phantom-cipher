@@ -5,6 +5,8 @@
     hover-stay-time="80"
     bind:tap="onTap"
   >
+    <!-- 周身红色光晕：仅在 active 时由 keyframe 驱动 opacity/scale -->
+    <view class="deck-glow" />
     <view class="stack">
       <view
         class="card-back"

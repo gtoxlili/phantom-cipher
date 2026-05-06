@@ -11,7 +11,7 @@
         </view>
       </view>
 
-      <view class="num-grid">
+      <view class="num-grid {{visible ? 'is-entering' : ''}}">
         <view
           class="num-btn"
           wx:for="{{nums}}"
@@ -19,6 +19,7 @@
           wx:for-item="n"
           wx:for-index="i"
           data-n="{{n}}"
+          style="animation-delay: {{0.08 + i * 0.035}}s"
           hover-class="num-btn-press"
           hover-stay-time="80"
           bind:tap="onPick"
@@ -27,7 +28,12 @@
         </view>
       </view>
 
-      <view class="joker-btn" hover-class="joker-btn-press" hover-stay-time="80" bind:tap="onJoker">
+      <view
+        class="joker-btn {{visible ? 'is-entering' : ''}}"
+        hover-class="joker-btn-press"
+        hover-stay-time="80"
+        bind:tap="onJoker"
+      >
         <view class="joker-row">
           <icon name="star" size="36" color="#e60022" />
           <text class="label">JOKER</text>
