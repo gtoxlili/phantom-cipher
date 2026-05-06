@@ -256,6 +256,12 @@
    跟之前 view 一样的 P5 风格。 */
 .primary-cta {
   align-self: center;
+  /* 微信 <button> 默认 display:block 宽度被外面 align-items:stretch 影响，
+     即便外面 align-self:center 也可能只能拿到整数 px 的内容宽度 ——
+     在某些 Skyline 1.4.7 版本下表现成"按钮宽度比 text 内容窄"，
+     最后一字"片"被默认 overflow:hidden 裁掉。
+     用 width:max-content 强制按 text+icon 实际内容宽度撑开。 */
+  width: max-content;
   display: inline-flex;
   flex-direction: row;
   align-items: center;
@@ -264,9 +270,6 @@
   border: 4rpx solid #0a0a0a;
   box-shadow: 6rpx 6rpx 0 #fafaf3;
   padding: 14rpx 36rpx;
-  /* 整张按钮一起 skew，子元素 icon / text 不再反向 skewX；
-     之前反斜成直会让"片"顶出斜框外，要么被裁要么溢出。
-     P5 风格本来就是整体倾斜的胶带感，统一斜更对调性 */
   transform: skewX(-8deg);
   margin: 0 0 8rpx;
   line-height: 1;
