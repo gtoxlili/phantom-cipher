@@ -44,6 +44,7 @@
       </view>
     </view>
 
+    <view class="section-spacer" />
     <view class="section">
       <view class="section-head">
         <text class="cn">名次</text>
@@ -74,6 +75,7 @@
       </block>
     </view>
 
+    <view class="section-spacer" />
     <view class="section">
       <view class="section-head">
         <text class="cn">最近对局</text>

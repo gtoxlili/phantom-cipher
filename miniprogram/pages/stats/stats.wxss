@@ -177,8 +177,11 @@
 
 .section {
   padding: 0 36rpx;
-  margin-top: 56rpx;
 }
+/* section 之间用 view.section-spacer 撑开间距 —— scroll-view type=list
+   会按 list item 排版，子元素的 margin-top 在某些 Skyline 版本下会被
+   当成 0，所以用 view 的固定高度更稳 */
+.section-spacer { height: 56rpx; }
 
 .section-head {
   display: flex;
