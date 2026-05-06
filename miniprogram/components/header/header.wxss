@@ -40,7 +40,8 @@
    <view> 视觉一致。 */
 .code-wrap {
   flex: 1;
-  margin: 0 0 0 14rpx;
+  /* 左 margin 给 back 按钮和 CIPHER KEY 卡之间留呼吸空间 */
+  margin: 0 0 0 24rpx;
   padding: 0;
   display: flex;
   flex-direction: row;
