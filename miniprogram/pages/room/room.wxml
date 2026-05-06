@@ -14,7 +14,7 @@
     code="{{code}}"
     connected="{{connected}}"
     capsule-safe-right="{{layout.capsuleSafeRight}}"
-    nav-min-height="{{layout.navBarHeight - layout.statusBarHeight}}"
+    capsule-height="{{layout.capsuleHeight}}"
     bind:back="onBack"
     bind:toggleLog="onToggleLog"
   />

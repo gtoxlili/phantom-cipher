@@ -1,28 +1,54 @@
-<view
-  class="hd"
-  style="padding-right: {{capsuleSafeRight}}px; min-height: {{navMinHeight}}px"
->
-  <view class="icon-btn" hover-class="icon-btn-press" hover-stay-time="80" bind:tap="onBack">
-    <icon name="chevron-left" size="36" color="#fafaf3" />
-  </view>
-  <view class="code-wrap" hover-class="code-wrap-press" hover-stay-time="80" bind:tap="onShare">
-    <text class="label">· CIPHER KEY ·</text>
-    <text class="code">{{code}}</text>
-    <view class="copy-hint">
-      <block wx:if="{{copied}}">
-        <text>COPIED</text>
-        <icon name="check" size="20" color="rgba(10,10,10,0.6)" />
-      </block>
-      <block wx:else>
-        <text>TAP TO COPY</text>
-      </block>
+<view class="hd">
+  <!-- Row 1：跟系统胶囊视觉同高同行（back + cipher key card）-->
+  <view
+    class="hd-primary"
+    style="padding-right: {{capsuleSafeRight}}px; min-height: {{capsuleHeight}}px"
+  >
+    <view
+      class="icon-btn"
+      hover-class="icon-btn-press"
+      hover-stay-time="80"
+      bind:tap="onBack"
+      style="height: {{capsuleHeight}}px; width: {{capsuleHeight}}px"
+    >
+      <icon name="chevron-left" size="36" color="#fafaf3" />
+    </view>
+    <view
+      class="code-wrap"
+      hover-class="code-wrap-press"
+      hover-stay-time="80"
+      bind:tap="onShare"
+      style="min-height: {{capsuleHeight}}px"
+    >
+      <text class="label">· CIPHER KEY ·</text>
+      <text class="code">{{code}}</text>
+      <view class="copy-hint">
+        <block wx:if="{{copied}}">
+          <text>COPIED</text>
+          <icon name="check" size="20" color="rgba(10,10,10,0.6)" />
+        </block>
+        <block wx:else>
+          <text>TAP TO COPY</text>
+        </block>
+      </view>
     </view>
   </view>
-  <view wx:if="{{!connected}}" class="disconnected">
-    <view class="dot" />
-    <text>RECONNECTING</text>
-  </view>
-  <view class="icon-btn" hover-class="icon-btn-press" hover-stay-time="80" bind:tap="onLog">
-    <icon name="bars" size="36" color="#fafaf3" />
+
+  <!-- Row 2：断线提示（左）+ 日志按钮（右）。胶囊不在这一行下方所以
+       不需要 padding-right 留位 —— 整行可用 -->
+  <view class="hd-secondary">
+    <view wx:if="{{!connected}}" class="disconnected">
+      <view class="dot" />
+      <text>RECONNECTING</text>
+    </view>
+    <view class="hd-spacer" />
+    <view
+      class="icon-btn log-btn"
+      hover-class="icon-btn-press"
+      hover-stay-time="80"
+      bind:tap="onLog"
+    >
+      <icon name="bars" size="32" color="#fafaf3" />
+    </view>
   </view>
 </view>

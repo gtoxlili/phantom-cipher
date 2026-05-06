@@ -1,18 +1,40 @@
+/* ===================================================================== *
+ * Header 两行布局：
+ *   Row 1 (hd-primary)  back-btn + cipher-key-card —— 高度严格按胶囊
+ *                       高度排，视觉跟系统胶囊同行同高对齐
+ *   Row 2 (hd-secondary) 断线提示（左）+ 日志按钮（右）—— 不再受
+ *                       capsule-safe-right 限制，全宽可用
+ * ===================================================================== */
+
 .hd {
   position: relative;
   z-index: 5;
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  padding-left: 24rpx;
-  /* padding-right + min-height 由 inline style 注入 */
-  margin-top: 8rpx;
+  flex-direction: column;
 }
 
+/* Row 1 —— 跟胶囊同高同行 */
+.hd-primary {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 24rpx;
+  /* padding-right + min-height 由 inline style 注入 = 胶囊高度 */
+}
+
+/* Row 2 —— 全宽，右下角放日志按钮 */
+.hd-secondary {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 12rpx 24rpx 0;
+}
+.hd-spacer { flex: 1; }
+
+/* ====== 按钮 ====== */
 .icon-btn {
-  width: 72rpx;
-  height: 72rpx;
+  /* width / height 在 inline style 里给（Row 1 跟胶囊等高）；
+     log-btn 在 Row 2 用单独的固定尺寸 */
   border: 3rpx solid #fafaf3;
   background: #131313;
   display: flex;
@@ -21,46 +43,32 @@
   transform: skewX(-6deg);
   box-shadow: 4rpx 4rpx 0 #e60022;
 }
-
 .icon-btn-press {
   transform: skewX(-6deg) translate(2rpx, 2rpx);
   box-shadow: 2rpx 2rpx 0 #e60022;
 }
 
-.icon-arrow {
-  color: #fafaf3;
-  font-size: 56rpx;
-  font-weight: 900;
-  line-height: 1;
-  font-style: italic;
-  transform: skewX(6deg);
+/* Row 2 的日志按钮单独尺寸，比 Row 1 略小一圈，跟 Row 2 整体克制调性匹配 */
+.log-btn {
+  width: 60rpx;
+  height: 60rpx;
 }
 
-.bars {
-  display: flex;
-  flex-direction: column;
-  gap: 6rpx;
-  transform: skewX(6deg);
-}
-.bar {
-  width: 32rpx;
-  height: 4rpx;
-  background: #fafaf3;
-}
-.bar.short { width: 20rpx; }
-
+/* ====== Cipher key card ====== */
 .code-wrap {
   flex: 1;
-  margin: 0 16rpx;
+  margin-left: 14rpx;
   text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   background: #fafaf3;
   border: 3rpx solid #0a0a0a;
   box-shadow: 5rpx 5rpx 0 #e60022;
-  padding: 6rpx 14rpx;
+  padding: 0 16rpx;
   transform: skewX(-8deg);
+  /* min-height 由 inline style 注入 = 胶囊高度，跟左侧 back 按钮等高 */
 }
 .code-wrap-press {
   box-shadow: 2rpx 2rpx 0 #e60022;
@@ -71,23 +79,24 @@
   display: inline-block;
   transform: skewX(8deg);
   color: #e60022;
-  font-size: 18rpx;
-  letter-spacing: 0.32em;
+  font-size: 16rpx;
+  letter-spacing: 0.28em;
   font-weight: 700;
   font-style: italic;
   white-space: nowrap;
+  line-height: 1;
 }
 
 .code {
   display: inline-block;
   transform: skewX(8deg);
   color: #0a0a0a;
-  font-size: 44rpx;
+  font-size: 32rpx;
   font-weight: 900;
   font-style: italic;
-  letter-spacing: 0.18em;
-  line-height: 1;
-  margin: 2rpx 0;
+  letter-spacing: 0.16em;
+  line-height: 1.05;
+  margin: 1rpx 0;
   white-space: nowrap;
 }
 
@@ -95,47 +104,47 @@
   display: inline-flex;
   flex-direction: row;
   align-items: center;
-  gap: 6rpx;
   transform: skewX(8deg);
   color: rgba(10,10,10,0.6);
-  font-size: 16rpx;
+  font-size: 14rpx;
   letter-spacing: 0.22em;
   font-weight: 700;
-  margin-top: 2rpx;
+  line-height: 1;
 }
+.copy-hint icon { margin-left: 4rpx; }
 .copy-hint text {
   color: rgba(10,10,10,0.6);
-  font-size: 16rpx;
+  font-size: 14rpx;
   letter-spacing: 0.22em;
   font-weight: 700;
   white-space: nowrap;
 }
 
+/* ====== 断线提示 chip ====== */
 .disconnected {
-  position: absolute;
-  top: 100%;
-  left: 50%;
-  transform: translateX(-50%) skewX(-6deg);
-  margin-top: 12rpx;
   background: #e60022;
   color: #fafaf3;
   border: 3rpx solid #0a0a0a;
-  padding: 6rpx 14rpx;
+  padding: 4rpx 14rpx;
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 8rpx;
-  z-index: 10;
+  transform: skewX(-6deg);
+}
+.disconnected .dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+  background: #fafaf3;
+  margin-right: 8rpx;
+  animation: p5-blink 1s ease-in-out infinite;
 }
 .disconnected text {
+  display: inline-block;
+  transform: skewX(6deg);
   color: #fafaf3;
   font-size: 18rpx;
   letter-spacing: 0.22em;
   font-weight: 700;
-  transform: skewX(6deg);
-}
-.disconnected .dot {
-  width: 12rpx; height: 12rpx; border-radius: 50%;
-  background: #fafaf3;
-  animation: p5-blink 1s ease-in-out infinite;
+  white-space: nowrap;
 }
