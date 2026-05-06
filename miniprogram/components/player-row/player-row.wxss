@@ -174,6 +174,7 @@
 .tile-cell {
   display: inline-block;
   flex-shrink: 0;
-  /* 替代父级 gap —— Skyline 1.4.7 flex+gap bug 会让最后一张牌被裁 */
-  margin: 0 10rpx 8rpx 0;
+  /* 替代父级 gap —— Skyline 1.4.7 flex+gap bug 会让最后一张牌被裁。
+     横向 24rpx 给 tile 之间足够呼吸，避免顶部 OPEN/NEW 标签互相挤压。 */
+  margin: 0 24rpx 8rpx 0;
 }
