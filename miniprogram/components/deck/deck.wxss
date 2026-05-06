@@ -21,10 +21,14 @@
 /* keyframe 直接定义在组件内部，绕开 app.wxss 全局 keyframes 在
    styleIsolation:isolated 子组件下名字解析为空导致动画不生效的坑。
    动画参数对齐 web 端 frontend：rotate -3deg ↔ +2deg + scale 1 ↔ 1.05，
-   节奏 1s ease-in-out infinite，是温柔的"摇一下，胀一点"提示。 */
+   节奏 1s ease-in-out infinite。
+   box-shadow 给红色光晕：Skyline 1.4.7 在 keyframe 里改 box-shadow 有 bug，
+   所以不动 keyframe，靠静态 + class 切换实现 web 端那种「红光绕牌堆」效果，
+   配合 transform 动画整体跟着摇头一起呼吸。 */
 .deck.active {
   animation: deck-pulse 1s ease-in-out infinite;
   transform-origin: 50% 50%;
+  box-shadow: 0 0 32rpx 6rpx rgba(230, 0, 34, 0.55);
 }
 @keyframes deck-pulse {
   0%, 100% { transform: rotate(-3deg) scale(1); }

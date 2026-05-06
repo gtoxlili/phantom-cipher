@@ -233,11 +233,17 @@
   transform: rotate(-1deg) translateY(-12rpx) scale(0.97);
 }
 
+/* flash 时给静态 box-shadow 当作"光晕"。Skyline 1.4.7 不能在 keyframe
+   里动 box-shadow，但 class 切换时静态 shadow 跟着出现/消失能近似
+   web 端 flashCorrect 的金色 shimmer / flashWrong 的红色 punch。
+   transform 动画照常跑，shadow 是叠加层。 */
 .tile.flash-correct {
   animation: tile-flash-correct 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 0 36rpx 6rpx rgba(255, 210, 0, 0.75);
 }
 .tile.flash-wrong {
   animation: tile-flash-wrong 0.6s ease-in-out;
+  box-shadow: 0 0 24rpx 4rpx rgba(230, 0, 34, 0.65);
 }
 
 /* keyframes 在组件内部定义 —— app.wxss 的全局 keyframes 在组件
