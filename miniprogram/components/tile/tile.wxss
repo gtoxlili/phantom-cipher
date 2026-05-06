@@ -240,20 +240,22 @@
   animation: p5-flash-wrong 0.7s ease-out;
 }
 
-/* halo 平时透明、不参与点击，命中/失手时一拳打出来。
-   用 border + opacity + scale —— 这些属性 Skyline 1.4.7 keyframe 里
-   都跑得动，不踩 box-shadow 的坑。 */
+/* halo 平时透明，命中/失手时打一下扩散。
+   边框做厚 + 大圆角让边角更柔和，不像贴上去的方框；
+   起始 scale 已经大于 1 → 视觉是从牌身向外炸开，而不是先收后扩。
+   skewX 旋一点点呼应整张 tile 的 rotate(-2deg)，避免直角对比。 */
 .flash-halo {
   position: absolute;
-  top: -14rpx;
-  left: -14rpx;
-  right: -14rpx;
-  bottom: -14rpx;
-  border: 6rpx solid transparent;
-  border-radius: 12rpx;
+  top: -18rpx;
+  left: -18rpx;
+  right: -18rpx;
+  bottom: -18rpx;
+  border: 4rpx solid transparent;
+  border-radius: 26rpx;
   opacity: 0;
   pointer-events: none;
   z-index: 0;
+  transform: rotate(-2deg);
 }
 .tile.flash-correct .flash-halo {
   animation: p5-halo-correct 1s ease-out;
@@ -263,14 +265,14 @@
 }
 
 @keyframes p5-halo-correct {
-  0%   { opacity: 0; transform: scale(0.92); border-color: rgba(255,210,0,0); }
-  20%  { opacity: 1; transform: scale(1.18); border-color: #ffd200; }
-  60%  { opacity: 0.6; transform: scale(1.06); border-color: #ffd200; }
-  100% { opacity: 0; transform: scale(1); border-color: rgba(255,210,0,0); }
+  0%   { opacity: 0;   transform: rotate(-2deg) scale(1.05); border-color: rgba(255,210,0,0); }
+  18%  { opacity: 0.9; transform: rotate(-2deg) scale(1.32); border-color: rgba(255,210,0,0.85); }
+  55%  { opacity: 0.4; transform: rotate(-2deg) scale(1.18); border-color: rgba(255,210,0,0.5); }
+  100% { opacity: 0;   transform: rotate(-2deg) scale(1.1);  border-color: rgba(255,210,0,0); }
 }
 
 @keyframes p5-halo-wrong {
-  0%, 100% { opacity: 0; transform: scale(1); border-color: rgba(230,0,34,0); }
-  15%      { opacity: 1; transform: scale(1.1); border-color: #e60022; }
-  60%      { opacity: 0.5; transform: scale(1.02); border-color: #e60022; }
+  0%, 100% { opacity: 0;   transform: rotate(-2deg) scale(1.05); border-color: rgba(230,0,34,0); }
+  15%      { opacity: 0.85; transform: rotate(-2deg) scale(1.22); border-color: rgba(230,0,34,0.8); }
+  55%      { opacity: 0.3; transform: rotate(-2deg) scale(1.12); border-color: rgba(230,0,34,0.4); }
 }

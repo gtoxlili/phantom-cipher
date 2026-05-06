@@ -5,8 +5,11 @@
     hover-stay-time="80"
     bind:tap="onTap"
   >
-    <!-- 周身红色光晕：仅在 active 时由 keyframe 驱动 opacity/scale -->
-    <view class="deck-glow" />
+    <!-- 四角 spark：active 时错峰闪烁，比方框线 halo 更 P5 调性 -->
+    <view class="deck-spark tl" />
+    <view class="deck-spark tr" />
+    <view class="deck-spark bl" />
+    <view class="deck-spark br" />
     <view class="stack">
       <view
         class="card-back"
