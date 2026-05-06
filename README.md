@@ -75,6 +75,8 @@ docker run -d --name phantom-cipher \
 | `WX_APPID` | *(空)* | 微信小程序 AppID。空则 `/api/wx/login` 503，小程序端自动 fallback 到本地 UUID |
 | `WX_SECRET` | *(空)* | 微信小程序 AppSecret，跟 `WX_APPID` 一起配齐才启用 openid 认证 |
 
+> 微信服务端代理还有几条端点（订阅消息推送 / 动态分享卡 / URL Link / 配额运维）后端实现了但还没接到客户端，详见 [docs/wechat-server-apis.md](./docs/wechat-server-apis.md)。
+
 ### 资源占用参考
 
 - **空载**：~3 MB RSS / 0% CPU
