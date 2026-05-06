@@ -145,11 +145,18 @@
 
 /* 自己的手牌：scroll-view scroll-x，单行不换行；
    牌再多也不会把对手区挤得需要纵向滚动。
-   高度 = tile(md=140rpx) + 上方 NEW/OPEN 标签(~28rpx) + padding(14rpx)
-   ≈ 200rpx 兜底 */
+   高度账：
+     - tile 本体 140rpx (size=md)
+     - 顶部 NEW/OPEN 标签 top:-28rpx 再向上伸出
+     - tile 自带阴影投影 ~10rpx
+     - 底部 halftone dots 还要 padding 一点呼吸
+   合计 ≈ 220rpx，padding-top 36rpx 给标签让位（scroll-view 默认
+   clip:true 会把 top:-28rpx 的标签裁掉，所以要给足上 padding） */
 .hand-me {
   width: 100%;
-  height: 200rpx;
+  height: 220rpx;
+  padding-top: 36rpx;
+  padding-bottom: 12rpx;
   white-space: nowrap;
   justify-content: flex-start;
 }

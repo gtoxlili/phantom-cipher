@@ -315,13 +315,14 @@
 /* ========== Action Zone ========== */
 .action-zone {
   margin: 16rpx 24rpx;
-  padding: 24rpx;
+  padding: 40rpx 24rpx;
   background: rgba(10,10,10,0.6);
   border: 3rpx solid rgba(230,0,34,0.45);
   display: flex;
   flex-direction: column;
   gap: 20rpx;
   align-items: center;
+  justify-content: center;
 }
 
 .waiting-msg {
