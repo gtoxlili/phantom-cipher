@@ -35,18 +35,25 @@
  * └─┴───────────────────┴─────────┘
  *  ↑ red spine
  * ===================================================== */
+/* code-wrap 是 <button open-type="share">，需要 reset 微信 button 的
+   默认 padding / line-height / 圆角 / 内置 ::after 描边，才能跟之前
+   <view> 视觉一致。 */
 .code-wrap {
   flex: 1;
-  margin-left: 14rpx;
+  margin: 0 0 0 14rpx;
+  padding: 0;
   display: flex;
   flex-direction: row;
   align-items: stretch;
   background: #fafaf3;
   border: 3rpx solid #0a0a0a;
+  border-radius: 0;
   box-shadow: 5rpx 5rpx 0 #e60022;
   transform: skewX(-8deg);
   overflow: hidden;
+  line-height: 1;
 }
+.code-wrap::after { border: none; }
 .code-wrap-press {
   box-shadow: 2rpx 2rpx 0 #e60022;
   transform: skewX(-8deg) translate(3rpx, 3rpx);
@@ -116,4 +123,3 @@
   white-space: nowrap;
   line-height: 1;
 }
-.code-aux.is-copied text { color: #e60022; }

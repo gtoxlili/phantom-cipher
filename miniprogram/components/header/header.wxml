@@ -18,12 +18,13 @@
   <!-- Cipher key 卡：evidence-tag 三段式
        左：红 spine（视觉重音）
        中：label "CIPHER KEY //" 上 + 大字号 code 下
-       右：action chip（COPIED ✓ / SHARE ↗） -->
-  <view
+       右：action chip（SHARE ↗）—— 整张卡片即 <button open-type="share">，
+       点一下直接弹微信原生分享菜单，由 page.onShareAppMessage 提供卡片数据 -->
+  <button
     class="code-wrap"
+    open-type="share"
     hover-class="code-wrap-press"
     hover-stay-time="80"
-    bind:tap="onShare"
     style="min-height: {{capsuleHeight}}px"
   >
     <view class="code-spine" />
@@ -31,10 +32,9 @@
       <text class="code-label">CIPHER KEY //</text>
       <text class="code">{{code}}</text>
     </view>
-    <view class="code-aux {{copied ? 'is-copied' : ''}}">
-      <icon wx:if="{{copied}}" name="check" size="18" color="#e60022" />
-      <icon wx:else name="qr" size="18" color="#0a0a0a" />
-      <text>{{copied ? 'COPIED' : 'SHARE'}}</text>
+    <view class="code-aux">
+      <icon name="arrow-right" size="18" color="#0a0a0a" />
+      <text>SHARE</text>
     </view>
-  </view>
+  </button>
 </view>
