@@ -2,8 +2,7 @@
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: center;
-  margin: 24rpx 24rpx 12rpx;
+  justify-content: flex-start;
   pointer-events: none;
 }
 

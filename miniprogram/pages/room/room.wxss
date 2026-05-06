@@ -8,6 +8,64 @@
   z-index: 1;
 }
 
+/* 二级行：phase-banner 拉伸 + log 按钮右钉 + 断线 chip 居中可选 */
+.secondary-row {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 14rpx 24rpx 10rpx;
+}
+.phase-slot {
+  flex: 1;
+  min-width: 0;
+}
+.disconnected-chip {
+  margin-right: 12rpx;
+  background: #e60022;
+  color: #fafaf3;
+  border: 3rpx solid #0a0a0a;
+  padding: 4rpx 12rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  transform: skewX(-6deg);
+}
+.disconnected-chip .dot {
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: #fafaf3;
+  margin-right: 6rpx;
+  animation: p5-blink 1s ease-in-out infinite;
+}
+.disconnected-chip text {
+  display: inline-block;
+  transform: skewX(6deg);
+  color: #fafaf3;
+  font-size: 16rpx;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.log-btn {
+  flex-shrink: 0;
+  margin-left: 14rpx;
+  width: 60rpx;
+  height: 60rpx;
+  border: 3rpx solid #fafaf3;
+  background: #131313;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: skewX(-6deg);
+  box-shadow: 4rpx 4rpx 0 #e60022;
+}
+.log-btn-press {
+  transform: skewX(-6deg) translate(2rpx, 2rpx);
+  box-shadow: 2rpx 2rpx 0 #e60022;
+}
+
 /* 对手区：撑满中段剩余空间。多于 1 个对手或屏幕短时滚动起来 */
 .opponents-area {
   flex: 1;

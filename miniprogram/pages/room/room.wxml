@@ -12,20 +12,36 @@
 
   <header-bar
     code="{{code}}"
-    connected="{{connected}}"
     capsule-safe-right="{{layout.capsuleSafeRight}}"
     capsule-height="{{layout.capsuleHeight}}"
     bind:back="onBack"
-    bind:toggleLog="onToggleLog"
   />
 
-  <phase-banner
-    text="{{phaseText}}"
-    accent="{{phaseAccent}}"
-    accent-icon="{{phaseAccentIcon}}"
-    accent-color="{{phaseAccentColor}}"
-    mood="{{phaseMood}}"
-  />
+  <!-- 二级行：左 phase-banner（拉伸）+ 右 log 按钮；
+       断线提示 chip 居中插入两者之间 -->
+  <view class="secondary-row">
+    <view class="phase-slot">
+      <phase-banner
+        text="{{phaseText}}"
+        accent="{{phaseAccent}}"
+        accent-icon="{{phaseAccentIcon}}"
+        accent-color="{{phaseAccentColor}}"
+        mood="{{phaseMood}}"
+      />
+    </view>
+    <view wx:if="{{!connected}}" class="disconnected-chip">
+      <view class="dot" />
+      <text>RECONNECTING</text>
+    </view>
+    <view
+      class="log-btn"
+      hover-class="log-btn-press"
+      hover-stay-time="80"
+      bind:tap="onToggleLog"
+    >
+      <icon name="bars" size="32" color="#fafaf3" />
+    </view>
+  </view>
 
   <!-- 对手区：flex:1 撑开剩余空间。
        4 人局时三个对手行可能超过自己空间，所以包一层 scroll-view 兜底。 -->

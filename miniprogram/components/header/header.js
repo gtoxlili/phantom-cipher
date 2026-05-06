@@ -5,7 +5,6 @@ Component({
   options: { multipleSlots: false },
   properties: {
     code: { type: String, value: '' },
-    connected: { type: Boolean, value: false },
     /** 胶囊按钮左侧到屏幕右边缘的距离（px）—— 让 header 右边留出
      *  足够空间不挡胶囊。从 page 透传过来。 */
     capsuleSafeRight: { type: Number, value: 96 },
@@ -48,6 +47,5 @@ Component({
         },
       });
     },
-    onLog() { this.triggerEvent('toggleLog', {}); },
   },
 });
