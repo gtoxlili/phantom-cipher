@@ -1,9 +1,17 @@
 <view class="banner-host">
   <view class="banner mood-{{mood}}" key="{{animKey}}">
     <view class="inner">
-      <text wx:if="{{accent}}" class="accent">{{accent}}</text>
+      <!-- accentIcon 优先于 accent 文本：JS 传 'arrow-right' / 'star' / 'dot' 时显图标，
+           否则把 accent 当文字直接 render（"1/2"、"·" 等） -->
+      <block wx:if="{{accentIcon}}">
+        <icon name="{{accentIcon}}" size="24" color="{{accentColor}}" />
+      </block>
+      <text wx:elif="{{accent}}" class="accent">{{accent}}</text>
       <text class="text">{{text}}</text>
-      <text wx:if="{{accent}}" class="accent">{{accent}}</text>
+      <block wx:if="{{accentIcon}}">
+        <icon name="{{accentIcon}}" size="24" color="{{accentColor}}" />
+      </block>
+      <text wx:elif="{{accent}}" class="accent">{{accent}}</text>
     </view>
   </view>
 </view>

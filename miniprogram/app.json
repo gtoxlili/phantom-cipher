@@ -22,6 +22,9 @@
     "navigationBarTextStyle": "white",
     "navigationStyle": "custom"
   },
+  "usingComponents": {
+    "icon": "/components/icon/icon"
+  },
   "style": "v2",
   "sitemapLocation": "sitemap.json"
 }

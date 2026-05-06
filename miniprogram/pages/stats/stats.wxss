@@ -54,7 +54,10 @@
 }
 
 .eyebrow {
-  display: inline-block;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10rpx;
   background: #ffd200;
   color: #0a0a0a;
   padding: 6rpx 16rpx;
@@ -65,7 +68,6 @@
 }
 .eyebrow text {
   display: inline-block;
-  transform: skewX(10deg);
   font-size: 20rpx;
   font-weight: 800;
   letter-spacing: 0.36em;

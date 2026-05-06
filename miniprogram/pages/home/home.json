@@ -5,6 +5,7 @@
   "componentFramework": "glass-easel",
   "usingComponents": {
     "sketch": "../../components/sketch/sketch",
-    "notifications": "../../components/notifications/notifications"
+    "notifications": "../../components/notifications/notifications",
+    "icon": "/components/icon/icon"
   }
 }

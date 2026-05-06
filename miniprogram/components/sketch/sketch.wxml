@@ -12,12 +12,14 @@
   </view>
 
   <view class="stars-wrap">
-    <text
+    <view
       class="star"
       wx:for="{{stars}}"
       wx:key="index"
-      style="top:{{item.top}};left:{{item.left || 'auto'}};right:{{item.right || 'auto'}};font-size:{{item.size}};opacity:{{intensity==='subdued' ? item.op*0.6 : item.op}}"
-    >✦</text>
+      style="top:{{item.top}};left:{{item.left || 'auto'}};right:{{item.right || 'auto'}};opacity:{{intensity==='subdued' ? item.op*0.6 : item.op}}"
+    >
+      <icon name="sparkle" size="{{item.size}}" color="#e60022" />
+    </view>
   </view>
 
   <text class="big-question" style="opacity:{{intensity==='subdued' ? 0.04 : 0.08}}">?</text>

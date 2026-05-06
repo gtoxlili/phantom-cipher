@@ -10,9 +10,9 @@ Component({
       { top: '70%', left: '-15%', width: '55%', height: '12rpx', bg: 'rgba(230,0,34,0.55)', op: 0.45, dur: '6.5s', delay: '2.6s' },
     ],
     stars: [
-      { top: '18%', right: '12%', size: '54rpx', op: 0.45 },
-      { top: '46%', left: '7%', size: '40rpx', op: 0.32 },
-      { top: '74%', right: '18%', size: '60rpx', op: 0.28 },
+      { top: '18%', right: '12%', size: 54, op: 0.45 },
+      { top: '46%', left: '7%', size: 40, op: 0.32 },
+      { top: '74%', right: '18%', size: 60, op: 0.28 },
     ],
   },
 });

@@ -24,10 +24,10 @@
       <text class="glyph number">{{number}}</text>
     </block>
     <block wx:elif="{{!faceDown && joker}}">
-      <text class="glyph star-shadow">★</text>
-      <text class="glyph star">★</text>
-      <text class="corner-spark a">◆</text>
-      <text class="corner-spark b">◆</text>
+      <view class="glyph star-shadow"><icon name="star" size="80" color="#e60022" /></view>
+      <view class="glyph star"><icon name="star" size="80" color="{{color === 'black' ? '#fafaf3' : '#0a0a0a'}}" /></view>
+      <view class="corner-spark a"><icon name="diamond" size="14" color="#e60022" /></view>
+      <view class="corner-spark b"><icon name="diamond" size="14" color="#e60022" /></view>
     </block>
     <block wx:else>
       <text class="glyph qmark-shadow">?</text>

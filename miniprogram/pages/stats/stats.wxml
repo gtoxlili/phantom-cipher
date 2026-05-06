@@ -9,7 +9,11 @@
   <sketch />
 
   <view class="title-block">
-    <view class="eyebrow"><text>★ STAT BOARD ★</text></view>
+    <view class="eyebrow">
+      <icon name="star" size="20" color="#0a0a0a" />
+      <text>STAT BOARD</text>
+      <icon name="star" size="20" color="#0a0a0a" />
+    </view>
     <view class="t1"><text>排行榜</text></view>
     <view class="t2"><text>// LEADERBOARD</text></view>
   </view>
@@ -103,6 +107,6 @@
   bind:tap="goBack"
   style="top: {{layout.capsuleTop}}px; height: {{layout.capsuleHeight}}px"
 >
-  <text class="arrow">‹</text>
+  <icon name="chevron-left" size="32" color="#fafaf3" />
   <text class="lbl">BACK</text>
 </view>

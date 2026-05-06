@@ -12,7 +12,7 @@
       </block>
       <block wx:else>
         <view class="fallback">
-          <text class="big">⚠</text>
+          <icon name="warning" size="80" color="#e60022" />
           <text class="line">二维码暂不可用</text>
           <text class="hint">直接转发卡片或复制密码邀请</text>
         </view>
@@ -23,7 +23,8 @@
       <text class="cn">扫一扫直接进房间 · {{code}}</text>
     </view>
     <view class="dismiss" hover-class="dismiss-press" hover-stay-time="80" bind:tap="onClose">
-      <text>关闭 ✕</text>
+      <text>关闭</text>
+      <icon name="cross" size="22" color="#fafaf3" />
     </view>
   </view>
 </view>

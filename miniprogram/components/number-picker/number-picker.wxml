@@ -29,14 +29,15 @@
 
       <view class="joker-btn" hover-class="joker-btn-press" hover-stay-time="80" bind:tap="onJoker">
         <view class="joker-row">
-          <text class="star">★</text>
+          <icon name="star" size="36" color="#e60022" />
           <text class="label">JOKER</text>
           <text class="zh">赖子</text>
         </view>
       </view>
 
       <view class="cancel" hover-class="cancel-press" hover-stay-time="80" bind:tap="onClose">
-        <text>CANCEL ✕</text>
+        <text>CANCEL</text>
+        <icon name="cross" size="22" color="#ece5cf" />
       </view>
     </view>
   </vertical-drag-gesture-handler>

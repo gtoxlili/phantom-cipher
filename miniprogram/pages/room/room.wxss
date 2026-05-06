@@ -147,7 +147,10 @@
 }
 .start-btn.disabled { opacity: 0.5; }
 .start-btn .lab {
-  display: inline-block;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10rpx;
   transform: skewX(8deg);
 }
 .start-btn text {
@@ -206,6 +209,12 @@
   transform: skewX(-8deg) translate(3rpx, 3rpx);
   box-shadow: 2rpx 2rpx 0 #e60022;
 }
+.btn-primary, .btn-secondary {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8rpx;
+}
 .btn-primary text, .btn-secondary text {
   display: inline-block;
   transform: skewX(8deg);
@@ -227,6 +236,10 @@
   padding: 20rpx 0;
 }
 .end-crown {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10rpx;
   font-size: 36rpx;
   letter-spacing: 0.28em;
   color: #ffd200;

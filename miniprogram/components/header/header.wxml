@@ -3,22 +3,26 @@
   style="padding-right: {{capsuleSafeRight}}px; min-height: {{navMinHeight}}px"
 >
   <view class="icon-btn" hover-class="icon-btn-press" hover-stay-time="80" bind:tap="onBack">
-    <text class="icon-arrow">‹</text>
+    <icon name="chevron-left" size="36" color="#fafaf3" />
   </view>
   <view class="code-wrap" hover-class="code-wrap-press" hover-stay-time="80" bind:tap="onShare">
     <text class="label">· CIPHER KEY ·</text>
     <text class="code">{{code}}</text>
-    <text class="copy-hint">{{copied ? 'COPIED ✓' : 'TAP TO COPY'}}</text>
+    <view class="copy-hint">
+      <block wx:if="{{copied}}">
+        <text>COPIED</text>
+        <icon name="check" size="20" color="rgba(10,10,10,0.6)" />
+      </block>
+      <block wx:else>
+        <text>TAP TO COPY</text>
+      </block>
+    </view>
   </view>
   <view wx:if="{{!connected}}" class="disconnected">
     <view class="dot" />
     <text>RECONNECTING</text>
   </view>
   <view class="icon-btn" hover-class="icon-btn-press" hover-stay-time="80" bind:tap="onLog">
-    <view class="bars">
-      <view class="bar" />
-      <view class="bar" />
-      <view class="bar short" />
-    </view>
+    <icon name="bars" size="36" color="#fafaf3" />
   </view>
 </view>

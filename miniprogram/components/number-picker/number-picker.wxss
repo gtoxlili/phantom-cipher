@@ -166,8 +166,12 @@
 
 .cancel {
   margin-top: 22rpx;
-  text-align: center;
   padding: 12rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
 }
 .cancel text {
   color: #ece5cf;

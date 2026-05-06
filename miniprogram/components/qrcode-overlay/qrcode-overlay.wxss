@@ -107,7 +107,11 @@
 }
 
 .dismiss {
-  text-align: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
   padding: 12rpx 0;
 }
 .dismiss text {

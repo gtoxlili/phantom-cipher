@@ -4,6 +4,7 @@
   "renderer": "skyline",
   "componentFramework": "glass-easel",
   "usingComponents": {
-    "sketch": "../../components/sketch/sketch"
+    "sketch": "../../components/sketch/sketch",
+    "icon": "/components/icon/icon"
   }
 }

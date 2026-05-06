@@ -43,8 +43,18 @@
 }
 
 .subtitle {
-  display: block;
-  text-align: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  color: #ffd200;
+  font-size: 22rpx;
+  letter-spacing: 0.36em;
+  font-weight: 800;
+  font-style: italic;
+}
+.subtitle text {
   color: #ffd200;
   font-size: 22rpx;
   letter-spacing: 0.36em;

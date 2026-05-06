@@ -90,13 +90,22 @@
 }
 
 .copy-hint {
-  display: inline-block;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6rpx;
   transform: skewX(8deg);
   color: rgba(10,10,10,0.6);
   font-size: 16rpx;
   letter-spacing: 0.22em;
   font-weight: 700;
   margin-top: 2rpx;
+}
+.copy-hint text {
+  color: rgba(10,10,10,0.6);
+  font-size: 16rpx;
+  letter-spacing: 0.22em;
+  font-weight: 700;
 }
 
 .disconnected {

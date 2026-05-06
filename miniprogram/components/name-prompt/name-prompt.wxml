@@ -15,16 +15,21 @@
       bindconfirm="onSubmit"
     />
     <view class="shuffle" hover-class="shuffle-press" hover-stay-time="80" bind:tap="onShuffle">
-      <text class="spark">✦</text>
+      <icon name="sparkle" size="22" color="#e60022" />
       <text>随机代号 / SHUFFLE</text>
-      <text class="spark">✦</text>
+      <icon name="sparkle" size="22" color="#e60022" />
     </view>
-    <view wx:if="{{error}}" class="error"><text>⚠ {{error}}</text></view>
+    <view wx:if="{{error}}" class="error">
+      <icon name="warning" size="22" color="#e60022" />
+      <text>{{error}}</text>
+    </view>
     <view class="submit {{!draft || !draft.trim() ? 'disabled' : ''}}" hover-class="submit-press" hover-stay-time="80" bind:tap="onSubmit">
-      <text>入局 ▶</text>
+      <text>入局</text>
+      <icon name="arrow-right" size="28" color="#fafaf3" />
     </view>
     <view class="link" hover-class="link-press" hover-stay-time="80" bind:tap="onCancel">
-      <text>‹ BACK TO LOBBY</text>
+      <icon name="chevron-left" size="20" color="rgba(250,250,243,0.55)" />
+      <text>BACK TO LOBBY</text>
     </view>
   </view>
 </view>

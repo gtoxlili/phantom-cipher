@@ -26,7 +26,7 @@
     <view class="content">
       <block wx:if="{{mode === 'menu'}}">
         <view class="hook">
-          <view class="hook-mark"><text>※</text></view>
+          <view class="hook-mark"><icon name="asterisk" size="32" color="#fafaf3" /></view>
           <text class="copy"><text class="em">TAKE THEIR CIPHER.</text> 二十四块刻着数字的木牌——藏匿与显露之间，用你的演绎与直觉，<text class="em">破译</text>每一块尚未现身的密码。</text>
         </view>
 
@@ -38,7 +38,7 @@
                 <text class="en light">CREATE NEW</text>
               </view>
             </view>
-            <text class="arrow">▶</text>
+            <view class="arrow"><icon name="arrow-right" size="36" color="#fafaf3" /></view>
           </view>
 
           <view class="btn secondary" hover-class="btn-secondary-press" hover-stay-time="80" bind:tap="goJoin">
@@ -48,20 +48,23 @@
                 <text class="en dark">ENTER WITH CODE</text>
               </view>
             </view>
-            <text class="arrow">▶</text>
+            <view class="arrow"><icon name="arrow-right" size="36" color="#0a0a0a" /></view>
           </view>
         </view>
 
         <view class="howto" bind:tap="toggleHowto">
-          <text class="howto-summary">· How to Play / 玩法简述 {{showHowto ? '▴' : '▾'}} ·</text>
+          <view class="howto-summary">
+            <text>· How to Play / 玩法简述 ·</text>
+            <icon name="{{showHowto ? 'chevron-up' : 'chevron-down'}}" size="20" color="#e60022" />
+          </view>
         </view>
 
         <view wx:if="{{showHowto}}" class="howto-box">
-          <view class="howto-line"><text class="dot">◆</text><text>抽取数张数字牌（黑白共 0–11 各一份），按数字升序排列，同数时黑前白后。</text></view>
-          <view class="howto-line"><text class="dot">◆</text><text>每回合：抽一张新牌做「暂置」，任选对手一张未亮明的牌，宣告一个数字。</text></view>
-          <view class="howto-line"><text class="dot">◆</text><text>命中──对手翻明该牌，你可继续，亦可收手（暂置牌仍藏匿）。</text></view>
-          <view class="howto-line"><text class="dot">◆</text><text>失手──你必须把暂置那张牌翻明示众，回合结束。</text></view>
-          <view class="howto-line"><text class="dot">◆</text><text>当只剩你一人尚有藏匿之牌──<text class="em-strong">YOU WIN</text>。</text></view>
+          <view class="howto-line"><view class="dot"><icon name="diamond" size="16" color="#e60022" /></view><text>抽取数张数字牌（黑白共 0–11 各一份），按数字升序排列，同数时黑前白后。</text></view>
+          <view class="howto-line"><view class="dot"><icon name="diamond" size="16" color="#e60022" /></view><text>每回合：抽一张新牌做「暂置」，任选对手一张未亮明的牌，宣告一个数字。</text></view>
+          <view class="howto-line"><view class="dot"><icon name="diamond" size="16" color="#e60022" /></view><text>命中──对手翻明该牌，你可继续，亦可收手（暂置牌仍藏匿）。</text></view>
+          <view class="howto-line"><view class="dot"><icon name="diamond" size="16" color="#e60022" /></view><text>失手──你必须把暂置那张牌翻明示众，回合结束。</text></view>
+          <view class="howto-line"><view class="dot"><icon name="diamond" size="16" color="#e60022" /></view><text>当只剩你一人尚有藏匿之牌──<text class="em-strong">YOU WIN</text>。</text></view>
         </view>
       </block>
 
@@ -80,19 +83,26 @@
               bindinput="onNameInput"
             />
             <view class="shuffle-btn" hover-class="shuffle-btn-press" hover-stay-time="80" bind:tap="onShuffle">
-              <text class="spark">✦</text>
+              <icon name="sparkle" size="24" color="#e60022" />
               <text>随机代号 / SHUFFLE</text>
-              <text class="spark">✦</text>
+              <icon name="sparkle" size="24" color="#e60022" />
             </view>
           </view>
 
-          <view wx:if="{{error}}" class="error"><text>⚠ {{error}}</text></view>
+          <view wx:if="{{error}}" class="error">
+            <icon name="warning" size="22" color="#e60022" />
+            <text>{{error}}</text>
+          </view>
 
           <view class="form-actions">
-            <view class="btn-text" hover-class="btn-text-press" hover-stay-time="80" bind:tap="goBack"><text>‹ BACK</text></view>
+            <view class="btn-text" hover-class="btn-text-press" hover-stay-time="80" bind:tap="goBack">
+              <icon name="chevron-left" size="22" color="#ece5cf" />
+              <text>BACK</text>
+            </view>
             <view class="btn primary submit" hover-class="btn-submit-press" hover-stay-time="80" bind:tap="submitCreate">
               <view class="btn-label">
-                <text class="zh">开局 ▶</text>
+                <text class="zh">开局</text>
+                <icon name="arrow-right" size="28" color="#fafaf3" />
               </view>
             </view>
           </view>
@@ -114,9 +124,9 @@
               bindinput="onNameInput"
             />
             <view class="shuffle-btn" hover-class="shuffle-btn-press" hover-stay-time="80" bind:tap="onShuffle">
-              <text class="spark">✦</text>
+              <icon name="sparkle" size="24" color="#e60022" />
               <text>随机代号 / SHUFFLE</text>
-              <text class="spark">✦</text>
+              <icon name="sparkle" size="24" color="#e60022" />
             </view>
           </view>
 
@@ -132,13 +142,20 @@
             />
           </view>
 
-          <view wx:if="{{error}}" class="error"><text>⚠ {{error}}</text></view>
+          <view wx:if="{{error}}" class="error">
+            <icon name="warning" size="22" color="#e60022" />
+            <text>{{error}}</text>
+          </view>
 
           <view class="form-actions">
-            <view class="btn-text" hover-class="btn-text-press" hover-stay-time="80" bind:tap="goBack"><text>‹ BACK</text></view>
+            <view class="btn-text" hover-class="btn-text-press" hover-stay-time="80" bind:tap="goBack">
+              <icon name="chevron-left" size="22" color="#ece5cf" />
+              <text>BACK</text>
+            </view>
             <view class="btn primary submit" hover-class="btn-submit-press" hover-stay-time="80" bind:tap="submitJoin">
               <view class="btn-label">
-                <text class="zh">进入 ▶</text>
+                <text class="zh">进入</text>
+                <icon name="arrow-right" size="28" color="#fafaf3" />
               </view>
             </view>
           </view>
@@ -149,9 +166,9 @@
 
   <view class="footer">
     <view class="tagline">
-      <text class="star">★</text>
+      <icon name="star" size="22" color="#e60022" />
       <text>made with ink &amp; pixels</text>
-      <text class="star">★</text>
+      <icon name="star" size="22" color="#e60022" />
     </view>
     <view class="byline">
       <text class="lbl">crafted by</text>
@@ -166,7 +183,8 @@
     bind:tap="goStats"
     style="top: {{layout.capsuleTop}}px; right: {{layout.capsuleSafeRight}}px; height: {{layout.capsuleHeight}}px"
   >
-    <text>★ 排行榜</text>
+    <icon name="star" size="22" color="#0a0a0a" />
+    <text>排行榜</text>
   </view>
 </view>
 

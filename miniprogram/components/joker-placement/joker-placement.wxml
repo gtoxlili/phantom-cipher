@@ -3,7 +3,11 @@
   <vertical-drag-gesture-handler worklet:onGestureEvent="handleVerticalDrag">
     <view id="joker-sheet" class="sheet" catch:tap="onSheetTap" style="padding-bottom: {{safeBottom + 28}}px">
       <view class="grab" />
-      <text class="subtitle">▶ JOKER · 赖子待放置 ◀</text>
+      <view class="subtitle">
+        <icon name="arrow-right" size="20" color="#ffd200" />
+        <text>JOKER · 赖子待放置</text>
+        <icon name="arrow-left" size="20" color="#ffd200" />
+      </view>
       <text class="title">选个位置 — <text class="strong">把赖子塞进去</text></text>
 
       <view class="preview">
@@ -13,7 +17,7 @@
       <view class="hand-row">
         <block wx:for="{{slots}}" wx:key="*this" wx:for-item="pos" wx:for-index="i">
           <view class="slot" hover-class="slot-press" hover-stay-time="80" data-pos="{{pos}}" bind:tap="onSlot">
-            <text>+</text>
+            <icon name="plus" size="32" color="#e60022" />
           </view>
           <view class="tile-wrap" wx:if="{{pos < others.length}}">
             <tile

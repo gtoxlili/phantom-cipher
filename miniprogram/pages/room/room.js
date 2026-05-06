@@ -36,6 +36,8 @@ Page({
     // UI 派生
     phaseText: '',
     phaseAccent: '',
+    phaseAccentIcon: '',
+    phaseAccentColor: '#fafaf3',
     phaseMood: 'idle',
 
     // ActionZone 状态机
@@ -259,6 +261,8 @@ Page({
 
       phaseText: banner.text,
       phaseAccent: banner.accent,
+      phaseAccentIcon: banner.accentIcon || '',
+      phaseAccentColor: banner.accentColor || '#fafaf3',
       phaseMood: banner.mood,
 
       actionZone,
@@ -391,20 +395,22 @@ Page({
 
 // 派生工具函数
 function computePhaseInfo(v, isConnected) {
-  if (!isConnected) return { text: 'CONNECTING', accent: '', mood: 'idle' };
-  if (!v.state) return { text: 'LOADING', accent: '', mood: 'idle' };
+  if (!isConnected) return { text: 'CONNECTING', accent: '', accentIcon: '', mood: 'idle' };
+  if (!v.state) return { text: 'LOADING', accent: '', accentIcon: '', mood: 'idle' };
   if (v.state.phase === 'waiting') {
     const n = v.state.players.length;
     if (n < 2) {
-      return { text: 'WAITING · 等待 2–4 玩家', accent: n + '/2', mood: 'idle' };
+      return { text: 'WAITING · 等待 2–4 玩家', accent: n + '/2', accentIcon: '', mood: 'idle' };
     }
-    return { text: 'READY · ' + n + ' 玩家就位 · 房主开局', accent: '▶', mood: 'turn' };
+    return { text: 'READY · ' + n + ' 玩家就位 · 房主开局', accent: '', accentIcon: 'arrow-right', accentColor: '#fafaf3', mood: 'turn' };
   }
   if (v.state.phase === 'ended') {
     const winner = v.state.players.find((p) => p.id === v.state.winnerId);
     return {
       text: winner ? (winner.name || '').toUpperCase() + ' WINS' : 'GAME OVER',
-      accent: '★',
+      accent: '',
+      accentIcon: 'star',
+      accentColor: '#0a0a0a',
       mood: 'end',
     };
   }
@@ -414,7 +420,7 @@ function computePhaseInfo(v, isConnected) {
     else if (v.state.phase === 'placing') text = '放置赖子 / PLACE JOKER';
     else if (v.canGuess && v.state.phase === 'continuing') text = '继续 OR 收手';
     else if (v.canGuess) text = '选一块 PICK A TILE';
-    return { text, accent: '▶', mood: 'turn' };
+    return { text, accent: '', accentIcon: 'arrow-right', accentColor: '#fafaf3', mood: 'turn' };
   }
   const cur = v.state.players.find((p) => p.id === v.state.currentPlayerId);
   const action = ({
@@ -425,7 +431,9 @@ function computePhaseInfo(v, isConnected) {
   })[v.state.phase] || '';
   return {
     text: ((cur && cur.name) ? cur.name.toUpperCase() : '?') + ' ' + action,
-    accent: '·',
+    accent: '',
+    accentIcon: 'dot',
+    accentColor: '#ece5cf',
     mood: 'wait',
   };
 }

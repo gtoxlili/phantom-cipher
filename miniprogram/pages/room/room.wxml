@@ -22,6 +22,8 @@
   <phase-banner
     text="{{phaseText}}"
     accent="{{phaseAccent}}"
+    accent-icon="{{phaseAccentIcon}}"
+    accent-color="{{phaseAccentColor}}"
     mood="{{phaseMood}}"
   />
 
@@ -42,7 +44,7 @@
         </view>
         <view class="hint-actions">
           <view class="hint-btn" hover-class="hint-btn-press" hover-stay-time="80" bind:tap="onShowQr">
-            <text class="ico">▦</text>
+            <icon name="qr" size="28" color="#fafaf3" />
             <text>邀请二维码</text>
           </view>
         </view>
@@ -83,8 +85,13 @@
         bind:tap="onStart"
       >
         <view class="lab">
-          <text wx:if="{{playerCount < 2}}">等待玩家 · {{playerCount}}/2 · MIN 2</text>
-          <text wx:else>开局 START · {{playerCount}} 玩家 ▶</text>
+          <block wx:if="{{playerCount < 2}}">
+            <text>等待玩家 · {{playerCount}}/2 · MIN 2</text>
+          </block>
+          <block wx:else>
+            <text>开局 START · {{playerCount}} 玩家</text>
+            <icon name="arrow-right" size="28" color="#fafaf3" />
+          </block>
         </view>
       </view>
     </block>
@@ -114,7 +121,14 @@
     <block wx:if="{{actionZone === 'ended'}}">
       <view class="end-panel">
         <view class="end-crown">
-          <text>{{youWin ? '★ ★ ★' : '· · ·'}}</text>
+          <block wx:if="{{youWin}}">
+            <icon name="star" size="32" color="#ffd200" />
+            <icon name="star" size="32" color="#ffd200" />
+            <icon name="star" size="32" color="#ffd200" />
+          </block>
+          <block wx:else>
+            <text>· · ·</text>
+          </block>
         </view>
         <view class="end-text">
           <text wx:if="{{youWin}}">YOU WIN</text>
@@ -123,7 +137,8 @@
         </view>
         <block wx:if="{{isHost}}">
           <view class="btn-primary reset" hover-class="btn-primary-press" hover-stay-time="80" bind:tap="onReset">
-            <text>再来一局 ▶</text>
+            <text>再来一局</text>
+            <icon name="arrow-right" size="24" color="#fafaf3" />
           </view>
         </block>
         <block wx:else>

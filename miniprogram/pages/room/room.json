@@ -16,6 +16,7 @@
     "log-panel": "../../components/log-panel/log-panel",
     "notifications": "../../components/notifications/notifications",
     "name-prompt": "../../components/name-prompt/name-prompt",
-    "qrcode-overlay": "../../components/qrcode-overlay/qrcode-overlay"
+    "qrcode-overlay": "../../components/qrcode-overlay/qrcode-overlay",
+    "icon": "/components/icon/icon"
   }
 }

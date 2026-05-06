@@ -2,6 +2,7 @@
   "component": true,
   "styleIsolation": "apply-shared",
   "usingComponents": {
-    "sketch": "../sketch/sketch"
+    "sketch": "../sketch/sketch",
+    "icon": "/components/icon/icon"
   }
 }

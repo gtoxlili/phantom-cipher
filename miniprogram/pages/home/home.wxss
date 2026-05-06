@@ -206,6 +206,10 @@
   font-size: 38rpx;
   font-weight: 900;
   letter-spacing: 0.04em;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10rpx;
 }
 .text-row .en {
   font-size: 22rpx;
@@ -231,10 +235,20 @@
   padding: 18rpx 12rpx;
 }
 .howto-summary {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8rpx;
   color: rgba(236, 229, 207, 0.85);
   font-size: 22rpx;
   letter-spacing: 0.28em;
   font-weight: 700;
+  font-style: italic;
+}
+.howto-summary text {
+  color: rgba(236, 229, 207, 0.85);
+  font-size: 22rpx;
+  letter-spacing: 0.28em;
   font-style: italic;
 }
 .howto-box {
@@ -256,7 +270,14 @@
   gap: 12rpx;
   align-items: flex-start;
 }
-.howto-line .dot { color: #e60022; font-size: 20rpx; line-height: 1.7; }
+.howto-line .dot {
+  flex-shrink: 0;
+  width: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-top: 6rpx;
+}
 .howto-line text {
   color: #0a0a0a;
   font-size: 24rpx;
@@ -351,13 +372,17 @@
 .shuffle-btn-press .spark { color: #fafaf3; }
 
 .error {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8rpx;
   color: #e60022;
   font-size: 24rpx;
   letter-spacing: 0.06em;
   font-weight: 800;
   animation: p5-shake 0.4s ease-out;
 }
-.error text { color: #e60022; }
+.error text { color: #e60022; font-size: 24rpx; font-weight: 800; }
 
 .form-actions {
   display: flex;
@@ -368,6 +393,10 @@
   margin-top: 12rpx;
 }
 .btn-text {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 6rpx;
   padding: 16rpx 18rpx;
 }
 .btn-text text {
@@ -401,10 +430,12 @@
   z-index: 10;
   background: #fafaf3;
   color: #0a0a0a;
-  padding: 0 16rpx;
+  padding: 0 14rpx;
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: center;
+  gap: 6rpx;
   transform: skewX(-8deg);
   border: 3rpx solid #0a0a0a;
   box-shadow: 4rpx 4rpx 0 #e60022;
@@ -446,7 +477,7 @@
   letter-spacing: 0.32em;
   font-style: italic;
 }
-.tagline .star { color: #e60022; opacity: 0.7; }
+/* .tagline .star removed — replaced with <icon name="star" /> */
 .byline {
   display: flex;
   flex-direction: row;
