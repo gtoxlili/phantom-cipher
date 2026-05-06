@@ -1,5 +1,6 @@
 const { shared, timing, spring, Easing } = wx.worklet;
 const { GestureState } = require('../../lib/curves');
+const haptics = require('../../lib/haptics');
 
 Component({
   options: { multipleSlots: false },
@@ -55,6 +56,7 @@ Component({
 
     onSlot(e) {
       const pos = e.currentTarget.dataset.pos;
+      haptics.light();
       this.triggerEvent('place', { position: pos });
     },
     onSheetTap(e) { e.stopPropagation && e.stopPropagation(); },

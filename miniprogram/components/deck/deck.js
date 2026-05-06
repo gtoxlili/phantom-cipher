@@ -1,3 +1,5 @@
+const haptics = require('../../lib/haptics');
+
 Component({
   options: { multipleSlots: false },
   properties: {
@@ -19,6 +21,7 @@ Component({
   methods: {
     onTap() {
       if (!this.data.canDraw || this.data.count <= 0) return;
+      haptics.light();
       this.triggerEvent('draw', { color: this.data.color });
     },
   },

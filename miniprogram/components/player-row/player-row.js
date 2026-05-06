@@ -1,4 +1,5 @@
 const { forfeitSecondsLeft } = require('../../lib/util');
+const haptics = require('../../lib/haptics');
 
 Component({
   options: { multipleSlots: false, addGlobalClass: false },
@@ -95,6 +96,7 @@ Component({
       if (!player || player.alive === false) return;
       const tile = (this.data.tiles || []).find((t) => t && t.id === id);
       if (!tile || tile.revealed) return;
+      haptics.light();
       this.triggerEvent('tileTap', { tileId: id });
     },
   },
