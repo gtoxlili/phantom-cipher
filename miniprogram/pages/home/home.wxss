@@ -265,15 +265,18 @@
   transform: skewX(-2deg);
   display: flex;
   flex-direction: column;
-  gap: 12rpx;
+  /* 不用 gap：Skyline 1.4.7 flex+gap 会让最后一项被裁切 —— "玩法简述
+     最后一行 YOU WIN 看不到" 就这毛病。改用每个 line 的 margin-bottom */
   animation: p5-gentle-in 0.28s ease-out backwards;
 }
 .howto-line {
   display: flex;
   flex-direction: row;
-  gap: 12rpx;
   align-items: flex-start;
+  /* 替代 howto-box 上的 column gap */
+  margin-bottom: 12rpx;
 }
+.howto-line:last-child { margin-bottom: 0; }
 .howto-line .dot {
   flex-shrink: 0;
   width: 24rpx;
@@ -281,6 +284,8 @@
   align-items: center;
   justify-content: center;
   padding-top: 6rpx;
+  /* 替代 howto-line 上的 row gap */
+  margin-right: 12rpx;
 }
 .howto-line text {
   color: #0a0a0a;
@@ -359,7 +364,7 @@
   display: inline-flex;
   flex-direction: row;
   align-items: center;
-  gap: 14rpx;
+  /* 不用 gap：Skyline 1.4.7 flex+gap 有 bug 会把最后一个子节点裁掉 */
   transform: skewX(-6deg);
   font-size: 22rpx;
   letter-spacing: 0.28em;
@@ -373,6 +378,8 @@
   display: inline-block;
   transform: skewX(6deg);
   white-space: nowrap;
+  /* 用 margin 替代父级 gap */
+  margin: 0 14rpx;
 }
 .shuffle-btn .spark { color: #e60022; font-style: italic; font-size: 24rpx; }
 .shuffle-btn-press .spark { color: #fafaf3; }
@@ -433,7 +440,7 @@
   display: inline-flex;
   flex-direction: row;
   align-items: center;
-  gap: 12rpx;
+  /* 不用 gap，Skyline 1.4.7 bug 会让 icon 跟 text 贴脸 */
   transform: skewX(8deg);
 }
 .submit-label text {
@@ -442,6 +449,7 @@
   font-style: italic;
   letter-spacing: 0.04em;
   white-space: nowrap;
+  margin-right: 14rpx;
 }
 .btn-submit-press {
   transform: skewX(-8deg) translate(4rpx, 4rpx);
