@@ -27,6 +27,10 @@ Component({
 
   observers: {
     'visible': function (vis) {
+      // observer 在 attached 之前会先触发一次（初值），shared 还没建
+      // 直接进 _enter/_exit 会撞 undefined.value。等 attached 后由
+      // 它自己根据当时的 visible 启动一遍
+      if (!this._bound) return;
       if (vis) {
         this._enter();
       } else {
@@ -47,6 +51,9 @@ Component({
         'worklet';
         return { opacity: this._backOpacity.value };
       });
+      this._bound = true;
+      // attached 时如果父级已经把 visible 置 true 了，补一次 enter
+      if (this.data.visible) wx.nextTick(() => this._enter());
     },
   },
 

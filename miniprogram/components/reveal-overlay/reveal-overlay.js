@@ -20,6 +20,8 @@ Component({
 
   observers: {
     'visible': function (vis) {
+      // observer 在 attached 之前会先触发一次（初值），shared 还没建
+      if (!this._bound) return;
       if (vis) {
         this._playEnter();
       } else {
@@ -55,6 +57,8 @@ Component({
         'worklet';
         return { opacity: this._bgOpacity.value };
       });
+      this._bound = true;
+      if (this.data.visible) wx.nextTick(() => this._playEnter());
     },
   },
 

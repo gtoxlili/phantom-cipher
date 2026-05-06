@@ -18,6 +18,7 @@ Component({
       this.setData({ slots: Array.from({ length: len }, (_, i) => i) });
     },
     'visible': function (vis) {
+      if (!this._bound) return;
       if (vis) this._enter();
       else this._exit();
     },
@@ -34,6 +35,8 @@ Component({
         'worklet';
         return { opacity: this._backOpacity.value };
       });
+      this._bound = true;
+      if (this.data.visible) wx.nextTick(() => this._enter());
     },
   },
   methods: {
