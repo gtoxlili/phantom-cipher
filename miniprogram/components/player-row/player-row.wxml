@@ -29,12 +29,15 @@
     enhanced
     clip="{{false}}"
     show-scrollbar="{{false}}"
+    scroll-with-animation
+    scroll-into-view="{{focusViewId}}"
+    scroll-into-view-alignment="center"
   >
     <block wx:if="{{tiles.length === 0}}">
       <text class="empty-hand">· · ·</text>
     </block>
     <block wx:else>
-      <view class="tile-cell" wx:for="{{tiles}}" wx:key="id" wx:for-item="t" wx:for-index="i">
+      <view class="tile-cell" id="tile-{{t.id}}" wx:for="{{tiles}}" wx:key="id" wx:for-item="t" wx:for-index="i">
         <tile
           number="{{t.number}}"
           color="{{t.color}}"

@@ -17,6 +17,10 @@ Component({
   data: {
     forfeitSec: 0,
     playerNameUpper: '',
+    /* 自己手牌横向滚动定位：抽完牌后让 scroll-view 滚到刚抽到的（pending）
+       那张，避免新牌追加在末尾、用户根本没看到的尴尬。
+       小程序 scroll-into-view 的 id 不能纯数字开头，加 'tile-' 前缀。*/
+    focusViewId: '',
   },
   observers: {
     'player, nowMs': function (player, now) {
@@ -31,6 +35,15 @@ Component({
         forfeitSec: sec,
         playerNameUpper: (player.name || '').toUpperCase(),
       });
+    },
+    /* 只对自己的手牌滚动；对手区域是 wrap 排版没有滚动条 */
+    'isMe, tiles': function (isMe, tiles) {
+      if (!isMe) return;
+      const pending = (tiles || []).find((t) => t && t.pending);
+      if (!pending || !pending.id) return;
+      const next = 'tile-' + pending.id;
+      if (next === this.data.focusViewId) return;
+      this.setData({ focusViewId: next });
     },
   },
   methods: {
