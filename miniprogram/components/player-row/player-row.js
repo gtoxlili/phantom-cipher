@@ -17,10 +17,22 @@ Component({
   data: {
     forfeitSec: 0,
     playerNameUpper: '',
-    /* 自己手牌横向滚动定位：抽完牌后让 scroll-view 滚到刚抽到的（pending）
-       那张，避免新牌追加在末尾、用户根本没看到的尴尬。
-       小程序 scroll-into-view 的 id 不能纯数字开头，加 'tile-' 前缀。*/
-    focusViewId: '',
+  },
+  /* 自己手牌横向滚动里要把刚抽到的（pending）那张牌滚进视口。
+     注意：声明式 scroll-into-view 在"新增 tile-cell + 改 scroll-into-view"
+     同一帧到达时不可靠 —— scroll-view 计算位置时新节点尚未完成布局，
+     滚动会哑掉（Skyline scroll-view 已知行为）。
+     正确做法：scroll-view 开 enhanced，通过 ScrollViewContext.scrollIntoView()
+     在 nextTick 里调用，等 DOM 实际挂上、布局完成后再滚。*/
+  lifetimes: {
+    attached() {
+      this._lastPendingId = '';
+      this._svCtx = null;
+    },
+    ready() {
+      if (!this.data.isMe) return;
+      this._resolveScrollViewCtx();
+    },
   },
   observers: {
     'player, nowMs': function (player, now) {
@@ -36,17 +48,42 @@ Component({
         playerNameUpper: (player.name || '').toUpperCase(),
       });
     },
-    /* 只对自己的手牌滚动；对手区域是 wrap 排版没有滚动条 */
     'isMe, tiles': function (isMe, tiles) {
       if (!isMe) return;
       const pending = (tiles || []).find((t) => t && t.pending);
-      if (!pending || !pending.id) return;
-      const next = 'tile-' + pending.id;
-      if (next === this.data.focusViewId) return;
-      this.setData({ focusViewId: next });
+      const pid = pending && pending.id ? pending.id : '';
+      if (!pid || pid === this._lastPendingId) return;
+      this._lastPendingId = pid;
+      // 等 setData → 渲染落地后再滚，否则新 tile-cell 还没在 DOM 上
+      wx.nextTick(() => this._scrollToTile(pid));
     },
   },
   methods: {
+    _resolveScrollViewCtx() {
+      if (this._svCtx) return Promise.resolve(this._svCtx);
+      return new Promise((resolve) => {
+        this.createSelectorQuery()
+          .select('#hand-scroll')
+          .node()
+          .exec((res) => {
+            this._svCtx = (res && res[0] && res[0].node) || null;
+            resolve(this._svCtx);
+          });
+      });
+    },
+    async _scrollToTile(tileId) {
+      const ctx = await this._resolveScrollViewCtx();
+      if (!ctx || typeof ctx.scrollIntoView !== 'function') return;
+      // Skyline 3.1.0+ 才支持 ScrollIntoViewOptions（alignment/animated/offset）
+      try {
+        ctx.scrollIntoView('#tile-' + tileId, {
+          alignment: 'center',
+          animated: true,
+        });
+      } catch (e) {
+        ctx.scrollIntoView('#tile-' + tileId);
+      }
+    },
     onTileTap(e) {
       const id = e.currentTarget.dataset.id;
       if (!id) return;

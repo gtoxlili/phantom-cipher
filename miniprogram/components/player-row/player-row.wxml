@@ -22,6 +22,7 @@
        这样手牌再多也不会把对手区挤压到需要纵向滚动 -->
   <scroll-view
     wx:if="{{isMe}}"
+    id="hand-scroll"
     class="hand hand-me"
     scroll-x
     type="list"
@@ -29,9 +30,6 @@
     enhanced
     clip="{{false}}"
     show-scrollbar="{{false}}"
-    scroll-with-animation
-    scroll-into-view="{{focusViewId}}"
-    scroll-into-view-alignment="center"
   >
     <block wx:if="{{tiles.length === 0}}">
       <text class="empty-hand">· · ·</text>
