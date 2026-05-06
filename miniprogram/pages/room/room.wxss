@@ -26,89 +26,225 @@
   /* padding-bottom 由 inline style 注入 = layout.safeBottom + 8 */
 }
 
-/* ========== Waiting hint when alone ========== */
-.waiting-hint {
-  margin: 24rpx 28rpx 12rpx;
-  padding: 28rpx 26rpx;
-  background: rgba(19,19,19,0.7);
-  border: 4rpx dashed #fafaf3;
-  text-align: center;
-  transform: skewX(-2deg);
-}
-.hint-title {
-  display: inline-block;
-  background: #e60022;
-  color: #fafaf3;
-  padding: 8rpx 22rpx;
-  font-size: 30rpx;
-  font-weight: 900;
-  font-style: italic;
-  letter-spacing: 0.18em;
-  border: 3rpx solid #fafaf3;
-  transform: skewX(-8deg);
-  margin-bottom: 18rpx;
-}
-.hint-title text {
-  display: inline-block;
-  transform: skewX(8deg);
-}
-.hint-body {
-  display: flex;
-  flex-direction: column;
-  gap: 6rpx;
-}
-.hint-line {
-  color: #ece5cf;
-  font-size: 26rpx;
-  line-height: 1.7;
-}
-.hint-line text { color: #ece5cf; font-size: 26rpx; }
-.hint-line.muted text {
-  color: rgba(250,250,243,0.55);
-  font-size: 20rpx;
-  letter-spacing: 0.18em;
-}
-.hint-line .strong {
-  color: #e60022;
-  font-weight: 900;
-  font-style: italic;
-  letter-spacing: 0.18em;
+/* ========== Wanted Poster · P5 招募档案 ==========
+ * 视觉构造：
+ *   - 顶部一根斜红带，"案件档案"质感
+ *   - eyebrow：编号 + WANTED 标签
+ *   - 大字号日文「招集」+ 副英文
+ *   - 中部 cipher key 大方块（4 角装饰，标本式取景框）
+ *   - 主 CTA 按钮 = 二维码邀请
+ *   - 底部 footnote：游戏规格 dash 列表
+ */
+
+.poster {
+  position: relative;
+  margin: 16rpx 24rpx;
+  padding: 28rpx 28rpx 24rpx;
+  background: #131313;
+  border: 4rpx solid #fafaf3;
+  box-shadow: 10rpx 10rpx 0 #e60022;
+  overflow: hidden;
 }
 
-.hint-actions {
+/* 顶部红色斜带，伪装案件档案的撕裂感 */
+.poster-streak {
+  position: absolute;
+  top: -6rpx;
+  left: -10%;
+  right: -10%;
+  height: 36rpx;
+  background: #e60022;
+  transform: skewY(-3deg);
+  opacity: 0.92;
+}
+
+/* eyebrow: No. 01 + WANTED 标签 */
+.poster-eyebrow {
+  position: relative;
   display: flex;
   flex-direction: row;
-  justify-content: center;
-  margin-top: 22rpx;
-}
-.hint-btn {
-  display: inline-flex;
-  flex-direction: row;
   align-items: center;
-  gap: 12rpx;
-  background: #e60022;
-  color: #fafaf3;
-  padding: 12rpx 24rpx;
-  border: 3rpx solid #fafaf3;
-  box-shadow: 5rpx 5rpx 0 #0a0a0a;
-  transform: skewX(-8deg);
+  margin-top: 28rpx;
+  margin-bottom: 24rpx;
 }
-.hint-btn-press {
-  transform: skewX(-8deg) translate(2rpx, 2rpx);
-  box-shadow: 2rpx 2rpx 0 #0a0a0a;
+.eyebrow-no {
+  font-family: 'Bebas Neue', 'Oswald', sans-serif;
+  font-size: 22rpx;
+  letter-spacing: 0.4em;
+  color: rgba(250,250,243,0.55);
+  font-weight: 700;
+  font-style: italic;
+  margin-right: 14rpx;
+  white-space: nowrap;
 }
-.hint-btn text {
+.eyebrow-pill {
+  background: #fafaf3;
+  color: #0a0a0a;
+  padding: 4rpx 14rpx;
+  border: 2rpx solid #0a0a0a;
+  box-shadow: 3rpx 3rpx 0 #e60022;
+  transform: skewX(-10deg);
+}
+.eyebrow-pill text {
   display: inline-block;
-  transform: skewX(8deg);
-  font-size: 24rpx;
-  letter-spacing: 0.16em;
-  font-weight: 800;
+  transform: skewX(10deg);
+  font-size: 18rpx;
+  letter-spacing: 0.32em;
+  font-weight: 900;
   font-style: italic;
   white-space: nowrap;
 }
-.hint-btn .ico {
+
+/* 大标题：左日 右英 */
+.poster-title {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  margin-bottom: 30rpx;
+}
+.title-jp {
+  display: inline-block;
+  background: #e60022;
+  padding: 4rpx 16rpx 8rpx;
+  border: 3rpx solid #0a0a0a;
+  box-shadow: 5rpx 5rpx 0 #fafaf3;
+  transform: skewX(-6deg);
+  margin-right: 18rpx;
+}
+.title-jp text {
+  display: inline-block;
+  transform: skewX(6deg);
+  color: #fafaf3;
+  font-size: 56rpx;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+.title-en text {
+  color: rgba(250,250,243,0.6);
   font-size: 22rpx;
+  letter-spacing: 0.28em;
   font-weight: 700;
+  font-style: italic;
+  white-space: nowrap;
+}
+
+/* 中部 cipher key 大方块 */
+.poster-key {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 28rpx;
+}
+.key-label {
+  color: #e60022;
+  font-size: 20rpx;
+  letter-spacing: 0.42em;
+  font-weight: 800;
+  font-style: italic;
+  white-space: nowrap;
+  margin-bottom: 14rpx;
+}
+.key-frame {
+  position: relative;
+  width: 100%;
+  background: #fafaf3;
+  border: 4rpx solid #0a0a0a;
+  padding: 20rpx 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 6rpx 6rpx 0 #e60022;
+}
+.key-code {
+  color: #0a0a0a;
+  font-size: 96rpx;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.22em;
+  line-height: 1.05;
+  white-space: nowrap;
+}
+/* 取景框 4 角小红边角 —— 像专业杂志拍照的角标 */
+.key-corner {
+  position: absolute;
+  width: 18rpx;
+  height: 18rpx;
+  border: 4rpx solid #e60022;
+}
+.key-corner-tl { top: -3rpx; left: -3rpx; border-right: none; border-bottom: none; }
+.key-corner-tr { top: -3rpx; right: -3rpx; border-left: none; border-bottom: none; }
+.key-corner-bl { bottom: -3rpx; left: -3rpx; border-right: none; border-top: none; }
+.key-corner-br { bottom: -3rpx; right: -3rpx; border-left: none; border-top: none; }
+
+.key-sub {
+  margin-top: 14rpx;
+  color: rgba(250,250,243,0.65);
+  font-size: 22rpx;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+/* 主 CTA */
+.poster-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-bottom: 24rpx;
+}
+.primary-cta {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  background: #e60022;
+  border: 4rpx solid #0a0a0a;
+  box-shadow: 6rpx 6rpx 0 #fafaf3;
+  padding: 14rpx 28rpx;
+  transform: skewX(-8deg);
+}
+.primary-cta-press {
+  transform: skewX(-8deg) translate(3rpx, 3rpx);
+  box-shadow: 2rpx 2rpx 0 #fafaf3;
+}
+.primary-cta icon { margin-right: 14rpx; transform: skewX(8deg); }
+.primary-cta text {
+  display: inline-block;
+  transform: skewX(8deg);
+  color: #fafaf3;
+  font-size: 28rpx;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.16em;
+  white-space: nowrap;
+}
+
+/* footnote */
+.poster-footnote {
+  border-top: 2rpx dashed rgba(250,250,243,0.18);
+  padding-top: 16rpx;
+  display: flex;
+  flex-direction: column;
+}
+.footnote-line {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 6rpx;
+}
+.footnote-line:last-child { margin-bottom: 0; }
+.footnote-line .dash {
+  width: 20rpx;
+  height: 2rpx;
+  background: #e60022;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+.footnote-line text {
+  color: rgba(250,250,243,0.55);
+  font-size: 20rpx;
+  letter-spacing: 0.04em;
+  font-weight: 600;
 }
 
 /* ========== Action Zone ========== */
@@ -134,10 +270,75 @@
   font-style: italic;
 }
 
-.start-btn {
+/* ========== Standby 进度（< 2 人时） ==========
+ * 玩家加入进度灯，4 个点，未到的灯暗，到了的灯亮红。
+ * 整体非按钮态，低调且与 wanted-poster 调性一致。 */
+.standby {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14rpx 24rpx;
+}
+.standby-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+.standby-label {
+  color: rgba(250,250,243,0.62);
+  font-size: 22rpx;
+  letter-spacing: 0.32em;
+  font-weight: 700;
+  font-style: italic;
+  white-space: nowrap;
+  margin-right: 16rpx;
+}
+.standby-dots {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.standby-dot {
+  width: 14rpx;
+  height: 14rpx;
+  background: rgba(250,250,243,0.22);
+  border: 2rpx solid rgba(250,250,243,0.42);
+  margin-right: 8rpx;
+  transform: rotate(45deg);
+}
+.standby-dot.dim {
+  background: transparent;
+  border-color: rgba(250,250,243,0.18);
+}
+.standby-dot.lit {
   background: #e60022;
-  color: #fafaf3;
-  padding: 22rpx 40rpx;
+  border-color: #fafaf3;
+  animation: p5-blink 1.6s ease-in-out infinite;
+}
+.standby-count {
+  margin-left: 8rpx;
+  color: #ffd200;
+  font-size: 22rpx;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.standby-hint {
+  color: rgba(250,250,243,0.42);
+  font-size: 18rpx;
+  letter-spacing: 0.22em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ========== START 按钮（≥2 人时） ==========
+ * P5 "All-Out Attack" 双层错位标签 */
+.start-btn {
+  position: relative;
+  background: #e60022;
+  padding: 18rpx 40rpx 22rpx;
   border: 4rpx solid #0a0a0a;
   box-shadow: 8rpx 8rpx 0 #fafaf3;
   transform: skewX(-8deg);
@@ -146,20 +347,29 @@
   transform: skewX(-8deg) translate(4rpx, 4rpx);
   box-shadow: 2rpx 2rpx 0 #fafaf3;
 }
-.start-btn.disabled { opacity: 0.5; }
 .start-btn .lab {
   display: inline-flex;
   flex-direction: row;
-  align-items: center;
-  gap: 10rpx;
+  align-items: baseline;
   transform: skewX(8deg);
 }
-.start-btn text {
-  font-size: 30rpx;
+.start-btn .lab-zh {
+  color: #fafaf3;
+  font-size: 44rpx;
   font-weight: 900;
   font-style: italic;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.04em;
   white-space: nowrap;
+  margin-right: 14rpx;
+}
+.start-btn .lab-en {
+  color: rgba(250,250,243,0.7);
+  font-size: 22rpx;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  font-style: italic;
+  white-space: nowrap;
+  margin-right: 14rpx;
 }
 
 .deck-row {

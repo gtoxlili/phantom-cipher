@@ -1,17 +1,14 @@
 <view class="banner-host">
   <view class="banner mood-{{mood}}" key="{{animKey}}">
     <view class="inner">
-      <!-- accentIcon 优先于 accent 文本：JS 传 'arrow-right' / 'star' / 'dot' 时显图标，
-           否则把 accent 当文字直接 render（"1/2"、"·" 等） -->
-      <block wx:if="{{accentIcon}}">
-        <icon name="{{accentIcon}}" size="24" color="{{accentColor}}" />
-      </block>
-      <text wx:elif="{{accent}}" class="accent">{{accent}}</text>
+      <!-- 图标型 accent（▶ ★ ·）：左右各一，对称感强 -->
+      <icon wx:if="{{accentIcon}}" name="{{accentIcon}}" size="22" color="{{accentColor}}" />
       <text class="text">{{text}}</text>
-      <block wx:if="{{accentIcon}}">
-        <icon name="{{accentIcon}}" size="24" color="{{accentColor}}" />
-      </block>
-      <text wx:elif="{{accent}}" class="accent">{{accent}}</text>
+      <icon wx:if="{{accentIcon}}" name="{{accentIcon}}" size="22" color="{{accentColor}}" />
+      <!-- 文本型 accent（"1/2"）：当 chip 单挂尾巴，不要双侧重复 -->
+      <view wx:if="{{accent && !accentIcon}}" class="chip">
+        <text>{{accent}}</text>
+      </view>
     </view>
   </view>
 </view>

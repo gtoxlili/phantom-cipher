@@ -31,21 +31,52 @@
        4 人局时三个对手行可能超过自己空间，所以包一层 scroll-view 兜底。 -->
   <scroll-view class="opponents-area" scroll-y type="list" enhanced show-scrollbar="{{false}}">
     <block wx:if="{{opponentsCount === 0 && phase === 'waiting'}}">
-      <view class="waiting-hint">
-        <view class="hint-title"><text>STAND BY</text></view>
-        <view class="hint-body">
-          <view class="hint-line">
-            <text>把房间密码 </text>
-            <text class="strong">{{code}}</text>
-            <text> 告诉朋友</text>
-          </view>
-          <view class="hint-line"><text>或点击上方密码复制邀请词</text></view>
-          <view class="hint-line muted"><text>· 2–4 PLAYERS · 房主可在 ≥2 人时开局 ·</text></view>
+      <view class="poster">
+        <!-- 顶部红色斜带 P5 案件档案标头 -->
+        <view class="poster-streak"></view>
+
+        <!-- 文件编号 + 标签 -->
+        <view class="poster-eyebrow">
+          <text class="eyebrow-no">No.01</text>
+          <view class="eyebrow-pill"><text>WANTED ALLIES</text></view>
         </view>
-        <view class="hint-actions">
-          <view class="hint-btn" hover-class="hint-btn-press" hover-stay-time="80" bind:tap="onShowQr">
-            <icon name="qr" size="28" color="#fafaf3" />
-            <text>邀请二维码</text>
+
+        <!-- 大标题：日文（招集） + 英文 -->
+        <view class="poster-title">
+          <view class="title-jp"><text>招集</text></view>
+          <view class="title-en"><text>// CALLING THIEVES</text></view>
+        </view>
+
+        <!-- 主体大字号房间码 -->
+        <view class="poster-key">
+          <text class="key-label">— CIPHER KEY —</text>
+          <view class="key-frame">
+            <text class="key-code">{{code}}</text>
+            <view class="key-corner key-corner-tl" />
+            <view class="key-corner key-corner-tr" />
+            <view class="key-corner key-corner-bl" />
+            <view class="key-corner key-corner-br" />
+          </view>
+          <text class="key-sub">把这串密码丢给朋友 · 或扫码入局</text>
+        </view>
+
+        <!-- 行动按钮 -->
+        <view class="poster-actions">
+          <view class="primary-cta" hover-class="primary-cta-press" hover-stay-time="80" bind:tap="onShowQr">
+            <icon name="qr" size="32" color="#fafaf3" />
+            <text>展开邀请二维码</text>
+          </view>
+        </view>
+
+        <!-- 底部说明 -->
+        <view class="poster-footnote">
+          <view class="footnote-line">
+            <view class="dash"></view>
+            <text>2 ~ 4 玩家 · 房主可在 ≥ 2 人时开局</text>
+          </view>
+          <view class="footnote-line">
+            <view class="dash"></view>
+            <text>对局时长 5 ~ 30 分钟 · 单局制</text>
           </view>
         </view>
       </view>
@@ -78,20 +109,33 @@
     </block>
 
     <block wx:if="{{actionZone === 'start'}}">
+      <!-- 不到 2 人：进度条占位，整体低调 -->
+      <view wx:if="{{playerCount < 2}}" class="standby">
+        <view class="standby-row">
+          <text class="standby-label">玩家就位</text>
+          <view class="standby-dots">
+            <view class="standby-dot {{playerCount >= 1 ? 'lit' : ''}}" />
+            <view class="standby-dot {{playerCount >= 2 ? 'lit' : ''}}" />
+            <view class="standby-dot dim {{playerCount >= 3 ? 'lit' : ''}}" />
+            <view class="standby-dot dim {{playerCount >= 4 ? 'lit' : ''}}" />
+          </view>
+          <text class="standby-count">{{playerCount}}/4</text>
+        </view>
+        <text class="standby-hint">至少 2 人 · 房主才能开局</text>
+      </view>
+
+      <!-- 2 人以上：All-Out Attack 风格大红按钮 -->
       <view
-        class="start-btn {{playerCount < 2 ? 'disabled' : ''}}"
-        hover-class="{{playerCount < 2 ? '' : 'start-btn-press'}}"
+        wx:else
+        class="start-btn"
+        hover-class="start-btn-press"
         hover-stay-time="80"
         bind:tap="onStart"
       >
         <view class="lab">
-          <block wx:if="{{playerCount < 2}}">
-            <text>等待玩家 · {{playerCount}}/2 · MIN 2</text>
-          </block>
-          <block wx:else>
-            <text>开局 START · {{playerCount}} 玩家</text>
-            <icon name="arrow-right" size="28" color="#fafaf3" />
-          </block>
+          <text class="lab-zh">开局</text>
+          <text class="lab-en">START · {{playerCount}}P</text>
+          <icon name="arrow-right" size="28" color="#fafaf3" />
         </view>
       </view>
     </block>

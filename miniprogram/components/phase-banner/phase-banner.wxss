@@ -3,17 +3,17 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 24rpx 0 12rpx;
+  margin: 24rpx 24rpx 12rpx;
   pointer-events: none;
 }
 
 .banner {
   display: inline-block;
-  padding: 12rpx 28rpx;
+  padding: 10rpx 24rpx;
   border: 3rpx solid #0a0a0a;
   transform: skewX(-9deg);
   animation: p5-streak-in 0.42s cubic-bezier(0.16, 1, 0.3, 1) backwards;
-  max-width: 92%;
+  max-width: 100%;
 }
 
 .banner.mood-idle {
@@ -44,19 +44,33 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 16rpx;
   transform: skewX(9deg);
 }
+/* gap 替代 —— Skyline 1.4.7 flex+gap bug */
+.inner > icon { margin: 0 12rpx; }
 
 .text {
-  font-size: 32rpx;
-  letter-spacing: 0.18em;
+  font-size: 26rpx;
+  letter-spacing: 0.16em;
   font-weight: 900;
   font-style: italic;
+  white-space: nowrap;
 }
 
-.accent {
-  font-size: 28rpx;
+/* 文本型 accent 例如 "1/2"：当一个 chip 单独挂尾巴 */
+.chip {
+  margin-left: 14rpx;
+  padding: 2rpx 10rpx;
+  background: rgba(0, 0, 0, 0.35);
+  border: 2rpx solid currentColor;
+  border-radius: 4rpx;
+  display: inline-flex;
+  align-items: center;
+}
+.chip text {
+  font-size: 22rpx;
+  font-weight: 900;
   font-style: italic;
-  font-weight: 700;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
 }
