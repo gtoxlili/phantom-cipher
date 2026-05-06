@@ -256,12 +256,13 @@
    跟之前 view 一样的 P5 风格。 */
 .primary-cta {
   align-self: center;
-  /* 微信 <button> 默认 display:block 宽度被外面 align-items:stretch 影响，
-     即便外面 align-self:center 也可能只能拿到整数 px 的内容宽度 ——
-     在某些 Skyline 1.4.7 版本下表现成"按钮宽度比 text 内容窄"，
-     最后一字"片"被默认 overflow:hidden 裁掉。
-     用 width:max-content 强制按 text+icon 实际内容宽度撑开。 */
-  width: max-content;
+  /* Skyline 的 width 只接受 <length>，max-content / fit-content / auto
+     都被静默忽略；微信 <button> 默认 display:block 又把宽度收缩到比
+     text 内容更窄一截，最后一字"片"刚好掉进默认 overflow:hidden 的
+     裁切区。直接给一个足够的 min-width，让 button 不会再被收窄。
+     icon 46rpx + text "邀请好友 · 转发卡片" 28rpx*10 + letter-spacing
+     ≈ 320rpx + 横向 padding 72rpx ≈ 440rpx，给 480rpx 留余量。 */
+  min-width: 480rpx;
   display: inline-flex;
   flex-direction: row;
   align-items: center;
