@@ -88,14 +88,6 @@ button::after {
   50% { transform: rotate(1deg) translateY(-32rpx); }
 }
 
-/* 牌堆 active 时连续左右抖：translateX ±20rpx 大幅 + rotate ±6deg 摇摆，
-   节奏 0.6s 一轮，做到一眼能看到"快来抽我"。 */
-@keyframes p5-deck-pulse {
-  0%, 100%             { transform: translateX(0)      rotate(-2deg); }
-  12%, 36%, 60%, 84%   { transform: translateX(-20rpx) rotate(-6deg); }
-  24%, 48%, 72%, 96%   { transform: translateX(20rpx)  rotate(2deg); }
-}
-
 /* 可猜 / 可点提示：让对手未亮明的 ? 牌在猜牌阶段一直轻轻"喘"，
    旋转 + 缩放 + 上抬，吸引玩家点它。强度在不打扰浏览的范围内。 */
 @keyframes p5-selectable-pulse {
