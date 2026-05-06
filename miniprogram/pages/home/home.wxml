@@ -100,8 +100,8 @@
               <text>BACK</text>
             </view>
             <view class="btn primary submit" hover-class="btn-submit-press" hover-stay-time="80" bind:tap="submitCreate">
-              <view class="btn-label">
-                <text class="zh">开局</text>
+              <view class="submit-label">
+                <text>开局</text>
                 <icon name="arrow-right" size="28" color="#fafaf3" />
               </view>
             </view>
@@ -153,8 +153,8 @@
               <text>BACK</text>
             </view>
             <view class="btn primary submit" hover-class="btn-submit-press" hover-stay-time="80" bind:tap="submitJoin">
-              <view class="btn-label">
-                <text class="zh">进入</text>
+              <view class="submit-label">
+                <text>进入</text>
                 <icon name="arrow-right" size="28" color="#fafaf3" />
               </view>
             </view>

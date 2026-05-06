@@ -107,7 +107,9 @@
 .content {
   position: relative;
   z-index: 2;
-  padding: 0 40rpx;
+  /* 底部留 60rpx 防止「玩法简述」展开后最后一行贴到 scroll-area 底端
+     被裁切（footer 还在下面占位） */
+  padding: 0 40rpx 60rpx;
 }
 
 /* hook quote */
@@ -422,6 +424,23 @@
   background: #e60022;
   color: #fafaf3;
   box-shadow: 8rpx 8rpx 0 #0a0a0a;
+  /* submit 单行：text + arrow 横排 */
+  justify-content: center;
+}
+/* submit-label 自己 inline-flex row，不复用 .btn-label/.text-row 的列方向 */
+.submit-label {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12rpx;
+  transform: skewX(8deg);
+}
+.submit-label text {
+  font-size: 36rpx;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
 }
 .btn-submit-press {
   transform: skewX(-8deg) translate(4rpx, 4rpx);
