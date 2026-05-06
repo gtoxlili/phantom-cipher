@@ -151,10 +151,10 @@
 .hand-me {
   width: 100%;
   height: 200rpx;
-  padding-top: 32rpx;
-  padding-bottom: 12rpx;
+  padding: 32rpx 28rpx 12rpx 28rpx;
   white-space: nowrap;
   justify-content: flex-start;
+  box-sizing: border-box;
 }
 
 /* 对手手牌：换行排，对手最多 4 张牌一般一行就够 */
@@ -175,6 +175,7 @@
   display: inline-block;
   flex-shrink: 0;
   /* 替代父级 gap —— Skyline 1.4.7 flex+gap bug 会让最后一张牌被裁。
-     横向 24rpx 给 tile 之间足够呼吸，避免顶部 OPEN/NEW 标签互相挤压。 */
-  margin: 0 24rpx 8rpx 0;
+     横向 56rpx：tile 100rpx + skew 后的 OPEN 标签视觉宽 ~150rpx，
+     左右各溢出 ~25rpx，所以两 tile 之间留 ≥50rpx 才不让顶部标签重叠。 */
+  margin: 0 56rpx 8rpx 0;
 }
