@@ -155,9 +155,11 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 14rpx;
   transform: skewX(8deg);
 }
+/* Skyline 1.4.7 flex+gap 不稳，改用子元素 margin-right 给间距 */
+.joker-row > * { margin-right: 18rpx; }
+.joker-row > *:last-child { margin-right: 0; }
 
 .joker-btn .star {
   color: #e60022;
@@ -172,10 +174,14 @@
   font-style: italic;
   white-space: nowrap;
 }
+/* JOKER / 赖子 同号 — 之前 22rpx 比 JOKER 矮一截不协调；
+   赖子是中文方块字，给小一点的字距才不挤。 */
 .joker-btn .zh {
   color: #ece5cf;
-  font-size: 22rpx;
-  letter-spacing: 0.14em;
+  font-size: 30rpx;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  font-style: italic;
   white-space: nowrap;
 }
 
