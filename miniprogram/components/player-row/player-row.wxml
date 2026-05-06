@@ -27,6 +27,7 @@
     type="list"
     enable-flex
     enhanced
+    clip="{{false}}"
     show-scrollbar="{{false}}"
   >
     <block wx:if="{{tiles.length === 0}}">
