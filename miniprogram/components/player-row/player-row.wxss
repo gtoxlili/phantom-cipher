@@ -138,14 +138,25 @@
 .hand {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
-  gap: 18rpx 12rpx;
   align-items: flex-end;
   padding-top: 14rpx;
   transform: skewX(3deg);
 }
 
+/* 自己的手牌：scroll-view scroll-x，单行不换行；
+   牌再多也不会把对手区挤得需要纵向滚动。
+   高度 = tile(md=140rpx) + 上方 NEW/OPEN 标签(~28rpx) + padding(14rpx)
+   ≈ 200rpx 兜底 */
 .hand-me {
+  width: 100%;
+  height: 200rpx;
+  white-space: nowrap;
+  justify-content: flex-start;
+}
+
+/* 对手手牌：换行排，对手最多 4 张牌一般一行就够 */
+.hand-op {
+  flex-wrap: wrap;
   justify-content: flex-start;
 }
 
@@ -160,4 +171,6 @@
 .tile-cell {
   display: inline-block;
   flex-shrink: 0;
+  /* 替代父级 gap —— Skyline 1.4.7 flex+gap bug 会让最后一张牌被裁 */
+  margin: 0 10rpx 8rpx 0;
 }

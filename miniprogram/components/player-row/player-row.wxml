@@ -18,24 +18,61 @@
     </view>
   </view>
 
-  <view class="hand {{isMe ? 'hand-me' : 'hand-op'}}">
+  <!-- 自己的手牌：单行不换行，超过屏幕宽度横向滚动；
+       这样手牌再多也不会把对手区挤压到需要纵向滚动 -->
+  <scroll-view
+    wx:if="{{isMe}}"
+    class="hand hand-me"
+    scroll-x
+    type="list"
+    enable-flex
+    enhanced
+    show-scrollbar="{{false}}"
+  >
     <block wx:if="{{tiles.length === 0}}">
       <text class="empty-hand">· · ·</text>
     </block>
     <block wx:else>
       <view class="tile-cell" wx:for="{{tiles}}" wx:key="id" wx:for-item="t" wx:for-index="i">
         <tile
-          number="{{isMe ? t.number : (t.revealed ? t.number : null)}}"
+          number="{{t.number}}"
           color="{{t.color}}"
-          joker="{{isMe ? t.joker : (t.revealed && t.joker)}}"
-          face-down="{{!isMe && !t.revealed}}"
-          owned-hidden="{{isMe && !t.revealed && !t.pending}}"
-          owned-exposed="{{isMe && t.revealed}}"
+          joker="{{t.joker}}"
+          face-down="{{false}}"
+          owned-hidden="{{!t.revealed && !t.pending}}"
+          owned-exposed="{{t.revealed}}"
+          pending="{{t.pending}}"
+          selected="{{false}}"
+          selectable="{{false}}"
+          highlight="{{revealTileId === t.id ? (revealCorrect ? 'correct' : 'wrong') : ''}}"
+          size="md"
+          index="{{i}}"
+          clickable="{{false}}"
+          data-id="{{t.id}}"
+        />
+      </view>
+    </block>
+  </scroll-view>
+
+  <!-- 对手手牌：换行排，因为对手最多 4 张牌一般一行就够 -->
+  <view wx:else class="hand hand-op">
+    <block wx:if="{{tiles.length === 0}}">
+      <text class="empty-hand">· · ·</text>
+    </block>
+    <block wx:else>
+      <view class="tile-cell" wx:for="{{tiles}}" wx:key="id" wx:for-item="t" wx:for-index="i">
+        <tile
+          number="{{t.revealed ? t.number : null}}"
+          color="{{t.color}}"
+          joker="{{t.revealed && t.joker}}"
+          face-down="{{!t.revealed}}"
+          owned-hidden="{{false}}"
+          owned-exposed="{{false}}"
           pending="{{t.pending}}"
           selected="{{selectedTileId === t.id}}"
           selectable="{{canTarget && !t.revealed && player.alive}}"
           highlight="{{revealTileId === t.id ? (revealCorrect ? 'correct' : 'wrong') : ''}}"
-          size="{{isMe ? 'lg' : 'md'}}"
+          size="md"
           index="{{i}}"
           clickable="{{canTarget && !t.revealed && player.alive}}"
           data-id="{{t.id}}"
