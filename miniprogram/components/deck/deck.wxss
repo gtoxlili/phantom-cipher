@@ -18,18 +18,17 @@
   opacity: 0.45;
 }
 
-/* keyframe 直接定义在组件内部，避免 app.wxss 的全局 keyframes
-   在这个组件的 styleIsolation 下被解析为不存在导致动画不跑。
-   Skyline 的 will-change 只允许 auto / contents，不能用 transform，
-   就靠改 transform-origin + 简单 keyframe 让节点稳定提到合成层。 */
+/* keyframe 直接定义在组件内部，绕开 app.wxss 全局 keyframes 在
+   styleIsolation:isolated 子组件下名字解析为空导致动画不生效的坑。
+   动画参数对齐 web 端 frontend：rotate -3deg ↔ +2deg + scale 1 ↔ 1.05，
+   节奏 1s ease-in-out infinite，是温柔的"摇一下，胀一点"提示。 */
 .deck.active {
-  animation: deck-shake 0.6s ease-in-out infinite;
+  animation: deck-pulse 1s ease-in-out infinite;
   transform-origin: 50% 50%;
 }
-@keyframes deck-shake {
-  0%, 100%             { transform: translateX(0)      rotate(-2deg); }
-  12%, 36%, 60%, 84%   { transform: translateX(-20rpx) rotate(-6deg); }
-  24%, 48%, 72%, 96%   { transform: translateX(20rpx)  rotate(2deg); }
+@keyframes deck-pulse {
+  0%, 100% { transform: rotate(-3deg) scale(1); }
+  50%      { transform: rotate(2deg)  scale(1.05); }
 }
 
 .deck-press {

@@ -11,7 +11,7 @@
   display: inline-block;
   flex-shrink: 0;
   transform: rotate(-2deg);
-  animation-name: p5-tile-in;
+  animation-name: tile-in-pop;
   animation-duration: 0.45s;
   animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
   animation-fill-mode: backwards;
@@ -152,8 +152,8 @@
 /* 暂置牌悬浮 */
 .tile.is-pending {
   animation:
-    p5-tile-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) backwards,
-    p5-pending-hover 1.6s ease-in-out 0.5s infinite;
+    tile-in-pop 0.45s cubic-bezier(0.16, 1, 0.3, 1) backwards,
+    tile-pending-hover 1.6s ease-in-out 0.5s infinite;
 }
 .tag.pending-tag {
   position: absolute;
@@ -211,7 +211,7 @@
   border-radius: 50%;
   background: #e60022;
   z-index: 5;
-  animation: p5-blink 1.5s ease-in-out infinite;
+  animation: tile-blink 1.5s ease-in-out infinite;
 }
 
 .tile.is-owned-hidden { opacity: 0.92; }
@@ -219,8 +219,8 @@
 
 .tile.is-pulse {
   animation:
-    p5-tile-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) backwards,
-    p5-selectable-pulse 0.9s ease-in-out infinite;
+    tile-in-pop 0.45s cubic-bezier(0.16, 1, 0.3, 1) backwards,
+    tile-selectable-pulse 0.9s ease-in-out infinite;
 }
 
 .tile.is-selected {
@@ -234,8 +234,45 @@
 }
 
 .tile.flash-correct {
-  animation: p5-flash-correct 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+  animation: tile-flash-correct 0.9s cubic-bezier(0.16, 1, 0.3, 1);
 }
 .tile.flash-wrong {
-  animation: p5-flash-wrong 0.6s ease-in-out;
+  animation: tile-flash-wrong 0.6s ease-in-out;
+}
+
+/* keyframes 在组件内部定义 —— app.wxss 的全局 keyframes 在组件
+   styleIsolation:isolated 下名字解析为空，动画跑了但效果是 0。
+   tile 的所有动画名都改成局部唯一前缀避免和别处冲突。 */
+@keyframes tile-in-pop {
+  0%   { opacity: 0; transform: rotate(-12deg) translateY(40rpx) scale(0.85); }
+  60%  { opacity: 1; }
+  100% { opacity: 1; transform: rotate(-2deg) translateY(0) scale(1); }
+}
+@keyframes tile-pending-hover {
+  0%, 100% { transform: rotate(-1deg) translateY(-24rpx); }
+  50%      { transform: rotate(1deg)  translateY(-32rpx); }
+}
+/* 对手未亮明 ? 牌在玩家可猜阶段一直轻轻喘：scale + rotate + 上抬，
+   节奏 0.9s ease-in-out infinite。比 web 略多了 translateY 一点点
+   "想被你点"的肢体语言。 */
+@keyframes tile-selectable-pulse {
+  0%, 100% { transform: rotate(-2deg) translateY(0)     scale(1); }
+  50%      { transform: rotate(2deg)  translateY(-6rpx) scale(1.08); }
+}
+/* 命中：scale 1 → 1.22 → 1 干脆的 pop，对齐 web 端 flashCorrect。 */
+@keyframes tile-flash-correct {
+  0%   { transform: rotate(-2deg) scale(1); }
+  35%  { transform: rotate(0deg)  scale(1.22); }
+  100% { transform: rotate(-2deg) scale(1); }
+}
+/* 失手：左右抖 —— rotate 全程锁 -2deg，translateX 在 ±12rpx 之间
+   高频震荡，对齐 web 端 flashWrong 的 shake 风格。 */
+@keyframes tile-flash-wrong {
+  0%, 100%             { transform: rotate(-2deg) translateX(0); }
+  10%, 30%, 50%, 70%   { transform: rotate(-2deg) translateX(-12rpx); }
+  20%, 40%, 60%, 80%   { transform: rotate(-2deg) translateX(12rpx); }
+}
+@keyframes tile-blink {
+  0%, 50%, 100% { opacity: 1; }
+  25%, 75%      { opacity: 0.45; }
 }

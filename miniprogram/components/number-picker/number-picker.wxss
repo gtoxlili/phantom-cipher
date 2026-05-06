@@ -104,9 +104,11 @@
 }
 /* 动画只在 picker 真的被打开时附加，class 切换会让 Skyline
    把动画从头重播，每次开启 sheet 都能看到数字按钮依序弹入。
-   per-button delay 由 wxml 上的 inline style 注入。 */
+   per-button delay 由 wxml 上的 inline style 注入。
+   keyframe 本地定义，避开 app.wxss 全局 keyframes 在组件
+   styleIsolation 下名字解析为空导致动画跑空的坑。 */
 .num-grid.is-entering .num-btn {
-  animation: p5-burst 0.32s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  animation: picker-burst 0.32s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 
 .num-btn-press {
@@ -137,7 +139,12 @@
   justify-content: center;
 }
 .joker-btn.is-entering {
-  animation: p5-burst 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.5s backwards;
+  animation: picker-burst 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.5s backwards;
+}
+@keyframes picker-burst {
+  0%   { transform: scale(0.5)  rotate(-10deg); opacity: 0; }
+  60%  { transform: scale(1.15) rotate(2deg);   opacity: 1; }
+  100% { transform: scale(1)    rotate(-3deg);  opacity: 1; }
 }
 .joker-btn-press {
   transform: skewX(-8deg) translate(3rpx, 3rpx);

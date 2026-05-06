@@ -20,9 +20,15 @@
   box-shadow: 12rpx 12rpx 0 #e60022;
   padding: 36rpx 32rpx 28rpx;
   transform: skewX(-3deg);
-  animation: p5-burst 0.36s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+  animation: qr-burst 0.36s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
 .sheet > * { transform: skewX(3deg); }
+/* 本地 keyframe，组件 styleIsolation 下不能可靠用 app.wxss 全局 keyframes */
+@keyframes qr-burst {
+  0%   { transform: scale(0.5)  rotate(-10deg); opacity: 0; }
+  60%  { transform: scale(1.15) rotate(2deg);   opacity: 1; }
+  100% { transform: scale(1)    rotate(-3deg);  opacity: 1; }
+}
 
 .eyebrow {
   text-align: center;

@@ -88,7 +88,7 @@
   letter-spacing: 0.2em;
   font-weight: 800;
   transform: skewX(-8deg);
-  animation: p5-blink 1.2s ease-in-out infinite;
+  animation: pr-blink 1.2s ease-in-out infinite;
 }
 
 .dead-tag {
@@ -132,7 +132,7 @@
   height: 10rpx;
   border-radius: 50%;
   background: #e60022;
-  animation: p5-blink 0.8s ease-in-out infinite;
+  animation: pr-blink 0.8s ease-in-out infinite;
 }
 
 .hand {
@@ -178,4 +178,10 @@
      横向 56rpx：tile 100rpx + skew 后的 OPEN 标签视觉宽 ~150rpx，
      左右各溢出 ~25rpx，所以两 tile 之间留 ≥50rpx 才不让顶部标签重叠。 */
   margin: 0 56rpx 8rpx 0;
+}
+
+/* 本地 keyframe —— 组件 styleIsolation 下不能可靠引用 app.wxss 的全局 keyframes */
+@keyframes pr-blink {
+  0%, 50%, 100% { opacity: 1; }
+  25%, 75%      { opacity: 0.45; }
 }
