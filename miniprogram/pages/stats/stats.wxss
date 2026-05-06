@@ -189,6 +189,7 @@
   align-items: baseline;
   gap: 14rpx;
   margin-bottom: 14rpx;
+  padding-top: 36rpx;
 }
 .section-head .cn {
   color: #fafaf3;
