@@ -22,7 +22,12 @@
   transform: skewX(-3deg);
   animation: qr-burst 0.36s cubic-bezier(0.16, 1, 0.3, 1) backwards;
 }
-.sheet > * { transform: skewX(3deg); }
+/* Skyline 不支持 *（universal selector），把 sheet 内每个直接子项
+   反向 skew 抵消父级 skewX(-3deg)，要逐个枚举类名 */
+.sheet .eyebrow,
+.sheet .frame,
+.sheet .caption,
+.sheet .dismiss { transform: skewX(3deg); }
 /* 本地 keyframe，组件 styleIsolation 下不能可靠用 app.wxss 全局 keyframes */
 @keyframes qr-burst {
   0%   { transform: scale(0.5)  rotate(-10deg); opacity: 0; }

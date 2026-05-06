@@ -157,9 +157,11 @@
   align-items: center;
   transform: skewX(8deg);
 }
-/* Skyline 1.4.7 flex+gap 不稳，改用子元素 margin-right 给间距 */
-.joker-row > * { margin-right: 18rpx; }
-.joker-row > *:last-child { margin-right: 0; }
+/* Skyline 1.4.7 flex+gap 不稳，改用子元素 margin-right 给间距。
+   Skyline 也不支持 universal selector *，要逐个枚举类名。
+   .zh 是最后一个子元素，不给 margin-right。 */
+.joker-row icon,
+.joker-row .label { margin-right: 18rpx; }
 
 .joker-btn .star {
   color: #e60022;
