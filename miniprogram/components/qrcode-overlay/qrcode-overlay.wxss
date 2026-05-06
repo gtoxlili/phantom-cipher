@@ -52,17 +52,21 @@
   transform: skewX(-8deg);
 }
 
+/* aspect-ratio 在 Skyline 1.4.7 不可靠，frame 容易塌成 0 高度让 <image>
+   渲染不出来 —— 直接给死高宽。sheet 最大宽 580rpx + padding 32rpx*2 +
+   frame padding 24rpx*2，剩 ~468rpx 给二维码用，圆整到 460rpx 方框。 */
 .frame {
   width: 100%;
+  height: 460rpx;
   background: #fafaf3;
   border: 4rpx solid #0a0a0a;
   box-shadow: 6rpx 6rpx 0 #e60022;
   padding: 24rpx;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 22rpx;
-  aspect-ratio: 1 / 1;
 }
 .qr {
   width: 100%;
