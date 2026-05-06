@@ -1,0 +1,206 @@
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 90;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  /* 永远 mount，靠 pointer-events 控制可点性；视觉由 worklet 驱动 */
+}
+.backdrop.is-hidden { pointer-events: none; }
+.backdrop.is-shown { pointer-events: auto; }
+
+/* 半透黑底 —— opacity 由 worklet 驱动 */
+.back-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 10, 10, 0.78);
+  opacity: 0;
+}
+
+.sheet {
+  position: relative;
+  width: 100%;
+  background: #131313;
+  border-top: 5rpx solid #e60022;
+  padding-top: 18rpx;
+  padding-left: 24rpx;
+  padding-right: 24rpx;
+  /* padding-bottom 由 inline style 注入 = safeBottom + 28 px */
+  /* transform 由 worklet 驱动 */
+  transform: translateY(800px);
+}
+
+/* 抓手：暗示可下拉关闭 */
+.grab {
+  width: 80rpx;
+  height: 8rpx;
+  background: rgba(250,250,243,0.32);
+  border-radius: 4rpx;
+  margin: 0 auto 18rpx;
+}
+
+.title {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 18rpx;
+  border-bottom: 2rpx dashed rgba(250,250,243,0.2);
+  margin-bottom: 22rpx;
+  flex-wrap: wrap;
+  gap: 18rpx;
+}
+.title .strong {
+  color: #e60022;
+  font-size: 30rpx;
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  font-style: italic;
+}
+.title .hint {
+  color: #ece5cf;
+  font-size: 24rpx;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+}
+.color-tag {
+  padding: 4rpx 14rpx;
+  font-size: 22rpx;
+  font-weight: 800;
+  letter-spacing: 0.18em;
+  transform: skewX(-8deg);
+  border: 2rpx solid #fafaf3;
+}
+.color-tag.color-black { background: #0a0a0a; color: #fafaf3; }
+.color-tag.color-white { background: #fafaf3; color: #0a0a0a; }
+.color-tag text { transform: skewX(8deg); display: inline-block; }
+
+.num-grid {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.num-btn {
+  width: 116rpx;
+  height: 116rpx;
+  background: #fafaf3;
+  color: #0a0a0a;
+  border: 4rpx solid #0a0a0a;
+  box-shadow: 5rpx 5rpx 0 #e60022;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: skewX(-8deg);
+  margin: 7rpx;
+}
+/* 动画只在 picker 真的被打开时附加，class 切换会让 Skyline
+   把动画从头重播，每次开启 sheet 都能看到数字按钮依序弹入。
+   per-button delay 由 wxml 上的 inline style 注入。
+   keyframe 本地定义，避开 app.wxss 全局 keyframes 在组件
+   styleIsolation 下名字解析为空导致动画跑空的坑。 */
+.num-grid.is-entering .num-btn {
+  animation: picker-burst 0.32s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+
+.num-btn-press {
+  transform: skewX(-8deg) translate(3rpx, 3rpx);
+  box-shadow: 2rpx 2rpx 0 #e60022;
+  background: #e60022;
+  color: #fafaf3;
+}
+.num-btn-press text { color: #fafaf3; }
+
+.num-btn text {
+  font-size: 56rpx;
+  font-weight: 900;
+  font-style: italic;
+  display: inline-block;
+  transform: skewX(8deg);
+}
+
+.joker-btn {
+  margin-top: 24rpx;
+  background: #0a0a0a;
+  border: 4rpx solid #fafaf3;
+  box-shadow: 5rpx 5rpx 0 #e60022;
+  padding: 18rpx 24rpx;
+  transform: skewX(-8deg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.joker-btn.is-entering {
+  animation: picker-burst 0.32s cubic-bezier(0.16, 1, 0.3, 1) 0.5s backwards;
+}
+@keyframes picker-burst {
+  0%   { transform: scale(0.5)  rotate(-10deg); opacity: 0; }
+  60%  { transform: scale(1.15) rotate(2deg);   opacity: 1; }
+  100% { transform: scale(1)    rotate(-3deg);  opacity: 1; }
+}
+.joker-btn-press {
+  transform: skewX(-8deg) translate(3rpx, 3rpx);
+  box-shadow: 2rpx 2rpx 0 #e60022;
+}
+
+.joker-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  transform: skewX(8deg);
+}
+/* Skyline 1.4.7 flex+gap 不稳，改用子元素 margin-right 给间距。
+   Skyline 也不支持 universal selector *，要逐个枚举类名。
+   .zh 是最后一个子元素，不给 margin-right。 */
+.joker-row icon,
+.joker-row .label { margin-right: 18rpx; }
+
+.joker-btn .star {
+  color: #e60022;
+  font-size: 38rpx;
+  font-style: italic;
+}
+.joker-btn .label {
+  color: #fafaf3;
+  font-size: 30rpx;
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  font-style: italic;
+  white-space: nowrap;
+}
+/* JOKER / 赖子 同号 — 之前 22rpx 比 JOKER 矮一截不协调；
+   赖子是中文方块字，给小一点的字距才不挤。 */
+.joker-btn .zh {
+  color: #ece5cf;
+  font-size: 30rpx;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  font-style: italic;
+  white-space: nowrap;
+}
+
+.cancel {
+  margin-top: 22rpx;
+  padding: 12rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+}
+.cancel text {
+  color: #ece5cf;
+  font-size: 22rpx;
+  letter-spacing: 0.32em;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.cancel-press text { color: #e60022; }

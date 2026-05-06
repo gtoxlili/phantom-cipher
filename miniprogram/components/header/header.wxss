@@ -1,0 +1,129 @@
+/* ===================================================================== *
+ * Header Row 1：back-btn + cipher-key-card
+ * 严格按胶囊高度排，整行视觉跟系统胶囊同行同高。
+ * ===================================================================== */
+
+.hd {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-left: 24rpx;
+  /* padding-right + min-height 由 inline style 注入 = 胶囊高度 */
+}
+
+/* ====== back 按钮 ====== */
+.icon-btn {
+  border: 3rpx solid #fafaf3;
+  background: #131313;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: skewX(-6deg);
+  box-shadow: 4rpx 4rpx 0 #e60022;
+  /* back 按钮和右侧 CIPHER KEY 卡之间的间距：放在 icon-btn 上而不是
+     code-wrap 上 —— 微信 <button>（code-wrap 是 button open-type=share）
+     在 Skyline 下不接 margin，写在 button 上完全没效果。 */
+  margin-right: 14rpx;
+}
+.icon-btn-press {
+  transform: skewX(-6deg) translate(2rpx, 2rpx);
+  box-shadow: 2rpx 2rpx 0 #e60022;
+}
+
+/* ====== Cipher Key Card · evidence-tag 三段式 ======
+ * ┌─┬───────────────────┬─────────┐
+ * │█│ CIPHER KEY //     │ ↗ SHARE │
+ * │█│   K  B  J  Y      │         │
+ * └─┴───────────────────┴─────────┘
+ *  ↑ red spine
+ * ===================================================== */
+/* code-wrap 是 <button open-type="share">，需要 reset 微信 button 的
+   默认 padding / line-height / 圆角 / 内置 ::after 描边，才能跟之前
+   <view> 视觉一致。 */
+.code-wrap {
+  flex: 1;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  background: #fafaf3;
+  border: 3rpx solid #0a0a0a;
+  border-radius: 0;
+  box-shadow: 5rpx 5rpx 0 #e60022;
+  transform: skewX(-8deg);
+  overflow: hidden;
+  line-height: 1;
+}
+.code-wrap::after { border: none; }
+.code-wrap-press {
+  box-shadow: 2rpx 2rpx 0 #e60022;
+  transform: skewX(-8deg) translate(3rpx, 3rpx);
+}
+
+/* 左侧红色重音 spine —— 像证据袋封口的染料标 */
+.code-spine {
+  width: 8rpx;
+  background: #e60022;
+  flex-shrink: 0;
+}
+
+/* 中段 body：label + code 上下叠 */
+.code-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 0 14rpx 0 12rpx;
+  min-width: 0;
+}
+.code-label {
+  display: inline-block;
+  transform: skewX(8deg);
+  color: #e60022;
+  font-size: 13rpx;
+  letter-spacing: 0.32em;
+  font-weight: 800;
+  font-style: italic;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.code {
+  display: inline-block;
+  transform: skewX(8deg);
+  color: #0a0a0a;
+  font-size: 32rpx;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.28em;
+  line-height: 1.05;
+  white-space: nowrap;
+}
+
+/* 右侧 action chip —— 视觉上是张邮票一样的小贴片 */
+.code-aux {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 12rpx 0 10rpx;
+  border-left: 2rpx dashed rgba(10,10,10,0.3);
+  flex-shrink: 0;
+}
+.code-aux icon {
+  transform: skewX(8deg);
+  margin-bottom: 1rpx;
+}
+.code-aux text {
+  display: inline-block;
+  transform: skewX(8deg);
+  color: rgba(10,10,10,0.6);
+  font-size: 13rpx;
+  letter-spacing: 0.18em;
+  font-weight: 800;
+  font-style: italic;
+  white-space: nowrap;
+  line-height: 1;
+}

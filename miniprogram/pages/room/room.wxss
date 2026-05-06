@@ -1,0 +1,608 @@
+.room {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  /* padding-top 由 inline style 注入 = statusBarHeight px */
+  z-index: 1;
+}
+
+/* 二级行：phase-banner 拉伸 + log 按钮右钉 + 断线 chip 居中可选 */
+.secondary-row {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 14rpx 24rpx 10rpx;
+}
+.phase-slot {
+  flex: 1;
+  min-width: 0;
+  margin-right: 4rpx;
+}
+.disconnected-chip {
+  margin-right: 12rpx;
+  background: #e60022;
+  color: #fafaf3;
+  border: 3rpx solid #0a0a0a;
+  padding: 4rpx 12rpx;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  transform: skewX(-6deg);
+}
+.disconnected-chip .dot {
+  width: 10rpx;
+  height: 10rpx;
+  border-radius: 50%;
+  background: #fafaf3;
+  margin-right: 6rpx;
+  animation: p5-blink 1s ease-in-out infinite;
+}
+.disconnected-chip text {
+  display: inline-block;
+  transform: skewX(6deg);
+  color: #fafaf3;
+  font-size: 16rpx;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.log-btn {
+  flex-shrink: 0;
+  margin-left: 14rpx;
+  width: 60rpx;
+  height: 60rpx;
+  border: 3rpx solid #fafaf3;
+  background: #131313;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: skewX(-6deg);
+  box-shadow: 4rpx 4rpx 0 #e60022;
+}
+.log-btn-press {
+  transform: skewX(-6deg) translate(2rpx, 2rpx);
+  box-shadow: 2rpx 2rpx 0 #e60022;
+}
+
+/* 对手区：撑满中段剩余空间。多于 1 个对手或屏幕短时滚动起来 */
+.opponents-area {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+}
+
+/* ActionZone 自适应高度，紧贴对手区下方 + 自己手牌上方 */
+.action-zone {
+  flex-shrink: 0;
+}
+
+.my-area {
+  flex-shrink: 0;
+  width: 100%;
+  /* padding-bottom 由 inline style 注入 = layout.safeBottom + 8 */
+}
+
+/* ========== Wanted Poster · P5 招募档案 ==========
+ * 视觉构造：
+ *   - 顶部一根斜红带，"案件档案"质感
+ *   - eyebrow：编号 + WANTED 标签
+ *   - 大字号日文「招集」+ 副英文
+ *   - 中部 cipher key 大方块（4 角装饰，标本式取景框）
+ *   - 主 CTA 按钮 = 二维码邀请
+ *   - 底部 footnote：游戏规格 dash 列表
+ */
+
+.poster {
+  position: relative;
+  margin: 16rpx 24rpx;
+  padding: 28rpx 28rpx 24rpx;
+  background: #131313;
+  border: 4rpx solid #fafaf3;
+  box-shadow: 10rpx 10rpx 0 #e60022;
+  overflow: hidden;
+  /* 拉伸到 opponents-area 全部剩余空间 */
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100% - 32rpx);
+}
+/* 把卡片中段空间塞满，让 footnote 钉在底端 */
+.poster-spacer { flex: 1; min-height: 28rpx; }
+
+/* 顶部红色斜带，伪装案件档案的撕裂感 */
+.poster-streak {
+  position: absolute;
+  top: -6rpx;
+  left: -10%;
+  right: -10%;
+  height: 36rpx;
+  background: #e60022;
+  transform: skewY(-3deg);
+  opacity: 0.92;
+}
+
+/* eyebrow: No. 01 + WANTED 标签 */
+.poster-eyebrow {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 28rpx;
+  margin-bottom: 24rpx;
+}
+.eyebrow-no {
+  font-family: 'Bebas Neue', 'Oswald', sans-serif;
+  font-size: 22rpx;
+  letter-spacing: 0.4em;
+  color: rgba(250,250,243,0.55);
+  font-weight: 700;
+  font-style: italic;
+  margin-right: 14rpx;
+  white-space: nowrap;
+}
+.eyebrow-pill {
+  background: #fafaf3;
+  color: #0a0a0a;
+  padding: 4rpx 14rpx;
+  border: 2rpx solid #0a0a0a;
+  box-shadow: 3rpx 3rpx 0 #e60022;
+  transform: skewX(-10deg);
+}
+.eyebrow-pill text {
+  display: inline-block;
+  transform: skewX(10deg);
+  font-size: 18rpx;
+  letter-spacing: 0.32em;
+  font-weight: 900;
+  font-style: italic;
+  white-space: nowrap;
+}
+
+/* 大标题：左日 右英 */
+.poster-title {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  margin-bottom: 30rpx;
+}
+.title-jp {
+  display: inline-block;
+  background: #e60022;
+  padding: 4rpx 16rpx 8rpx;
+  border: 3rpx solid #0a0a0a;
+  box-shadow: 5rpx 5rpx 0 #fafaf3;
+  transform: skewX(-6deg);
+  margin-right: 18rpx;
+}
+.title-jp text {
+  display: inline-block;
+  transform: skewX(6deg);
+  color: #fafaf3;
+  font-size: 56rpx;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.06em;
+  line-height: 1;
+}
+.title-en text {
+  color: rgba(250,250,243,0.6);
+  font-size: 22rpx;
+  letter-spacing: 0.28em;
+  font-weight: 700;
+  font-style: italic;
+  white-space: nowrap;
+}
+
+/* 中部 cipher key 大方块 */
+.poster-key {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 28rpx;
+}
+.key-label {
+  color: #e60022;
+  font-size: 20rpx;
+  letter-spacing: 0.42em;
+  font-weight: 800;
+  font-style: italic;
+  white-space: nowrap;
+  margin-bottom: 14rpx;
+}
+.key-frame {
+  position: relative;
+  width: 100%;
+  background: #fafaf3;
+  border: 4rpx solid #0a0a0a;
+  padding: 20rpx 28rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 6rpx 6rpx 0 #e60022;
+}
+.key-code {
+  color: #0a0a0a;
+  font-size: 96rpx;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.22em;
+  line-height: 1.05;
+  white-space: nowrap;
+}
+/* 取景框 4 角小红边角 —— 像专业杂志拍照的角标 */
+.key-corner {
+  position: absolute;
+  width: 18rpx;
+  height: 18rpx;
+  border: 4rpx solid #e60022;
+}
+.key-corner-tl { top: -3rpx; left: -3rpx; border-right: none; border-bottom: none; }
+.key-corner-tr { top: -3rpx; right: -3rpx; border-left: none; border-bottom: none; }
+.key-corner-bl { bottom: -3rpx; left: -3rpx; border-right: none; border-top: none; }
+.key-corner-br { bottom: -3rpx; right: -3rpx; border-left: none; border-top: none; }
+
+.key-sub {
+  margin-top: 14rpx;
+  color: rgba(250,250,243,0.65);
+  font-size: 22rpx;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+/* 主 CTA：是 <button open-type="share">，原生触发分享菜单。
+   button 标签默认 text-align:center + 各种 padding，全部 reset 到
+   跟之前 view 一样的 P5 风格。 */
+.primary-cta {
+  align-self: center;
+  /* Skyline 的 width 只接受 <length>，max-content / fit-content / auto
+     都被静默忽略；微信 <button> 默认 display:block 又把宽度收缩到比
+     text 内容更窄一截，最后一字"片"刚好掉进默认 overflow:hidden 的
+     裁切区。直接给一个足够的 min-width，让 button 不会再被收窄。
+     icon 46rpx + text "邀请好友 · 转发卡片" 28rpx*10 + letter-spacing
+     ≈ 320rpx + 横向 padding 72rpx ≈ 440rpx，给 480rpx 留余量。 */
+  min-width: 480rpx;
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background: #e60022;
+  border: 4rpx solid #0a0a0a;
+  box-shadow: 6rpx 6rpx 0 #fafaf3;
+  padding: 14rpx 36rpx;
+  transform: skewX(-8deg);
+  margin: 0 0 8rpx;
+  line-height: 1;
+}
+.primary-cta::after { border: none; }
+
+/* 行动按钮整行：左转发卡片 (primary-cta) + 右扫码 (qr-btn) */
+.invite-row {
+  align-self: center;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+/* invite-row 里的 primary-cta 不再自己 align-self —— 行容器统一摆放 */
+.invite-row .primary-cta { align-self: auto; margin: 0; }
+
+/* 扫码邀请 fallback：和转发按钮同款黑红轮廓胶带感小方块。
+   align-self: stretch 让它跟左侧 primary-cta 等高，避免视觉错位；
+   width 跟内部 icon size 留点 padding，整体接近正方形即可。 */
+.qr-btn {
+  align-self: stretch;
+  margin-left: 14rpx;
+  padding: 0 14rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #131313;
+  border: 4rpx solid #fafaf3;
+  box-shadow: 6rpx 6rpx 0 #e60022;
+  transform: skewX(-8deg);
+}
+.qr-btn-press {
+  transform: skewX(-8deg) translate(3rpx, 3rpx);
+  box-shadow: 2rpx 2rpx 0 #e60022;
+}
+.primary-cta-press {
+  transform: skewX(-8deg) translate(3rpx, 3rpx);
+  box-shadow: 2rpx 2rpx 0 #fafaf3;
+}
+.primary-cta icon { margin-right: 14rpx; }
+.primary-cta text {
+  display: inline-block;
+  color: #fafaf3;
+  font-size: 28rpx;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.16em;
+  white-space: nowrap;
+}
+
+/* footnote */
+.poster-footnote {
+  border-top: 2rpx dashed rgba(250,250,243,0.18);
+  padding-top: 16rpx;
+  display: flex;
+  flex-direction: column;
+}
+.footnote-line {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 6rpx;
+}
+.footnote-line:last-child { margin-bottom: 0; }
+.footnote-line .dash {
+  width: 20rpx;
+  height: 2rpx;
+  background: #e60022;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+.footnote-line text {
+  color: rgba(250,250,243,0.55);
+  font-size: 20rpx;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+/* ========== Action Zone ========== */
+.action-zone {
+  margin: 16rpx 24rpx;
+  padding: 40rpx 24rpx;
+  background: rgba(10,10,10,0.6);
+  border: 3rpx solid rgba(230,0,34,0.45);
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+  align-items: center;
+  justify-content: center;
+}
+
+.waiting-msg {
+  padding: 12rpx 0;
+}
+.waiting-msg text {
+  color: rgba(250,250,243,0.6);
+  font-size: 22rpx;
+  letter-spacing: 0.36em;
+  font-weight: 700;
+  font-style: italic;
+}
+
+/* ========== Standby 进度（< 2 人时） ==========
+ * 玩家加入进度灯，4 个点，未到的灯暗，到了的灯亮红。
+ * 整体非按钮态，低调且与 wanted-poster 调性一致。 */
+.standby {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 14rpx 24rpx;
+}
+.standby-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 8rpx;
+}
+.standby-label {
+  color: rgba(250,250,243,0.62);
+  font-size: 22rpx;
+  letter-spacing: 0.32em;
+  font-weight: 700;
+  font-style: italic;
+  white-space: nowrap;
+  margin-right: 16rpx;
+}
+.standby-dots {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+.standby-dot {
+  width: 14rpx;
+  height: 14rpx;
+  background: rgba(250,250,243,0.22);
+  border: 2rpx solid rgba(250,250,243,0.42);
+  margin-right: 8rpx;
+  transform: rotate(45deg);
+}
+.standby-dot.dim {
+  background: transparent;
+  border-color: rgba(250,250,243,0.18);
+}
+.standby-dot.lit {
+  background: #e60022;
+  border-color: #fafaf3;
+  animation: p5-blink 1.6s ease-in-out infinite;
+}
+.standby-count {
+  margin-left: 8rpx;
+  color: #ffd200;
+  font-size: 22rpx;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+.standby-hint {
+  color: rgba(250,250,243,0.42);
+  font-size: 18rpx;
+  letter-spacing: 0.22em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ========== START 按钮（≥2 人时） ==========
+ * P5 "All-Out Attack" 双层错位标签 */
+.start-btn {
+  position: relative;
+  background: #e60022;
+  padding: 18rpx 40rpx 22rpx;
+  border: 4rpx solid #0a0a0a;
+  box-shadow: 8rpx 8rpx 0 #fafaf3;
+  transform: skewX(-8deg);
+}
+.start-btn-press {
+  transform: skewX(-8deg) translate(4rpx, 4rpx);
+  box-shadow: 2rpx 2rpx 0 #fafaf3;
+}
+.start-btn .lab {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: baseline;
+  transform: skewX(8deg);
+}
+.start-btn .lab-zh {
+  color: #fafaf3;
+  font-size: 44rpx;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+  margin-right: 14rpx;
+}
+.start-btn .lab-en {
+  color: rgba(250,250,243,0.7);
+  font-size: 22rpx;
+  font-weight: 700;
+  letter-spacing: 0.32em;
+  font-style: italic;
+  white-space: nowrap;
+  margin-right: 14rpx;
+}
+
+.deck-row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+/* gap 在 Skyline 1.4.7 flex 下不稳，改用子元素 margin。
+   deck-hint 跟下面 deck-pair 之间需要明显呼吸 */
+.deck-hint {
+  margin-bottom: 24rpx;
+}
+.deck-hint text {
+  color: rgba(250,250,243,0.7);
+  font-size: 20rpx;
+  letter-spacing: 0.32em;
+  font-weight: 700;
+  font-style: italic;
+}
+.deck-pair {
+  display: flex;
+  flex-direction: row;
+  gap: 36rpx;
+}
+
+.continue-group {
+  display: flex;
+  flex-direction: row;
+  gap: 18rpx;
+  margin-top: 14rpx;
+}
+
+.btn-primary, .btn-secondary {
+  padding: 18rpx 28rpx;
+  border: 4rpx solid #0a0a0a;
+  transform: skewX(-8deg);
+}
+.btn-primary {
+  background: #e60022;
+  color: #fafaf3;
+  box-shadow: 6rpx 6rpx 0 #0a0a0a;
+}
+.btn-primary-press {
+  transform: skewX(-8deg) translate(3rpx, 3rpx);
+  box-shadow: 2rpx 2rpx 0 #0a0a0a;
+}
+.btn-secondary {
+  background: #fafaf3;
+  color: #0a0a0a;
+  box-shadow: 6rpx 6rpx 0 #e60022;
+}
+.btn-secondary-press {
+  transform: skewX(-8deg) translate(3rpx, 3rpx);
+  box-shadow: 2rpx 2rpx 0 #e60022;
+}
+.btn-primary, .btn-secondary {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8rpx;
+}
+.btn-primary text, .btn-secondary text {
+  display: inline-block;
+  transform: skewX(8deg);
+  font-size: 26rpx;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.12em;
+  white-space: nowrap;
+}
+
+.btn-primary.reset {
+  margin-top: 12rpx;
+}
+
+.end-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14rpx;
+  padding: 20rpx 0;
+}
+.end-crown {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10rpx;
+  font-size: 36rpx;
+  letter-spacing: 0.28em;
+  color: #ffd200;
+  font-style: italic;
+  font-weight: 900;
+}
+.end-text {
+  background: #ffd200;
+  color: #0a0a0a;
+  padding: 12rpx 36rpx;
+  font-size: 56rpx;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.16em;
+  border: 4rpx solid #0a0a0a;
+  box-shadow: 8rpx 8rpx 0 #e60022;
+  transform: skewX(-8deg);
+  animation: p5-burst 0.5s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+}
+.end-text text {
+  display: inline-block;
+  transform: skewX(8deg);
+}
+.end-hint {
+  margin-top: 8rpx;
+}
+.end-hint text {
+  color: rgba(250,250,243,0.55);
+  font-size: 22rpx;
+  letter-spacing: 0.32em;
+  font-style: italic;
+  font-weight: 700;
+}
+
+/* ========== Connecting placeholder ========== */
+.connecting-msg {
+  text-align: center;
+  padding: 40rpx 0;
+}
+.connecting-msg text {
+  color: rgba(250,250,243,0.5);
+  font-size: 22rpx;
+  letter-spacing: 0.32em;
+  font-style: italic;
+  font-weight: 700;
+}

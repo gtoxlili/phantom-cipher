@@ -1,0 +1,40 @@
+<!-- Row 1：跟系统胶囊视觉同高同行（back + cipher key card），
+     胶囊右边占位由 padding-right 让出来。
+     第二行 (phase-banner + log button) 由 room.wxml 自行组装 -->
+<view
+  class="hd"
+  style="padding-right: {{capsuleSafeRight}}px; min-height: {{capsuleHeight}}px"
+>
+  <view
+    class="icon-btn"
+    hover-class="icon-btn-press"
+    hover-stay-time="80"
+    bind:tap="onBack"
+    style="height: {{capsuleHeight}}px; width: {{capsuleHeight}}px"
+  >
+    <icon name="chevron-left" size="36" color="#fafaf3" />
+  </view>
+
+  <!-- Cipher key 卡：evidence-tag 三段式
+       左：红 spine（视觉重音）
+       中：label "CIPHER KEY //" 上 + 大字号 code 下
+       右：action chip（SHARE ↗）—— 整张卡片即 <button open-type="share">，
+       点一下直接弹微信原生分享菜单，由 page.onShareAppMessage 提供卡片数据 -->
+  <button
+    class="code-wrap"
+    open-type="share"
+    hover-class="code-wrap-press"
+    hover-stay-time="80"
+    style="min-height: {{capsuleHeight}}px"
+  >
+    <view class="code-spine" />
+    <view class="code-body">
+      <text class="code-label">CIPHER KEY //</text>
+      <text class="code">{{code}}</text>
+    </view>
+    <view class="code-aux">
+      <icon name="arrow-right" size="18" color="#0a0a0a" />
+      <text>SHARE</text>
+    </view>
+  </button>
+</view>

@@ -1,0 +1,17 @@
+{
+  "version": 1,
+  "skills": {
+    "auth-wechat-miniprogram": {
+      "source": "tencentcloudbase/skills",
+      "sourceType": "github",
+      "skillPath": "skills/auth-wechat/SKILL.md",
+      "computedHash": "32e8175276739367f0d4037070575a55ba9f3369bc9efd134f4373c33f2180b8"
+    },
+    "miniprogram-development": {
+      "source": "tencentcloudbase/skills",
+      "sourceType": "github",
+      "skillPath": "skills/miniprogram-development/SKILL.md",
+      "computedHash": "52742579968e9a29813a93a8c833fb1b5fb5703d8fe6d58fa450b0f13424c048"
+    }
+  }
+}

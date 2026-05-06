@@ -1,0 +1,35 @@
+<view class="np-main">
+  <sketch />
+  <view class="card">
+    <text class="eyebrow">· ROOM · {{code}} ·</text>
+    <text class="heading">取一个代号</text>
+    <text class="lead">朋友邀你入局，先告诉大家你的称呼。</text>
+    <input
+      class="input"
+      value="{{draft}}"
+      placeholder="JOKER"
+      maxlength="16"
+      placeholder-style="color: rgba(10,10,10,0.4); font-style: italic;"
+      bindinput="onInput"
+      confirm-type="done"
+      bindconfirm="onSubmit"
+    />
+    <view class="shuffle" hover-class="shuffle-press" hover-stay-time="80" bind:tap="onShuffle">
+      <icon name="sparkle" size="22" color="#e60022" />
+      <text>随机代号 / SHUFFLE</text>
+      <icon name="sparkle" size="22" color="#e60022" />
+    </view>
+    <view wx:if="{{error}}" class="error">
+      <icon name="warning" size="22" color="#e60022" />
+      <text>{{error}}</text>
+    </view>
+    <view class="submit {{!draft || !draft.trim() ? 'disabled' : ''}}" hover-class="submit-press" hover-stay-time="80" bind:tap="onSubmit">
+      <text>入局</text>
+      <icon name="arrow-right" size="28" color="#fafaf3" />
+    </view>
+    <view class="link" hover-class="link-press" hover-stay-time="80" bind:tap="onCancel">
+      <icon name="chevron-left" size="20" color="rgba(250,250,243,0.55)" />
+      <text>BACK TO LOBBY</text>
+    </view>
+  </view>
+</view>

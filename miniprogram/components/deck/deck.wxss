@@ -1,0 +1,178 @@
+.deck-group {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12rpx;
+}
+
+.deck {
+  position: relative;
+  width: 144rpx;
+  height: 200rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.deck.empty {
+  opacity: 0.45;
+}
+
+/* keyframe 直接定义在组件内部，绕开 app.wxss 全局 keyframes 在
+   styleIsolation:isolated 子组件下名字解析为空导致动画不生效的坑。
+   动画参数对齐 web 端 frontend：rotate -3deg ↔ +2deg + scale 1 ↔ 1.05，
+   节奏 1s ease-in-out infinite。
+   box-shadow 给红色光晕：Skyline 1.4.7 在 keyframe 里改 box-shadow 有 bug，
+   所以不动 keyframe，靠静态 + class 切换实现 web 端那种「红光绕牌堆」效果，
+   配合 transform 动画整体跟着摇头一起呼吸。 */
+.deck.active {
+  animation: deck-pulse 1s ease-in-out infinite;
+  transform-origin: 50% 50%;
+  box-shadow: 0 0 32rpx 6rpx rgba(230, 0, 34, 0.55);
+}
+@keyframes deck-pulse {
+  0%, 100% { transform: rotate(-3deg) scale(1); }
+  50%      { transform: rotate(2deg)  scale(1.05); }
+}
+
+.deck-press {
+  transform: rotate(-3deg) translate(4rpx, 4rpx) scale(0.97);
+}
+
+.stack {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.card-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border: 4rpx solid #0a0a0a;
+  border-radius: 6rpx;
+  overflow: hidden;
+}
+
+.deck.color-black .card-back .bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #0a0a0a;
+}
+.deck.color-white .card-back .bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #ece5cf;
+}
+
+.deck.color-black .card-back { border-color: #fafaf3; }
+
+/* 红色三角"切角"标志，跟 tile 同款 */
+.corner {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 0;
+  border-top: 36rpx solid #e60022;
+  border-left: 36rpx solid transparent;
+  z-index: 4;
+}
+
+.diag-red {
+  position: absolute;
+  top: 50%;
+  left: -10%;
+  right: -10%;
+  height: 28rpx;
+  background: #e60022;
+  transform: translateY(-50%) rotate(-18deg);
+}
+.diag-light {
+  position: absolute;
+  top: 64%;
+  left: -10%;
+  right: -10%;
+  height: 4rpx;
+  transform: translateY(-50%) rotate(-18deg);
+}
+.deck.color-white .diag-light { background: #0a0a0a; }
+.deck.color-black .diag-light { background: #fafaf3; }
+
+.mono {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) skewX(-6deg);
+  font-style: italic;
+  font-weight: 700;
+  font-size: 44rpx;
+  letter-spacing: -0.04em;
+  z-index: 2;
+}
+.deck.color-white .mono { color: #0a0a0a; }
+.deck.color-black .mono { color: #fafaf3; }
+
+.halftones {
+  position: absolute;
+  bottom: 14%;
+  left: 12%;
+  display: flex;
+  flex-direction: row;
+}
+.halftones .dot {
+  width: 6rpx;
+  height: 6rpx;
+  border-radius: 50%;
+  background: #e60022;
+  margin-right: 8rpx;
+}
+
+.count {
+  position: absolute;
+  bottom: -8rpx;
+  right: -16rpx;
+  background: #fafaf3;
+  border: 3rpx solid #0a0a0a;
+  box-shadow: 4rpx 4rpx 0 #e60022;
+  padding: 4rpx 12rpx;
+  transform: skewX(-8deg);
+  z-index: 5;
+}
+.count text {
+  display: inline-block;
+  transform: skewX(8deg);
+  color: #0a0a0a;
+  font-weight: 900;
+  font-size: 28rpx;
+  font-style: italic;
+}
+
+.deck-label {
+  font-size: 20rpx;
+  letter-spacing: 0.18em;
+  font-weight: 700;
+  padding: 4rpx 12rpx;
+  transform: skewX(-8deg);
+}
+.deck-label.color-black {
+  background: #0a0a0a;
+  color: #fafaf3;
+  border: 2rpx solid #fafaf3;
+}
+.deck-label.color-white {
+  background: #fafaf3;
+  color: #0a0a0a;
+  border: 2rpx solid #0a0a0a;
+}
+.deck-label text { display: inline-block; transform: skewX(8deg); }

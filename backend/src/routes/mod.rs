@@ -17,10 +17,14 @@ pub mod actions;
 pub mod players;
 pub mod stats;
 pub mod ws;
+pub mod wx;
+
+pub use wx::WxAuth;
 
 pub struct AppState {
     pub store: Arc<Store>,
     pub disconnect: Arc<DisconnectTimers>,
+    pub wx: WxAuth,
 }
 
 pub type SharedState = Arc<AppState>;
@@ -59,5 +63,15 @@ pub fn router(state: SharedState) -> Router {
         .route("/api/room/{code}/ws", get(ws::ws_handler))
         .route("/api/stats", get(stats::stats))
         .route("/api/players/{pid}", get(players::get_player))
+        .route("/api/wx/login", post(wx::login))
+        .route("/api/wx/sec-check", post(wx::sec_check))
+        .route("/api/wx/subscribe-send", post(wx::subscribe_send))
+        .route("/api/wx/qrcode", get(wx::qrcode))
+        .route("/api/wx/activity-create", post(wx::activity_create))
+        .route("/api/wx/updatable-msg-send", post(wx::updatable_msg_send))
+        .route("/api/wx/shortlink", post(wx::shortlink))
+        .route("/api/wx/urllink", post(wx::urllink))
+        .route("/api/wx/quota-get", post(wx::quota_get))
+        .route("/api/wx/quota-clear", post(wx::quota_clear))
         .with_state(state)
 }

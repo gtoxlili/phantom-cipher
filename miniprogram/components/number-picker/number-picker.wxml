@@ -1,0 +1,50 @@
+<view class="backdrop {{visible ? 'is-shown' : 'is-hidden'}}" bind:tap="onClose">
+  <view id="picker-back" class="back-fill" />
+  <vertical-drag-gesture-handler worklet:onGestureEvent="handleVerticalDrag">
+    <view id="picker-sheet" class="sheet" catch:tap="onSheetTap" style="padding-bottom: {{safeBottom + 28}}px">
+      <view class="grab" />
+      <view class="title">
+        <text class="strong">{{targetName}}</text>
+        <text class="hint">第 {{position + 1}} 张</text>
+        <view class="color-tag color-{{color}}">
+          <text>{{color === 'black' ? '黑' : '白'}}</text>
+        </view>
+      </view>
+
+      <view class="num-grid {{visible ? 'is-entering' : ''}}">
+        <view
+          class="num-btn"
+          wx:for="{{nums}}"
+          wx:key="*this"
+          wx:for-item="n"
+          wx:for-index="i"
+          data-n="{{n}}"
+          style="animation-delay: {{0.08 + i * 0.035}}s"
+          hover-class="num-btn-press"
+          hover-stay-time="80"
+          bind:tap="onPick"
+        >
+          <text>{{n}}</text>
+        </view>
+      </view>
+
+      <view
+        class="joker-btn {{visible ? 'is-entering' : ''}}"
+        hover-class="joker-btn-press"
+        hover-stay-time="80"
+        bind:tap="onJoker"
+      >
+        <view class="joker-row">
+          <icon name="star" size="36" color="#e60022" />
+          <text class="label">JOKER</text>
+          <text class="zh">赖子</text>
+        </view>
+      </view>
+
+      <view class="cancel" hover-class="cancel-press" hover-stay-time="80" bind:tap="onClose">
+        <text>CANCEL</text>
+        <icon name="cross" size="22" color="#ece5cf" />
+      </view>
+    </view>
+  </vertical-drag-gesture-handler>
+</view>

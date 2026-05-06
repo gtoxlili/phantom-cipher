@@ -1,0 +1,299 @@
+<block wx:if="{{needName}}">
+  <name-prompt
+    code="{{code}}"
+    bind:submit="onNameSubmit"
+    bind:cancel="onNameCancel"
+  />
+</block>
+<block wx:else>
+
+<view class="room" style="padding-top: {{layout.statusBarHeight}}px">
+  <sketch intensity="subdued" />
+
+  <header-bar
+    code="{{code}}"
+    capsule-safe-right="{{layout.capsuleSafeRight}}"
+    capsule-height="{{layout.capsuleHeight}}"
+    bind:back="onBack"
+  />
+
+  <!-- 二级行：左 phase-banner（拉伸）+ 右 log 按钮；
+       断线提示 chip 居中插入两者之间 -->
+  <view class="secondary-row">
+    <view class="phase-slot">
+      <phase-banner
+        text="{{phaseText}}"
+        accent="{{phaseAccent}}"
+        accent-icon="{{phaseAccentIcon}}"
+        accent-color="{{phaseAccentColor}}"
+        mood="{{phaseMood}}"
+      />
+    </view>
+    <view wx:if="{{!connected}}" class="disconnected-chip">
+      <view class="dot" />
+      <text>RECONNECTING</text>
+    </view>
+    <view
+      class="log-btn"
+      hover-class="log-btn-press"
+      hover-stay-time="80"
+      bind:tap="onToggleLog"
+    >
+      <icon name="bars" size="32" color="#fafaf3" />
+    </view>
+  </view>
+
+  <!-- 对手区：flex:1 撑开剩余空间。
+       4 人局时三个对手行可能超过自己空间，所以包一层 scroll-view 兜底。 -->
+  <scroll-view class="opponents-area" scroll-y type="list" enhanced show-scrollbar="{{false}}">
+    <block wx:if="{{opponentsCount === 0 && phase === 'waiting'}}">
+      <view class="poster">
+        <!-- 顶部红色斜带 P5 案件档案标头 -->
+        <view class="poster-streak"></view>
+
+        <!-- 文件编号 + 标签 -->
+        <view class="poster-eyebrow">
+          <text class="eyebrow-no">No.01</text>
+          <view class="eyebrow-pill"><text>WANTED ALLIES</text></view>
+        </view>
+
+        <!-- 大标题：日文（招集） + 英文 -->
+        <view class="poster-title">
+          <view class="title-jp"><text>招集</text></view>
+          <view class="title-en"><text>// CALLING THIEVES</text></view>
+        </view>
+
+        <!-- 主体大字号房间码 -->
+        <view class="poster-key">
+          <text class="key-label">— CIPHER KEY —</text>
+          <view class="key-frame">
+            <text class="key-code">{{code}}</text>
+            <view class="key-corner key-corner-tl" />
+            <view class="key-corner key-corner-tr" />
+            <view class="key-corner key-corner-bl" />
+            <view class="key-corner key-corner-br" />
+          </view>
+          <text class="key-sub">把这串密码丢给朋友 · 或扫码入局</text>
+        </view>
+
+        <!-- 行动按钮组：左转发卡片 + 右扫码邀请 fallback。
+             转发走 open-type="share" 由系统接管 onShareAppMessage；
+             小程序若被微信侧禁分享，扫码 icon button 是兜底入口。 -->
+        <view class="invite-row">
+          <button
+            class="primary-cta"
+            open-type="share"
+            hover-class="primary-cta-press"
+            hover-stay-time="80"
+          >
+            <icon name="arrow-right" size="32" color="#fafaf3" />
+            <text>邀请好友 · 转发卡片</text>
+          </button>
+          <view
+            class="qr-btn"
+            hover-class="qr-btn-press"
+            hover-stay-time="80"
+            bind:tap="onShowQr"
+          >
+            <icon name="qr-scan" size="36" color="#fafaf3" />
+          </view>
+        </view>
+
+        <!-- 把剩余空间撑开，让 footnote 钉在卡片底部 -->
+        <view class="poster-spacer" />
+
+        <!-- 底部说明 -->
+        <view class="poster-footnote">
+          <view class="footnote-line">
+            <view class="dash"></view>
+            <text>2 ~ 4 玩家 · 房主可在 ≥ 2 人时开局</text>
+          </view>
+          <view class="footnote-line">
+            <view class="dash"></view>
+            <text>对局时长 5 ~ 30 分钟 · 单局制</text>
+          </view>
+        </view>
+      </view>
+    </block>
+    <block wx:else>
+      <player-row
+        wx:for="{{opCellsList}}"
+        wx:key="player.id"
+        wx:for-item="op"
+        player="{{op.player}}"
+        is-me="{{false}}"
+        tiles="{{op.tiles}}"
+        current="{{op.isCurrent}}"
+        host="{{op.isHost}}"
+        can-target="{{canGuess && !pickerVisible && op.player.alive}}"
+        selected-tile-id="{{op.selectedTileId}}"
+        reveal-tile-id="{{revealTileId}}"
+        reveal-correct="{{revealCorrect}}"
+        now-ms="{{nowMs}}"
+        data-pid="{{op.player.id}}"
+        bind:tileTap="onOpTileTap"
+      />
+    </block>
+  </scroll-view>
+
+  <!-- ActionZone 介于对手区与自己手牌之间，flex:0 自适应高度 -->
+  <view wx:if="{{actionZone !== 'hidden'}}" class="action-zone">
+    <block wx:if="{{actionZone === 'waiting'}}">
+      <view class="waiting-msg"><text>WAITING FOR HOST</text></view>
+    </block>
+
+    <block wx:if="{{actionZone === 'start'}}">
+      <!-- 不到 2 人：进度条占位，整体低调 -->
+      <view wx:if="{{playerCount < 2}}" class="standby">
+        <view class="standby-row">
+          <text class="standby-label">玩家就位</text>
+          <view class="standby-dots">
+            <view class="standby-dot {{playerCount >= 1 ? 'lit' : ''}}" />
+            <view class="standby-dot {{playerCount >= 2 ? 'lit' : ''}}" />
+            <view class="standby-dot dim {{playerCount >= 3 ? 'lit' : ''}}" />
+            <view class="standby-dot dim {{playerCount >= 4 ? 'lit' : ''}}" />
+          </view>
+          <text class="standby-count">{{playerCount}}/4</text>
+        </view>
+        <text class="standby-hint">至少 2 人 · 房主才能开局</text>
+      </view>
+
+      <!-- 2 人以上：All-Out Attack 风格大红按钮 -->
+      <view
+        wx:else
+        class="start-btn"
+        hover-class="start-btn-press"
+        hover-stay-time="80"
+        bind:tap="onStart"
+      >
+        <view class="lab">
+          <text class="lab-zh">开局</text>
+          <text class="lab-en">START · {{playerCount}}P</text>
+          <icon name="arrow-right" size="28" color="#fafaf3" />
+        </view>
+      </view>
+    </block>
+
+    <block wx:if="{{actionZone === 'gameplay'}}">
+      <view class="deck-row">
+        <view class="deck-hint">
+          <text wx:if="{{canDraw}}">· 选一堆抽 · CHOOSE A PILE ·</text>
+          <text wx:else>· 牌堆 · DRAW PILES ·</text>
+        </view>
+        <view class="deck-pair">
+          <deck color="black" count="{{deckBlackCount}}" can-draw="{{canDraw}}" bind:draw="onDraw" />
+          <deck color="white" count="{{deckWhiteCount}}" can-draw="{{canDraw}}" bind:draw="onDraw" />
+        </view>
+      </view>
+
+      <view wx:if="{{phase === 'continuing' && isMyTurn}}" class="continue-group">
+        <view class="btn-primary" hover-class="btn-primary-press" hover-stay-time="80" bind:tap="onContinue">
+          <text>继续 PRESS ON</text>
+        </view>
+        <view class="btn-secondary" hover-class="btn-secondary-press" hover-stay-time="80" bind:tap="onStopHand">
+          <text>收手 STOP</text>
+        </view>
+      </view>
+    </block>
+
+    <block wx:if="{{actionZone === 'ended'}}">
+      <view class="end-panel">
+        <view class="end-crown">
+          <block wx:if="{{youWin}}">
+            <icon name="star" size="32" color="#ffd200" />
+            <icon name="star" size="32" color="#ffd200" />
+            <icon name="star" size="32" color="#ffd200" />
+          </block>
+          <block wx:else>
+            <text>· · ·</text>
+          </block>
+        </view>
+        <view class="end-text">
+          <text wx:if="{{youWin}}">YOU WIN</text>
+          <text wx:elif="{{winnerName}}">{{winnerName}} WINS</text>
+          <text wx:else>GAME OVER</text>
+        </view>
+        <block wx:if="{{isHost}}">
+          <view class="btn-primary reset" hover-class="btn-primary-press" hover-stay-time="80" bind:tap="onReset">
+            <text>再来一局</text>
+            <icon name="arrow-right" size="24" color="#fafaf3" />
+          </view>
+        </block>
+        <block wx:else>
+          <view class="end-hint"><text>WAIT FOR HOST</text></view>
+        </block>
+      </view>
+    </block>
+  </view>
+
+  <!-- 自己的手牌区固定在底部，留出 home indicator 安全区。
+       不放进 scroll-view 是为了"自己的手牌永远可见"——跟 frontend 的
+       myArea 在 main flex 容器底部一致。 -->
+  <view class="my-area" style="padding-bottom: {{layout.safeBottom + 8}}px">
+    <block wx:if="{{me}}">
+      <player-row
+        player="{{me}}"
+        is-me="{{true}}"
+        tiles="{{myCells}}"
+        current="{{isMyTurn}}"
+        host="{{isHost}}"
+        can-target="{{false}}"
+        selected-tile-id=""
+        reveal-tile-id="{{revealTileId}}"
+        reveal-correct="{{revealCorrect}}"
+        now-ms="{{nowMs}}"
+        bind:tileTap="onMyTileTap"
+      />
+    </block>
+    <block wx:else>
+      <view class="connecting-msg">
+        <text>· CONNECTING · {{phase}} ·</text>
+      </view>
+    </block>
+  </view>
+
+  <!-- ========== Modals & Overlays ========== -->
+  <number-picker
+    visible="{{pickerVisible}}"
+    target-name="{{pickerTargetName}}"
+    position="{{pickerPosition}}"
+    color="{{pickerColor}}"
+    safe-bottom="{{layout.safeBottom}}"
+    bind:close="onPickerClose"
+    bind:pick="onPick"
+  />
+
+  <joker-placement
+    visible="{{jokerVisible}}"
+    pending-color="{{jokerColor}}"
+    others="{{jokerOthers}}"
+    safe-bottom="{{layout.safeBottom}}"
+    bind:place="onPlaceJoker"
+  />
+
+  <reveal-overlay
+    visible="{{revealVisible}}"
+    correct="{{revealCorrect}}"
+    text="{{revealText}}"
+  />
+
+  <log-panel
+    visible="{{showLog}}"
+    entries="{{logEntries}}"
+    safe-top="{{layout.capsuleBottom + 4}}"
+    safe-bottom="{{layout.safeBottom + 16}}"
+    bind:close="onCloseLog"
+  />
+
+  <notifications items="{{notifications}}" top-offset="{{layout.navBarHeight + 12}}" />
+
+  <!-- 二维码邀请 fallback：分享被禁时手动打开 -->
+  <qrcode-overlay
+    visible="{{qrVisible}}"
+    code="{{code}}"
+    env-version="trial"
+    bind:close="onHideQr"
+  />
+</view>
+
+</block>

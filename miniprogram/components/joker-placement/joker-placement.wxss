@@ -1,0 +1,133 @@
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 95;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+.backdrop.is-hidden { pointer-events: none; }
+.backdrop.is-shown { pointer-events: auto; }
+
+.back-fill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 10, 10, 0.78);
+  opacity: 0;
+}
+
+.sheet {
+  position: relative;
+  width: 100%;
+  background: #131313;
+  border-top: 5rpx solid #ffd200;
+  padding-top: 18rpx;
+  padding-left: 24rpx;
+  padding-right: 24rpx;
+  /* transform 由 worklet 驱动 */
+  transform: translateY(800px);
+}
+
+.grab {
+  width: 80rpx;
+  height: 8rpx;
+  background: rgba(255, 210, 0, 0.4);
+  border-radius: 4rpx;
+  margin: 0 auto 18rpx;
+}
+
+.subtitle {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  color: #ffd200;
+  font-size: 22rpx;
+  letter-spacing: 0.36em;
+  font-weight: 800;
+  font-style: italic;
+}
+.subtitle text {
+  color: #ffd200;
+  font-size: 22rpx;
+  letter-spacing: 0.36em;
+  font-weight: 800;
+  font-style: italic;
+  white-space: nowrap;
+}
+
+.title {
+  display: block;
+  text-align: center;
+  color: #fafaf3;
+  font-size: 30rpx;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  margin: 12rpx 0 22rpx;
+}
+.title .strong {
+  color: #e60022;
+  font-weight: 900;
+  font-style: italic;
+}
+
+.preview {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 32rpx;
+}
+
+.hand-row {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8rpx;
+}
+
+.slot {
+  width: 54rpx;
+  height: 144rpx;
+  border: 3rpx dashed #e60022;
+  background: rgba(230,0,34,0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: skewX(-6deg);
+}
+.slot-press {
+  background: #e60022;
+}
+.slot text {
+  color: #e60022;
+  font-size: 38rpx;
+  font-weight: 900;
+  font-style: italic;
+  transform: skewX(6deg);
+  display: inline-block;
+}
+.slot-press text { color: #fafaf3; }
+
+.tile-wrap {
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+.hint {
+  display: block;
+  text-align: center;
+  margin-top: 28rpx;
+  color: rgba(250,250,243,0.55);
+  font-size: 20rpx;
+  letter-spacing: 0.24em;
+  font-style: italic;
+}

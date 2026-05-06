@@ -1,0 +1,14 @@
+<view class="banner-host">
+  <view class="banner mood-{{mood}}" key="{{animKey}}">
+    <view class="inner">
+      <!-- 图标型 accent（▶ ★ ·）：左右各一，对称感强 -->
+      <icon wx:if="{{accentIcon}}" name="{{accentIcon}}" size="22" color="{{accentColor}}" />
+      <text class="text">{{text}}</text>
+      <icon wx:if="{{accentIcon}}" name="{{accentIcon}}" size="22" color="{{accentColor}}" />
+      <!-- 文本型 accent（"1/2"）：当 chip 单挂尾巴，不要双侧重复 -->
+      <view wx:if="{{accent && !accentIcon}}" class="chip">
+        <text>{{accent}}</text>
+      </view>
+    </view>
+  </view>
+</view>

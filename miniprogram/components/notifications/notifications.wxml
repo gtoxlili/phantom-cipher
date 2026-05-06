@@ -1,0 +1,14 @@
+<view class="stack" style="top: {{topOffset}}px">
+  <view
+    class="toast"
+    wx:for="{{items}}"
+    wx:key="id"
+    data-id="{{item.id}}"
+    hover-class="toast-press"
+    hover-stay-time="80"
+    bind:tap="onTap"
+  >
+    <view class="bar" />
+    <text>{{item.text}}</text>
+  </view>
+</view>

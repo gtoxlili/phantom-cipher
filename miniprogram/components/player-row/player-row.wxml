@@ -1,0 +1,86 @@
+<view
+  class="row {{isMe ? 'me' : 'op'}} {{current ? 'current' : ''}} {{current && isMe ? 'me-current' : ''}} {{!player.alive ? 'dead' : ''}} {{!player.connected && !isMe ? 'offline' : ''}}"
+>
+  <view class="player-header">
+    <view class="player-name-row">
+      <text class="player-name">{{playerNameUpper}}</text>
+      <text wx:if="{{isMe}}" class="you-tag">· YOU</text>
+      <text wx:if="{{host}}" class="host-tag">HOST</text>
+    </view>
+    <view class="player-status">
+      <text wx:if="{{current}}" class="turn-tag">NOW</text>
+      <text wx:if="{{!player.alive}}" class="dead-tag">OUT</text>
+      <text wx:if="{{!player.connected && !isMe}}" class="offline-tag">OFF</text>
+      <view wx:if="{{forfeitSec > 0}}" class="forfeit-tag">
+        <view class="forfeit-dot" />
+        <text>{{forfeitSec}}s</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 自己的手牌：单行不换行，超过屏幕宽度横向滚动；
+       这样手牌再多也不会把对手区挤压到需要纵向滚动 -->
+  <scroll-view
+    wx:if="{{isMe}}"
+    id="hand-scroll"
+    class="hand hand-me"
+    scroll-x
+    type="list"
+    enable-flex
+    enhanced
+    clip="{{false}}"
+    show-scrollbar="{{false}}"
+  >
+    <block wx:if="{{tiles.length === 0}}">
+      <text class="empty-hand">· · ·</text>
+    </block>
+    <block wx:else>
+      <view class="tile-cell" id="tile-{{t.id}}" wx:for="{{tiles}}" wx:key="id" wx:for-item="t" wx:for-index="i">
+        <tile
+          number="{{t.number}}"
+          color="{{t.color}}"
+          joker="{{t.joker}}"
+          face-down="{{false}}"
+          owned-hidden="{{!t.revealed && !t.pending}}"
+          owned-exposed="{{t.revealed}}"
+          pending="{{t.pending}}"
+          selected="{{false}}"
+          selectable="{{false}}"
+          highlight="{{revealTileId === t.id ? (revealCorrect ? 'correct' : 'wrong') : ''}}"
+          size="md"
+          index="{{i}}"
+          clickable="{{false}}"
+          data-id="{{t.id}}"
+        />
+      </view>
+    </block>
+  </scroll-view>
+
+  <!-- 对手手牌：换行排，因为对手最多 4 张牌一般一行就够 -->
+  <view wx:else class="hand hand-op">
+    <block wx:if="{{tiles.length === 0}}">
+      <text class="empty-hand">· · ·</text>
+    </block>
+    <block wx:else>
+      <view class="tile-cell" wx:for="{{tiles}}" wx:key="id" wx:for-item="t" wx:for-index="i">
+        <tile
+          number="{{t.revealed ? t.number : null}}"
+          color="{{t.color}}"
+          joker="{{t.revealed && t.joker}}"
+          face-down="{{!t.revealed}}"
+          owned-hidden="{{false}}"
+          owned-exposed="{{false}}"
+          pending="{{t.pending}}"
+          selected="{{selectedTileId === t.id}}"
+          selectable="{{canTarget && !t.revealed && player.alive}}"
+          highlight="{{revealTileId === t.id ? (revealCorrect ? 'correct' : 'wrong') : ''}}"
+          size="md"
+          index="{{i}}"
+          clickable="{{canTarget && !t.revealed && player.alive}}"
+          data-id="{{t.id}}"
+          bind:tap="onTileTap"
+        />
+      </view>
+    </block>
+  </view>
+</view>

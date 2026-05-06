@@ -1,0 +1,63 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 80;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #0a0a0a;
+  opacity: 0;
+}
+
+.line {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  height: 60rpx;
+  background: #e60022;
+  /* 初始位置 + skew 由 worklet 驱动 */
+  transform: translateX(-110%) skewX(-22deg);
+}
+.line.top { top: 30%; }
+.line.bottom { bottom: 30%; }
+
+.overlay.correct .line { background: #ffd200; }
+
+.ribbon {
+  position: relative;
+  z-index: 2;
+  background: #fafaf3;
+  border: 5rpx solid #0a0a0a;
+  padding: 16rpx 36rpx;
+  /* 初始 transform/opacity 由 worklet 驱动 */
+  opacity: 0;
+  transform: skewX(-9deg) scale(0.4);
+  box-shadow: 8rpx 8rpx 0 #e60022;
+}
+
+.overlay.correct .ribbon {
+  background: #ffd200;
+  box-shadow: 8rpx 8rpx 0 #0a0a0a;
+}
+
+.ribbon text {
+  display: inline-block;
+  transform: skewX(9deg);
+  color: #0a0a0a;
+  font-size: 56rpx;
+  font-weight: 900;
+  font-style: italic;
+  letter-spacing: 0.12em;
+}

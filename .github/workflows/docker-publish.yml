@@ -134,6 +134,8 @@ jobs:
               --log-opt max-file=3 \
               --log-opt compress=true \
               -v phantom-cipher-data:/app/data \
+              -e WX_APPID='${{ secrets.WX_APPID }}' \
+              -e WX_SECRET='${{ secrets.WX_SECRET }}' \
               "$IMAGE"
 
             # 清掉除当前 tag 外的同 repo 旧镜像。grep 末尾留一个空格避免
